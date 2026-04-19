@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { evaluate, createGlobalEnv, resetEvaluationDepth, OutputFn } from '../evaluator';
 import { readFromString } from '../parser';
-import { printValue, makeNumber, NIL, Environment } from '../types';
+import { printValue, Environment } from '../types';
 
 let outputBuffer: string;
 let output: OutputFn;

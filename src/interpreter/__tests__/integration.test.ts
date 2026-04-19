@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { executeLisp, ExecutionResult } from '../index';
+import { executeLisp } from '../index';
 
 /**
  * 結合テスト — executeLisp を通して
