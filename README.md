@@ -1,0 +1,346 @@
+# Lisp Playground - Common Lisp 学習環境
+
+<p align="center">
+  <strong>λ Lisp Playground</strong><br>
+  ブラウザで動く Common Lisp インタプリタ付き学習サイト
+</p>
+
+---
+
+## 概要
+
+**Lisp Playground** は、ブラウザ上で Common Lisp のコードを入力・実行し、結果を確認できる学習プラットフォームです。  
+サーバーサイドの処理は不要で、すべてフロントエンドのみで動作するため、無料のホスティングサービスに静的サイトとしてデプロイできます。
+
+### 主な特長
+
+- **ブラウザ内 Lisp インタプリタ** — サーバー不要、完全クライアントサイド実行
+- **クロージャ対応** — レキシカルスコープ、高階関数、状態を持つクロージャ
+- **問題モード** — カテゴリ別の学習問題 + 自動正答判定
+- **フリーモード** — 自由にコードを書いて実験
+- **日本語 UI / エラーメッセージ** — 日本語学習者に最適化
+
+---
+
+## スクリーンショット
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  λ Lisp Playground   Common Lisp 学習環境               │
+├──────────┬──────────────────────┬────────────────────────┤
+│ 📚 問題   │  エディタ            │  実行結果              │
+│          │                      │                        │
+│ ▸ 基本構文│  (defun greet (name) │  出力:                 │
+│   初めて…│    (format nil ...)) │  "Hello, World!"       │
+│   変数の…│                      │                        │
+│   関数の…│  (print (greet ...)) │  戻り値:               │
+│ ▸ 条件分岐│                      │  "Hello, World!"       │
+│ ▸ リスト  │        [▶ 実行]      │  ✓ 正解！              │
+└──────────┴──────────────────────┴────────────────────────┘
+```
+
+---
+
+## 技術スタック
+
+| レイヤー | 技術 | バージョン |
+|----------|------|-----------|
+| フレームワーク | React + TypeScript | 18.x / 5.x |
+| ビルドツール | Vite | 5.x |
+| エディタ | CodeMirror 6 (via @uiw/react-codemirror) | 4.x |
+| Lisp実行 | カスタムインタプリタ (TypeScript) | — |
+| スタイリング | Pure CSS (カスタムプロパティ) | — |
+
+---
+
+## セットアップ
+
+### 前提条件
+
+- Node.js 18+ 
+- npm 9+
+
+### インストール
+
+```bash
+git clone <リポジトリURL>
+cd LispEditerApp
+npm install
+```
+
+### 開発サーバー起動
+
+```bash
+npm run dev
+```
+
+ブラウザで `http://localhost:5173` にアクセスしてください。
+
+### プロダクションビルド
+
+```bash
+npm run build
+```
+
+`dist/` フォルダに静的ファイルが生成されます。
+
+### プレビュー
+
+```bash
+npm run preview
+```
+
+### テスト
+
+```bash
+# 全テストを1回実行
+npm test
+
+# ウォッチモード（ファイル変更時に自動再実行）
+npm run test:watch
+```
+
+Vitest によるテストスイートが `src/interpreter/__tests__/` に用意されています。
+
+| テストファイル | 対象 | テスト数 |
+|---|---|---|
+| `types.test.ts` | LispValue ヘルパー関数 | 26 |
+| `environment.test.ts` | レキシカルスコープ管理 | 9 |
+| `parser.test.ts` | トークナイザ + パーサー | 23 |
+| `evaluator.test.ts` | 評価器・特殊形式・ビルトイン | 101 |
+| `integration.test.ts` | executeLisp E2E パイプライン | 25 |
+| **合計** | | **184** |
+
+---
+
+## プロジェクト構造
+
+```
+LispEditerApp/
+├── index.html                  # エントリーポイント
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── src/
+│   ├── main.tsx                # React マウント
+│   ├── App.tsx                 # メインアプリケーション
+│   ├── App.css                 # グローバルスタイル
+│   ├── index.css               # ベーススタイル
+│   ├── vite-env.d.ts
+│   ├── types/
+│   │   └── index.ts            # Problem 型定義
+│   ├── interpreter/            # ★ Lisp インタプリタ
+│   │   ├── index.ts            # 公開API (executeLisp)
+│   │   ├── types.ts            # LispValue 型定義
+│   │   ├── parser.ts           # レキサー + パーサー
+│   │   ├── evaluator.ts        # 評価器 + 組み込み関数
+│   │   ├── environment.ts      # 環境（スコープ）管理
+│   │   └── __tests__/          # Vitest テストスイート
+│   │       ├── types.test.ts
+│   │       ├── environment.test.ts
+│   │       ├── parser.test.ts
+│   │       ├── evaluator.test.ts
+│   │       └── integration.test.ts
+│   ├── components/             # React コンポーネント
+│   │   ├── Header.tsx          # ヘッダーバー
+│   │   ├── Editor.tsx          # CodeMirror エディタ
+│   │   ├── OutputPanel.tsx     # 実行結果パネル
+│   │   ├── ProblemList.tsx     # 問題一覧サイドバー
+│   │   └── ProblemView.tsx     # 問題説明・ヒント表示
+│   └── data/
+│       └── problems.ts         # 問題データ定義
+└── dist/                       # ビルド出力 (git管理外)
+```
+
+---
+
+## 対応する Common Lisp 機能
+
+### 特殊形式
+
+| 形式 | 説明 | 例 |
+|------|------|-----|
+| `quote` / `'` | クォート | `'(1 2 3)` |
+| `if` | 条件分岐 | `(if (> x 0) "positive" "non-positive")` |
+| `cond` | 多分岐 | `(cond ((= x 1) "one") (t "other"))` |
+| `when` / `unless` | 条件付き実行 | `(when (> x 0) (print x))` |
+| `and` / `or` / `not` | 論理演算 | `(and t nil)` → `NIL` |
+| `let` / `let*` | ローカル変数束縛 | `(let ((x 1)) x)` |
+| `progn` | 逐次実行 | `(progn (print 1) (print 2))` |
+| `setq` / `setf` | 代入 | `(setq x 42)` |
+| `defvar` / `defparameter` | グローバル変数 | `(defvar *x* 10)` |
+| `defun` | 関数定義 | `(defun add (a b) (+ a b))` |
+| `lambda` | 無名関数 | `(lambda (x) (* x x))` |
+| `funcall` / `apply` | 関数呼び出し | `(funcall #'+ 1 2)` |
+| `function` / `#'` | 関数オブジェクト取得 | `#'car` |
+| `dotimes` | 回数ループ | `(dotimes (i 10) (print i))` |
+| `dolist` | リストループ | `(dolist (x '(1 2 3)) (print x))` |
+| `loop` + `return` | 無限ループ | `(loop ... (return val))` |
+
+### 組み込み関数
+
+<details>
+<summary>算術 (15関数)</summary>
+
+`+`, `-`, `*`, `/`, `mod`, `abs`, `max`, `min`, `floor`, `ceiling`, `round`, `sqrt`, `expt`, `1+`, `1-`
+
+</details>
+
+<details>
+<summary>比較 (11関数)</summary>
+
+`=`, `/=`, `<`, `>`, `<=`, `>=`, `zerop`, `plusp`, `minusp`, `evenp`, `oddp`
+
+</details>
+
+<details>
+<summary>等値 (3関数)</summary>
+
+`eq`, `eql`, `equal`
+
+</details>
+
+<details>
+<summary>型判定 (7関数)</summary>
+
+`numberp`, `stringp`, `symbolp`, `listp`, `consp`, `atom`, `null`, `functionp`
+
+</details>
+
+<details>
+<summary>リスト操作 (15関数)</summary>
+
+`car`/`first`, `cdr`/`rest`, `second`, `third`, `nth`, `cons`, `list`, `append`, `length`, `reverse`, `last`, `member`, `remove`, `assoc`
+
+</details>
+
+<details>
+<summary>高階関数 (7関数)</summary>
+
+`mapcar`, `remove-if`, `remove-if-not`, `reduce`, `some`, `every`, `sort`
+
+</details>
+
+<details>
+<summary>文字列 (7関数)</summary>
+
+`concatenate`, `string-upcase`, `string-downcase`, `subseq`, `string=`, `write-to-string`, `parse-integer`
+
+</details>
+
+<details>
+<summary>入出力 (4関数)</summary>
+
+`print`, `princ`, `terpri`, `format`
+
+</details>
+
+---
+
+## 問題の追加方法
+
+[src/data/problems.ts](src/data/problems.ts) に `Problem` オブジェクトを追加します。
+
+```typescript
+// src/data/problems.ts
+{
+  id: 'category-nn',           // ユニークID
+  title: '問題タイトル',         // サイドバーに表示
+  category: 'カテゴリ名',       // グループ分け
+  difficulty: 'beginner',      // 'beginner' | 'intermediate' | 'advanced'
+  description: `
+## 解説タイトル
+
+マークダウン形式で構文説明を記載。
+\`\`\`lisp
+(コード例)
+\`\`\`
+
+### 問題
+ここに問題文を書く。
+  `,
+  hint: 'ヒントテキスト（省略可）',
+  initialCode: '; エディタに表示される初期コード\n',
+  expectedOutput: '期待する print 出力\n',     // 省略可
+  expectedReturnValue: '期待する戻り値文字列',   // 省略可
+  solution: '(模範解答コード)',
+}
+```
+
+### カテゴリの自動生成
+
+`category` フィールドでグルーピングされます。新しいカテゴリ名を指定するだけで自動的にサイドバーに新セクションが追加されます。
+
+---
+
+## デプロイ
+
+すべて **無料プラン** で対応可能な静的ホスティングサービスです。  
+本アプリはサーバーサイド処理不要のため、ビルド成果物 (`dist/`) をそのまま配信できます。
+
+### GitHub Pages（推奨）
+
+GitHub Actions で自動デプロイする方式です。リポジトリに含まれる `.github/workflows/deploy.yml` がそのまま使えます。
+
+1. GitHub にリポジトリを push
+2. リポジトリの **Settings → Pages → Source** を **GitHub Actions** に変更
+3. `main` ブランチに push するたびに自動ビルド＆デプロイ
+
+> **Note**: `vite.config.ts` の `base` は `'./'`（相対パス）のままで動作します。  
+> サブディレクトリ配信（`https://user.github.io/repo/`）でも相対パスなら問題ありません。
+
+### Cloudflare Pages
+
+CDN・プレビューURL・アクセス解析が無料で使えるため、学習サイトとの相性が良いサービスです。
+
+1. [Cloudflare Dashboard](https://dash.cloudflare.com/) にログイン
+2. **Workers & Pages → Create → Pages → Connect to Git**
+3. リポジトリを選択し、以下を設定:
+   - **ビルドコマンド**: `npm run build`
+   - **ビルド出力ディレクトリ**: `dist`
+   - **Node.js バージョン**: 環境変数 `NODE_VERSION` = `20`
+4. **Save and Deploy**
+
+PR ごとにプレビュー URL が自動生成されるため、レビューが容易です。
+
+### Vercel
+
+1. [Vercel](https://vercel.com) でリポジトリをインポート
+2. ビルドコマンド: `npm run build`、出力ディレクトリ: `dist`
+3. デプロイ完了
+
+### Netlify
+
+1. [Netlify](https://www.netlify.com) でリポジトリをインポート
+2. ビルドコマンド: `npm run build`、公開ディレクトリ: `dist`
+
+---
+
+## 開発ガイド
+
+### インタプリタの拡張
+
+新しい組み込み関数を追加するには、[src/interpreter/evaluator.ts](src/interpreter/evaluator.ts) の `createGlobalEnv` 関数内に追記します:
+
+```typescript
+defBuiltin('MY-FUNC', (args) => {
+  // args[0], args[1] ... で引数にアクセス
+  // 型チェックを行い、LispValue を返す
+  if (args[0].type !== 'number') throw new Error('my-func: 数値が期待されます');
+  return makeNumber(args[0].value * 2);
+});
+```
+
+新しい特殊形式を追加するには、`evalList` 関数内の `switch (head.name)` に `case` を追加します。
+
+---
+
+## ライセンス
+
+MIT License
+
+---
+
+## 貢献
+
+Issue や Pull Request を歓迎します。問題データの追加も大歓迎です。
