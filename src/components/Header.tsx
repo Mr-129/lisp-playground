@@ -26,6 +26,12 @@ export function Header() {
         >
           🖊️ エディタ
         </button>
+        <button
+          className={`header-nav-button ${location.pathname === '/repl' ? 'active' : ''}`}
+          onClick={() => navigate('/repl')}
+        >
+          🖥️ REPL
+        </button>
       </nav>
       <div className="header-right">
         <a

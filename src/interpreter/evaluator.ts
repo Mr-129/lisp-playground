@@ -885,3 +885,80 @@ export function createGlobalEnv(output: OutputFn): Environment {
 
   return env;
 }
+
+/**
+ * Re-bind output-dependent built-in functions (PRINT, PRINC, TERPRI, FORMAT)
+ * in an existing environment so they use a new output callback.
+ * Used by REPL to redirect output per evaluation while keeping the same env.
+ */
+export function rebindOutputBuiltins(env: Environment, output: OutputFn): void {
+  const set = (name: string, fn: (args: LispValue[], env: Environment) => LispValue) => {
+    envSet(env, name, { type: 'function', name, fn });
+  };
+
+  set('PRINT', (args) => {
+    const val = args[0];
+    output(printValue(val) + '\n');
+    return val;
+  });
+
+  set('PRINC', (args) => {
+    const val = args[0];
+    output(val.type === 'string' ? val.value : printValue(val));
+    return val;
+  });
+
+  set('TERPRI', () => {
+    output('\n');
+    return NIL;
+  });
+
+  set('FORMAT', (args) => {
+    const dest = args[0];
+    if (args[1].type !== 'string') throw new Error('format: フォーマット文字列が期待されます');
+    let fmt = args[1].value;
+    let argIdx = 2;
+
+    let result = '';
+    let i = 0;
+    while (i < fmt.length) {
+      if (fmt[i] === '~' && i + 1 < fmt.length) {
+        const directive = fmt[i + 1].toUpperCase();
+        switch (directive) {
+          case 'A': {
+            const arg = args[argIdx];
+            result += arg ? (arg.type === 'string' ? arg.value : printValue(arg)) : '';
+            argIdx++;
+          }
+            break;
+          case 'S':
+            result += args[argIdx] ? printValue(args[argIdx]) : '';
+            argIdx++;
+            break;
+          case 'D':
+            result += args[argIdx] ? printValue(args[argIdx]) : '';
+            argIdx++;
+            break;
+          case '%':
+            result += '\n';
+            break;
+          case '~':
+            result += '~';
+            break;
+          default:
+            result += '~' + fmt[i + 1];
+        }
+        i += 2;
+      } else {
+        result += fmt[i];
+        i++;
+      }
+    }
+
+    if (isTruthy(dest)) {
+      output(result);
+      return NIL;
+    }
+    return makeString(result);
+  });
+}

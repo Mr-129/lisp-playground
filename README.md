@@ -16,12 +16,13 @@
 
 - **ブラウザ内 Lisp インタプリタ** — サーバー不要、完全クライアントサイド実行
 - **クロージャ対応** — レキシカルスコープ、高階関数、状態を持つクロージャ
-- **2ページ構成** — 学習ページ（構文ガイド + 問題文）とエディタページ（コード実行）
+- **3ページ構成** — 学習ページ（構文ガイド + 問題文）、エディタページ（コード実行）、REPLページ（対話式実行）
 - **Lisp 構文ガイド** — 14セクションの包括的な Common Lisp リファレンス
 - **Lisp 構文ハイライト** — キーワード・ビルトイン・文字列・コメントの色分け
 - **バックグラウンド実行** — Web Worker によるUIブロックなし実行 + 10秒タイムアウト
 - **コード永続化** — localStorage によるコード・選択中問題の自動保存
-- **問題モード** — カテゴリ別の学習問題 + 自動正答判定
+- **問題モード** — カテゴリ別の学習問題（全35問） + 自動正答判定
+- **REPL モード** — 1行ずつ式を評価、環境を引き継いだ対話的実行
 - **フリーモード** — 自由にコードを書いて実験
 - **日本語 UI / エラーメッセージ** — 日本語学習者に最適化
 
@@ -135,6 +136,7 @@ Vitest によるテストスイートが用意されています。
 | `parser.test.ts` | トークナイザ + パーサー | 23 |
 | `evaluator.test.ts` | 評価器・特殊形式・ビルトイン | 101 |
 | `integration.test.ts` | executeLisp E2E パイプライン | 25 |
+| `repl.test.ts` | executeLispRepl 環境引き継ぎ | 8 |
 
 #### UI コンポーネントテスト (`src/components/__tests__/`, `src/pages/__tests__/`)
 
@@ -147,13 +149,14 @@ Vitest によるテストスイートが用意されています。
 | `LispGuide.test.tsx` | Lisp 構文ガイド | 11 |
 | `LearnPage.test.tsx` | 学習ページ統合 | 12 |
 | `EditorPage.test.tsx` | エディタページ統合 | 10 |
-| `problems.test.ts` | 問題データ整合性 | 0 |
+| `ReplPage.test.tsx` | REPLページ統合 | 10 |
+| `problems.test.ts` | 問題データ整合性 | 89 |
 
 | `storage.test.ts` | localStorage 永続化 | 11 |
 | `lisp-language.test.ts` | Lisp 構文ハイライト | 13 |
 | `worker.test.ts` | Web Worker 実行 | 4 |
 
-| **合計** | | **306** |
+| **合計** | | **378** |
 
 ---
 
@@ -175,7 +178,7 @@ LispEditerApp/
 │   ├── types/
 │   │   └── index.ts            # Problem 型定義
 │   ├── interpreter/            # ★ Lisp インタプリタ
-│   │   ├── index.ts            # 公開API (executeLisp)
+│   │   ├── index.ts            # 公開API (executeLisp, executeLispRepl)
 │   │   ├── types.ts            # LispValue 型定義
 │   │   ├── parser.ts           # レキサー + パーサー
 │   │   ├── evaluator.ts        # 評価器 + 組み込み関数
@@ -196,6 +199,7 @@ LispEditerApp/
 │   ├── pages/                  # ページコンポーネント
 │   │   ├── LearnPage.tsx       # 学習ページ（ガイド + 問題）
 │   │   ├── EditorPage.tsx      # エディタページ（実行環境）
+│   │   ├── ReplPage.tsx        # REPLページ（対話式実行）
 │   │   └── __tests__/          # ページ統合テスト
 │   ├── components/             # React コンポーネント
 │   │   ├── Header.tsx          # ナビゲーションヘッダー

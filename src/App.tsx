@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { LearnPage } from './pages/LearnPage';
 import { EditorPage } from './pages/EditorPage';
+import { ReplPage } from './pages/ReplPage';
 import { Problem } from './types';
 import { saveCode, loadCode, saveProblemId, loadProblemId } from './utils/storage';
 import { problems } from './data/problems';
@@ -114,6 +115,10 @@ function App() {
                   setIsCorrect={setIsCorrect}
                 />
               }
+            />
+            <Route
+              path="/repl"
+              element={<ReplPage />}
             />
           </Routes>
         </div>
