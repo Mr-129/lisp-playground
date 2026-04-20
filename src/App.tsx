@@ -1,10 +1,8 @@
 import { useState, useCallback } from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
-import { Editor } from './components/Editor';
-import { OutputPanel } from './components/OutputPanel';
-import { ProblemList } from './components/ProblemList';
-import { ProblemView } from './components/ProblemView';
-import { executeLisp } from './interpreter';
+import { LearnPage } from './pages/LearnPage';
+import { EditorPage } from './pages/EditorPage';
 import { Problem } from './types';
 import './App.css';
 
@@ -40,28 +38,6 @@ function App() {
   const [error, setError] = useState<string | undefined>();
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  const handleRun = useCallback(() => {
-    const result = executeLisp(code);
-    setOutput(result.output);
-    setReturnValue(result.returnValue);
-    setError(result.error);
-
-    // Judge if problem is selected
-    if (selectedProblem && !result.error) {
-      let correct = true;
-      if (selectedProblem.expectedOutput !== undefined) {
-        correct = correct && result.output === selectedProblem.expectedOutput;
-      }
-      if (selectedProblem.expectedReturnValue !== undefined) {
-        correct = correct && result.returnValue === selectedProblem.expectedReturnValue;
-      }
-      setIsCorrect(correct);
-    } else {
-      setIsCorrect(null);
-    }
-  }, [code, selectedProblem]);
 
   const handleSelectProblem = useCallback((problem: Problem) => {
     setSelectedProblem(problem);
@@ -78,9 +54,8 @@ function App() {
     }
   }, [selectedProblem]);
 
-  const handleFreeMode = useCallback(() => {
-    setSelectedProblem(null);
-    setCode(DEFAULT_CODE);
+  const handleNavigateToEditor = useCallback(() => {
+    // Reset output when navigating to editor
     setOutput('');
     setReturnValue('');
     setError(undefined);
@@ -88,45 +63,44 @@ function App() {
   }, []);
 
   return (
-    <div className="app">
-      <Header />
-      <div className="app-body">
-        <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
-          <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="サイドバーを切り替え">
-            {sidebarOpen ? '◀' : '▶'}
-          </button>
-          {sidebarOpen && (
-            <>
-              <button className="free-mode-button" onClick={handleFreeMode} aria-label="フリーモードに切り替え">
-                🖊️ フリーモード
-              </button>
-              <ProblemList
-                selectedId={selectedProblem?.id ?? null}
-                onSelect={handleSelectProblem}
-              />
-            </>
-          )}
-        </div>
-        <div className="main-content">
-          {selectedProblem && (
-            <ProblemView
-              key={selectedProblem.id}
-              problem={selectedProblem}
-              onShowSolution={handleShowSolution}
+    <HashRouter>
+      <div className="app">
+        <Header />
+        <div className="app-body">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <LearnPage
+                  selectedProblem={selectedProblem}
+                  onSelectProblem={handleSelectProblem}
+                  onShowSolution={handleShowSolution}
+                  onNavigateToEditor={handleNavigateToEditor}
+                />
+              }
             />
-          )}
-          <div className="editor-output-container">
-            <Editor code={code} onChange={setCode} onRun={handleRun} />
-            <OutputPanel
-              output={output}
-              returnValue={returnValue}
-              error={error}
-              isCorrect={isCorrect}
+            <Route
+              path="/editor"
+              element={
+                <EditorPage
+                  code={code}
+                  setCode={setCode}
+                  selectedProblem={selectedProblem}
+                  output={output}
+                  setOutput={setOutput}
+                  returnValue={returnValue}
+                  setReturnValue={setReturnValue}
+                  error={error}
+                  setError={setError}
+                  isCorrect={isCorrect}
+                  setIsCorrect={setIsCorrect}
+                />
+              }
             />
-          </div>
+          </Routes>
         </div>
       </div>
-    </div>
+    </HashRouter>
   );
 }
 

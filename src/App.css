@@ -58,6 +58,35 @@
   color: #e94560;
 }
 
+/* Header Nav */
+.header-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.header-nav-button {
+  padding: 6px 14px;
+  background: transparent;
+  color: #8892b0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.header-nav-button:hover {
+  background: #0f3460;
+  color: #fff;
+}
+
+.header-nav-button.active {
+  background: #0f3460;
+  color: #e94560;
+  border-color: #1a3a6a;
+  font-weight: 600;
+}
+
 /* Body */
 .app-body {
   display: flex;
@@ -540,11 +569,388 @@
 /* Focus visible for keyboard navigation */
 .sidebar-toggle:focus-visible,
 .free-mode-button:focus-visible,
+.guide-mode-button:focus-visible,
 .run-button:focus-visible,
 .problem-item:focus-visible,
 .hint-button:focus-visible,
 .solution-button:focus-visible,
-.header-link:focus-visible {
+.header-link:focus-visible,
+.start-coding-button:focus-visible,
+.back-to-learn:focus-visible,
+.guide-start-button:focus-visible {
   outline: 2px solid #e94560;
   outline-offset: 2px;
+}
+
+/* ===== Learn Page ===== */
+.learn-page {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.learn-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.learn-problem-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.learn-problem-area .problem-view {
+  max-height: none;
+  flex: 1;
+}
+
+.learn-actions {
+  padding: 16px 20px;
+  background: #16213e;
+  border-top: 1px solid #1a3a6a;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.start-coding-button {
+  padding: 10px 28px;
+  background: #e94560;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.start-coding-button:hover {
+  background: #c73652;
+  transform: translateY(-1px);
+}
+
+/* Guide mode button */
+.guide-mode-button {
+  margin: 12px 12px 4px;
+  padding: 8px 12px;
+  background: #0f3460;
+  color: #e0e0e0;
+  border: 1px solid #1a3a6a;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.guide-mode-button:hover {
+  background: #1a3a6a;
+  color: #fff;
+}
+
+.guide-mode-button.active {
+  background: #e94560;
+  color: #fff;
+  border-color: #e94560;
+}
+
+/* Welcome page */
+.learn-welcome {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.welcome-content {
+  max-width: 600px;
+  text-align: center;
+}
+
+.welcome-content h2 {
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.welcome-content > p {
+  color: #8892b0;
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+.welcome-steps {
+  text-align: left;
+  margin-bottom: 32px;
+}
+
+.welcome-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #e94560;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.welcome-step strong {
+  color: #fff;
+  font-size: 15px;
+}
+
+.welcome-step p {
+  color: #8892b0;
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.welcome-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.guide-start-button {
+  padding: 10px 24px;
+  background: #0f3460;
+  color: #e0e0e0;
+  border: 1px solid #1a3a6a;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.guide-start-button:hover {
+  background: #1a3a6a;
+  color: #fff;
+}
+
+/* ===== Editor Page ===== */
+.editor-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.editor-page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: #16213e;
+  border-bottom: 1px solid #1a3a6a;
+  flex-shrink: 0;
+}
+
+.back-to-learn {
+  padding: 6px 14px;
+  background: #0f3460;
+  color: #c0c8d8;
+  border: 1px solid #1a3a6a;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.back-to-learn:hover {
+  background: #1a3a6a;
+  color: #fff;
+}
+
+.current-problem-label {
+  font-size: 14px;
+  color: #c0c8d8;
+  font-weight: 600;
+}
+
+/* ===== Lisp Guide ===== */
+.lisp-guide {
+  flex: 1;
+  overflow-y: auto;
+  background: #0d1b2a;
+}
+
+.guide-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+}
+
+.guide-main-title {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e94560;
+}
+
+.guide-section {
+  margin-bottom: 28px;
+  padding: 20px;
+  background: #16213e;
+  border-radius: 8px;
+  border: 1px solid #1a3a6a;
+}
+
+.guide-section h3 {
+  font-size: 18px;
+  color: #e94560;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #1a3a6a;
+}
+
+.guide-section h4 {
+  font-size: 15px;
+  color: #e9a045;
+  margin: 16px 0 8px;
+}
+
+.guide-section p {
+  color: #c0c8d8;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 8px 0;
+}
+
+.guide-section code {
+  background: #0a0f1e;
+  color: #e06c75;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.guide-code {
+  background: #0a0f1e;
+  border: 1px solid #1a3a6a;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-size: 13px;
+  color: #abb2bf;
+  overflow-x: auto;
+  line-height: 1.6;
+  white-space: pre;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+}
+
+.guide-note {
+  margin: 12px 0;
+  padding: 12px 16px;
+  background: #1a2a3a;
+  border-left: 3px solid #e9a045;
+  border-radius: 0 6px 6px 0;
+  color: #c0c8d8;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.guide-note code {
+  background: #0a0f1e;
+  color: #e06c75;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 13px;
+}
+
+.guide-table th {
+  background: #0f3460;
+  color: #fff;
+  padding: 8px 12px;
+  text-align: left;
+  border: 1px solid #1a3a6a;
+}
+
+.guide-table td {
+  padding: 8px 12px;
+  color: #c0c8d8;
+  border: 1px solid #1a3a6a;
+  background: #0d1b2a;
+}
+
+.guide-table code {
+  background: #0a0f1e;
+  color: #e06c75;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+/* Reference links */
+.guide-references ul {
+  list-style: none;
+  padding: 0;
+}
+
+.reference-list li {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: #0d1b2a;
+  border-radius: 6px;
+  border: 1px solid #1a3a6a;
+}
+
+.reference-list a {
+  color: #61dafb;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.reference-list a:hover {
+  text-decoration: underline;
+  color: #8aecff;
+}
+
+.ref-desc {
+  color: #8892b0;
+  font-size: 13px;
+}
+
+.guide-footer {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #1a3a6a;
+}
+
+.guide-footer p {
+  color: #8892b0;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.guide-footer .guide-start-button {
+  font-size: 14px;
 }

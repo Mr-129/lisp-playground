@@ -2,7 +2,7 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年4月12日 — 課題修正・テスト追加を反映
+**最終更新**: 2026年4月20日 — ページリストラクチャ・構文ガイド・UIコンポーネントテストを反映
 
 ---
 
@@ -29,7 +29,7 @@
 | 観点 | 評価 | 備考 |
 |------|------|------|
 | 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。REPL・永続化が未実装 |
-| コード品質 | ⭐⭐⭐⭐☆ | 型安全性改善、Vitest テスト 184件追加済 |
+| コード品質 | ⭐⭐⭐⭐☆ | 型安全性改善、Vitest テスト 278件追加済 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -193,14 +193,12 @@
 - **修正案**: 定数ファイルに集約
 
 #### ✅ ~~🟡 CQ-003: テストコードが存在しない~~ **→ 修正済**
-- **ファイル**: `src/interpreter/__tests__/`
+- **ファイル**: `src/interpreter/__tests__/`, `src/components/__tests__/`, `src/pages/__tests__/`
 - **重要度**: Minor（学習プロジェクトとしては許容）
-- **対応**: Vitest でインタプリタの単体テスト + 結合テストを追加（合計 184 テスト）
-  - `types.test.ts` — 26 テスト
-  - `environment.test.ts` — 9 テスト
-  - `parser.test.ts` — 23 テスト
-  - `evaluator.test.ts` — 101 テスト
-  - `integration.test.ts` — 25 テスト
+- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UIコンポーネントテストを追加（合計 278 テスト）
+  - `src/interpreter/__tests__/` — 184 テスト（types, environment, parser, evaluator, integration）
+  - `src/components/__tests__/` — 72 テスト（Header, OutputPanel, ProblemList, ProblemView, LispGuide）
+  - `src/pages/__tests__/` — 22 テスト（LearnPage, EditorPage）
 
 ---
 
@@ -209,23 +207,29 @@
 ### 現在のアーキテクチャ
 
 ```
-[ユーザー入力]
+[ユーザーアクセス]
      ↓
-[CodeMirror エディタ]
-     ↓
-[Parser (tokenize → parse)]
-     ↓
-[Evaluator (evaluate + builtins)]
-     ↓
-[OutputPanel (結果表示)]
+[HashRouter (react-router-dom)]
+     ├─ / → [LearnPage] → [LispGuide] / [ProblemView]
+     └─ /editor → [EditorPage]
+                       ↓
+              [CodeMirror エディタ]
+                       ↓
+              [Parser (tokenize → parse)]
+                       ↓
+              [Evaluator (evaluate + builtins)]
+                       ↓
+              [OutputPanel (結果表示)]
 ```
 
 ### 良い点 ✅
 
 1. **完全クライアントサイド** — サーバー依存なし、デプロイが容易
-2. **コンポーネント分離** — Editor / Output / Problem が明確に分離
-3. **インタプリタの独立性** — React に依存せず、純粋な TypeScript
-4. **問題データの宣言的定義** — TypeScript の型安全性を活用
+2. **2ページ構成** — 学習ページとエディタページの分離で関心の分離を実現
+3. **コンポーネント分離** — Editor / Output / Problem / Guide が明確に分離
+4. **インタプリタの独立性** — React に依存せず、純粋な TypeScript
+5. **問題データの宣言的定義** — TypeScript の型安全性を活用
+6. **包括的テスト** — インタプリタ単体 + UIコンポーネントテスト 278件
 
 ### 改善が望ましい点 ⚠️
 
@@ -234,7 +238,7 @@
 | 同期実行 | UI スレッドで直接評価 | Web Worker に分離 | 高 |
 | 状態管理 | useState の組み合わせ | useReducer or Zustand | 中 |
 | コードの永続化 | なし（リロードで消失） | localStorage / IndexedDB | 高 |
-| テスタビリティ | ~~テストなし~~ Vitest 184件 | ✅ 対応済 | — |
+| テスタビリティ | ~~テストなし~~ Vitest 278件 | ✅ 対応済 | — |
 | CSS 管理 | 単一ファイル | CSS Modules or Tailwind | 低 |
 
 ---
@@ -271,7 +275,7 @@
 |---|--------|--------|---------|
 | 15 | ダーク/ライトテーマ切り替え | 中 | 中 |
 | 16 | 問題の JSON/YAML 外部ファイル化 | 中 | 中 |
-| 17 | ~~Vitest によるインタプリタ単体テスト~~ | 中 | 大 | ✅ 完了 |
+| 17 | ~~Vitest によるインタプリタ単体テスト + UIテスト~~ | 中 | 大 | ✅ 完了 |
 | 18 | Playwright E2E テスト | 低 | 大 |
 | 19 | PWA 対応（オフライン利用） | 低 | 中 |
 | 20 | ステップ実行デバッガ | 低 | 大 |
@@ -347,3 +351,4 @@
 
 *このドキュメントは Lisp Playground v1.0.0 の初期レビュー時点のものです。*
 *2026-04-12: BUG-001, SEC-001, SEC-002, ACC-001, ACC-002, CQ-003 の修正を反映。Vitest テスト 184 件を追加。*
+*2026-04-20: react-router-dom によるページ分割（LearnPage / EditorPage）、LispGuide コンポーネント追加、UIコンポーネントテスト 94 件追加（合計 278 件）。*
