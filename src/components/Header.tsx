@@ -7,8 +7,10 @@ export function Header() {
   return (
     <header className="app-header">
       <div className="header-left">
-        <span className="header-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>λ</span>
-        <h1 className="header-title" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>Lisp Playground</h1>
+        <button className="header-logo" onClick={() => navigate('/')} aria-label="ホームへ戻る">λ</button>
+        <h1 className="header-title">
+          <button className="header-title-link" onClick={() => navigate('/')}>Lisp Playground</button>
+        </h1>
         <span className="header-subtitle">Common Lisp 学習環境</span>
       </div>
       <nav className="header-nav">
