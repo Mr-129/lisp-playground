@@ -3,9 +3,10 @@ interface OutputPanelProps {
   returnValue: string;
   error?: string;
   isCorrect?: boolean | null;
+  isRunning?: boolean;
 }
 
-export function OutputPanel({ output, returnValue, error, isCorrect }: OutputPanelProps) {
+export function OutputPanel({ output, returnValue, error, isCorrect, isRunning }: OutputPanelProps) {
   return (
     <div className="output-container">
       <div className="output-toolbar">
@@ -17,7 +18,11 @@ export function OutputPanel({ output, returnValue, error, isCorrect }: OutputPan
         )}
       </div>
       <div className="output-body">
-        {error ? (
+        {isRunning ? (
+          <div className="output-placeholder">
+            ⏳ 実行中...
+          </div>
+        ) : error ? (
           <div className="output-error">
             <span className="error-icon">⚠</span>
             <span>{error}</span>

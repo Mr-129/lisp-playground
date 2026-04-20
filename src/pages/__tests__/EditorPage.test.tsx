@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { EditorPage } from '../EditorPage';
 import { Problem } from '../../types';
@@ -18,6 +18,10 @@ vi.mock('@uiw/react-codemirror', () => ({
 
 vi.mock('@codemirror/theme-one-dark', () => ({
   oneDark: {},
+}));
+
+vi.mock('../../editor/lisp-language', () => ({
+  lispLanguage: [],
 }));
 
 const mockProblem: Problem = {
@@ -75,7 +79,7 @@ describe('EditorPage', () => {
     expect(screen.getByLabelText('コードを実行')).toBeInTheDocument();
   });
 
-  it('実行ボタンをクリックするとコードが実行される', () => {
+  it('実行ボタンをクリックするとコードが実行される', async () => {
     const setOutput = vi.fn();
     const setReturnValue = vi.fn();
     const setError = vi.fn();
@@ -88,11 +92,13 @@ describe('EditorPage', () => {
     });
 
     fireEvent.click(screen.getByLabelText('コードを実行'));
-    expect(setReturnValue).toHaveBeenCalledWith('3');
+    await waitFor(() => {
+      expect(setReturnValue).toHaveBeenCalledWith('3');
+    });
     expect(setError).toHaveBeenCalledWith(undefined);
   });
 
-  it('問題のコードを実行して正解判定する', () => {
+  it('問題のコードを実行して正解判定する', async () => {
     const setOutput = vi.fn();
     const setReturnValue = vi.fn();
     const setError = vi.fn();
@@ -108,10 +114,12 @@ describe('EditorPage', () => {
     });
 
     fireEvent.click(screen.getByLabelText('コードを実行'));
-    expect(setIsCorrect).toHaveBeenCalledWith(true);
+    await waitFor(() => {
+      expect(setIsCorrect).toHaveBeenCalledWith(true);
+    });
   });
 
-  it('不正解の場合 false を設定する', () => {
+  it('不正解の場合 false を設定する', async () => {
     const setIsCorrect = vi.fn();
 
     renderEditorPage({
@@ -124,10 +132,12 @@ describe('EditorPage', () => {
     });
 
     fireEvent.click(screen.getByLabelText('コードを実行'));
-    expect(setIsCorrect).toHaveBeenCalledWith(false);
+    await waitFor(() => {
+      expect(setIsCorrect).toHaveBeenCalledWith(false);
+    });
   });
 
-  it('エラー時は正解判定しない', () => {
+  it('エラー時は正解判定しない', async () => {
     const setIsCorrect = vi.fn();
 
     renderEditorPage({
@@ -140,7 +150,9 @@ describe('EditorPage', () => {
     });
 
     fireEvent.click(screen.getByLabelText('コードを実行'));
-    expect(setIsCorrect).toHaveBeenCalledWith(null);
+    await waitFor(() => {
+      expect(setIsCorrect).toHaveBeenCalledWith(null);
+    });
   });
 
   it('エディタにコードが表示される', () => {

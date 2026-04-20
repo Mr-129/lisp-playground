@@ -1,15 +1,18 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { oneDark } from '@codemirror/theme-one-dark';
+import { lispLanguage } from '../editor/lisp-language';
 
 interface EditorProps {
   code: string;
   onChange: (value: string) => void;
   onRun: () => void;
+  isRunning?: boolean;
 }
 
-export function Editor({ code, onChange, onRun }: EditorProps) {
+export function Editor({ code, onChange, onRun, isRunning }: EditorProps) {
   const [fontSize] = useState(14);
+  const extensions = useMemo(() => [lispLanguage], []);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
@@ -24,8 +27,8 @@ export function Editor({ code, onChange, onRun }: EditorProps) {
         <span className="editor-label">エディタ</span>
         <div className="editor-actions">
           <span className="shortcut-hint">Ctrl+Enter で実行</span>
-          <button className="run-button" onClick={onRun} aria-label="コードを実行">
-            ▶ 実行
+          <button className="run-button" onClick={onRun} disabled={isRunning} aria-label="コードを実行">
+            {isRunning ? '⏳ 実行中...' : '▶ 実行'}
           </button>
         </div>
       </div>
@@ -34,6 +37,7 @@ export function Editor({ code, onChange, onRun }: EditorProps) {
           value={code}
           height="100%"
           theme={oneDark}
+          extensions={extensions}
           onChange={onChange}
           style={{ fontSize: `${fontSize}px` }}
           basicSetup={{

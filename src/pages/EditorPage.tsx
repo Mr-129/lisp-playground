@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Editor } from '../components/Editor';
 import { OutputPanel } from '../components/OutputPanel';
-import { executeLisp } from '../interpreter';
+import { executeLispAsync } from '../worker';
 import { Problem } from '../types';
 
 interface EditorPageProps {
@@ -25,26 +25,40 @@ export function EditorPage({
   error, setError, isCorrect, setIsCorrect,
 }: EditorPageProps) {
   const navigate = useNavigate();
+  const [isRunning, setIsRunning] = useState(false);
 
-  const handleRun = useCallback(() => {
-    const result = executeLisp(code);
-    setOutput(result.output);
-    setReturnValue(result.returnValue);
-    setError(result.error);
+  const handleRun = useCallback(async () => {
+    if (isRunning) return;
+    setIsRunning(true);
+    setOutput('');
+    setReturnValue('');
+    setError(undefined);
+    setIsCorrect(null);
 
-    if (selectedProblem && !result.error) {
-      let correct = true;
-      if (selectedProblem.expectedOutput !== undefined) {
-        correct = correct && result.output === selectedProblem.expectedOutput;
+    try {
+      const result = await executeLispAsync(code);
+      setOutput(result.output);
+      setReturnValue(result.returnValue);
+      setError(result.error);
+
+      if (selectedProblem && !result.error) {
+        let correct = true;
+        if (selectedProblem.expectedOutput !== undefined) {
+          correct = correct && result.output === selectedProblem.expectedOutput;
+        }
+        if (selectedProblem.expectedReturnValue !== undefined) {
+          correct = correct && result.returnValue === selectedProblem.expectedReturnValue;
+        }
+        setIsCorrect(correct);
+      } else {
+        setIsCorrect(null);
       }
-      if (selectedProblem.expectedReturnValue !== undefined) {
-        correct = correct && result.returnValue === selectedProblem.expectedReturnValue;
-      }
-      setIsCorrect(correct);
-    } else {
-      setIsCorrect(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '実行中にエラーが発生しました');
+    } finally {
+      setIsRunning(false);
     }
-  }, [code, selectedProblem, setOutput, setReturnValue, setError, setIsCorrect]);
+  }, [code, isRunning, selectedProblem, setOutput, setReturnValue, setError, setIsCorrect]);
 
   return (
     <div className="editor-page">
@@ -64,12 +78,13 @@ export function EditorPage({
         )}
       </div>
       <div className="editor-output-container">
-        <Editor code={code} onChange={setCode} onRun={handleRun} />
+        <Editor code={code} onChange={setCode} onRun={handleRun} isRunning={isRunning} />
         <OutputPanel
           output={output}
           returnValue={returnValue}
           error={error}
           isCorrect={isCorrect}
+          isRunning={isRunning}
         />
       </div>
     </div>

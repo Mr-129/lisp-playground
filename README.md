@@ -18,6 +18,9 @@
 - **クロージャ対応** — レキシカルスコープ、高階関数、状態を持つクロージャ
 - **2ページ構成** — 学習ページ（構文ガイド + 問題文）とエディタページ（コード実行）
 - **Lisp 構文ガイド** — 14セクションの包括的な Common Lisp リファレンス
+- **Lisp 構文ハイライト** — キーワード・ビルトイン・文字列・コメントの色分け
+- **バックグラウンド実行** — Web Worker によるUIブロックなし実行 + 10秒タイムアウト
+- **コード永続化** — localStorage によるコード・選択中問題の自動保存
 - **問題モード** — カテゴリ別の学習問題 + 自動正答判定
 - **フリーモード** — 自由にコードを書いて実験
 - **日本語 UI / エラーメッセージ** — 日本語学習者に最適化
@@ -67,8 +70,8 @@
 | フレームワーク | React + TypeScript | 18.x / 5.x |
 | ルーティング | react-router-dom (HashRouter) | 7.x |
 | ビルドツール | Vite | 5.x |
-| エディタ | CodeMirror 6 (via @uiw/react-codemirror) | 4.x |
-| Lisp実行 | カスタムインタプリタ (TypeScript) | — |
+| エディタ | CodeMirror 6 (via @uiw/react-codemirror) + Lisp構文ハイライト | 4.x |
+| Lisp実行 | カスタムインタプリタ (TypeScript) + Web Worker | — |
 | テスト | Vitest + Testing Library | 4.x / 16.x |
 | スタイリング | Pure CSS (カスタムプロパティ) | — |
 
@@ -146,7 +149,11 @@ Vitest によるテストスイートが用意されています。
 | `EditorPage.test.tsx` | エディタページ統合 | 10 |
 | `problems.test.ts` | 問題データ整合性 | 0 |
 
-| **合計** | | **278** |
+| `storage.test.ts` | localStorage 永続化 | 11 |
+| `lisp-language.test.ts` | Lisp 構文ハイライト | 13 |
+| `worker.test.ts` | Web Worker 実行 | 4 |
+
+| **合計** | | **306** |
 
 ---
 
@@ -179,6 +186,13 @@ LispEditerApp/
 │   │       ├── parser.test.ts
 │   │       ├── evaluator.test.ts
 │   │       └── integration.test.ts
+│   ├── editor/                 # CodeMirror 拡張
+│   │   └── lisp-language.ts    # Lisp 構文ハイライト定義
+│   ├── worker/                 # Web Worker
+│   │   ├── index.ts            # Worker 管理・非同期実行API
+│   │   └── lisp-worker.ts     # Worker 本体
+│   ├── utils/                  # ユーティリティ
+│   │   └── storage.ts          # localStorage 永続化
 │   ├── pages/                  # ページコンポーネント
 │   │   ├── LearnPage.tsx       # 学習ページ（ガイド + 問題）
 │   │   ├── EditorPage.tsx      # エディタページ（実行環境）

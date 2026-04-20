@@ -1,9 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { LearnPage } from './pages/LearnPage';
 import { EditorPage } from './pages/EditorPage';
 import { Problem } from './types';
+import { saveCode, loadCode, saveProblemId, loadProblemId } from './utils/storage';
+import { problems } from './data/problems';
 import './App.css';
 
 const DEFAULT_CODE = `; Lisp Playground へようこそ！
@@ -32,12 +34,28 @@ const DEFAULT_CODE = `; Lisp Playground へようこそ！
 `;
 
 function App() {
-  const [code, setCode] = useState(DEFAULT_CODE);
+  const [code, setCode] = useState(() => loadCode() ?? DEFAULT_CODE);
   const [output, setOutput] = useState('');
   const [returnValue, setReturnValue] = useState('');
   const [error, setError] = useState<string | undefined>();
-  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
+  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(() => {
+    const savedId = loadProblemId();
+    if (savedId) {
+      return problems.find(p => p.id === savedId) ?? null;
+    }
+    return null;
+  });
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+
+  // Persist code to localStorage on change
+  useEffect(() => {
+    saveCode(code);
+  }, [code]);
+
+  // Persist selected problem ID
+  useEffect(() => {
+    saveProblemId(selectedProblem?.id ?? null);
+  }, [selectedProblem]);
 
   const handleSelectProblem = useCallback((problem: Problem) => {
     setSelectedProblem(problem);
