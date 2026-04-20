@@ -445,6 +445,7 @@ export function createGlobalEnv(output: OutputFn): Environment {
 
   defBuiltin('MOD', (args) => {
     if (args[0].type !== 'number' || args[1].type !== 'number') throw new Error('mod: 数値が期待されます');
+    if (args[1].value === 0) throw new Error('mod: ゼロで割ることはできません');
     return makeNumber(args[0].value % args[1].value);
   });
 
@@ -610,6 +611,7 @@ export function createGlobalEnv(output: OutputFn): Environment {
 
   defBuiltin('NTH', (args) => {
     if (args[0].type !== 'number') throw new Error('nth: 数値が期待されます');
+    if (args[0].value < 0) throw new Error('nth: インデックスは非負である必要があります');
     const list = args[1];
     if (list.type === 'nil') return NIL;
     if (list.type !== 'list') throw new Error('nth: リストが期待されます');
@@ -700,10 +702,20 @@ export function createGlobalEnv(output: OutputFn): Environment {
   // Higher-order functions
   defBuiltin('MAPCAR', (args, callEnv) => {
     const fn = args[0];
-    const list = args[1];
-    if (list.type === 'nil') return NIL;
-    if (list.type !== 'list') throw new Error('mapcar: リストが期待されます');
-    const results = list.elements.map(el => applyFn(fn, [el], callEnv, output));
+    const lists = args.slice(1);
+    if (lists.length === 0) return NIL;
+    const elements = lists.map(list => {
+      if (list.type === 'nil') return [] as LispValue[];
+      if (list.type !== 'list') throw new Error('mapcar: リストが期待されます');
+      return list.elements;
+    });
+    const minLen = Math.min(...elements.map(e => e.length));
+    if (minLen === 0) return NIL;
+    const results: LispValue[] = [];
+    for (let i = 0; i < minLen; i++) {
+      const fnArgs = elements.map(el => el[i]);
+      results.push(applyFn(fn, fnArgs, callEnv, output));
+    }
     return { type: 'list', elements: results };
   });
 
@@ -794,10 +806,20 @@ export function createGlobalEnv(output: OutputFn): Environment {
   });
 
   defBuiltin('SUBSEQ', (args) => {
-    if (args[0].type !== 'string') throw new Error('subseq: 文字列が期待されます');
     if (args[1].type !== 'number') throw new Error('subseq: 開始位置は数値である必要があります');
-    const end = args[2]?.type === 'number' ? args[2].value : undefined;
-    return makeString(args[0].value.substring(args[1].value, end));
+    const startVal = args[1].value;
+    if (args[0].type === 'string') {
+      const endVal = args[2]?.type === 'number' ? args[2].value : undefined;
+      return makeString(args[0].value.substring(startVal, endVal));
+    } else if (args[0].type === 'list') {
+      const endVal = args[2]?.type === 'number' ? args[2].value : args[0].elements.length;
+      const result = args[0].elements.slice(startVal, endVal);
+      return result.length === 0 ? NIL : { type: 'list', elements: result };
+    } else if (args[0].type === 'nil') {
+      return NIL;
+    } else {
+      throw new Error('subseq: 文字列またはリストが期待されます');
+    }
   });
 
   defBuiltin('STRING=', (args) => {

@@ -14,9 +14,13 @@ export interface WorkerResponse {
   };
 }
 
-self.onmessage = (e: MessageEvent<WorkerRequest>) => {
-  const { id, code } = e.data;
-  const result = executeLisp(code);
-  const response: WorkerResponse = { id, result };
+self.onmessage = (e: MessageEvent) => {
+  const data = e.data as Partial<WorkerRequest>;
+  if (typeof data.id !== 'number' || typeof data.code !== 'string') {
+    self.postMessage({ id: data.id ?? 0, result: { output: '', returnValue: '', error: '不正なメッセージ形式' } });
+    return;
+  }
+  const result = executeLisp(data.code);
+  const response: WorkerResponse = { id: data.id, result };
   self.postMessage(response);
 };

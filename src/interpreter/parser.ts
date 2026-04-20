@@ -105,8 +105,10 @@ export function tokenize(source: string): Token[] {
   return tokens;
 }
 
+const ATOM_BREAK_CHARS = new Set([' ', '\t', '\n', '\r', '(', ')', "'", '"', ';']);
+
 function isAtomChar(ch: string): boolean {
-  return !/[\s()'";]/.test(ch);
+  return !ATOM_BREAK_CHARS.has(ch);
 }
 
 export function parse(tokens: Token[]): LispValue[] {

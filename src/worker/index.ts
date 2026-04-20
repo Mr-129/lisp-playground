@@ -25,7 +25,11 @@ export function executeLispAsync(
       return;
     }
 
+    let resolved = false;
+
     const timer = setTimeout(() => {
+      if (resolved) return;
+      resolved = true;
       worker?.terminate();
       resolve({
         output: '',
@@ -35,12 +39,21 @@ export function executeLispAsync(
     }, timeout);
 
     worker.onmessage = (e) => {
+      if (resolved) return;
+      resolved = true;
       clearTimeout(timer);
       worker?.terminate();
-      resolve(e.data.result);
+      const result = e.data?.result;
+      if (result && typeof result === 'object' && 'output' in result) {
+        resolve(result);
+      } else {
+        resolve({ output: '', returnValue: '', error: 'ワーカーから不正なレスポンスを受信しました' });
+      }
     };
 
     worker.onerror = (e) => {
+      if (resolved) return;
+      resolved = true;
       clearTimeout(timer);
       worker?.terminate();
       // Fallback to synchronous execution
