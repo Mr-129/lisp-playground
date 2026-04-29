@@ -64,155 +64,6 @@
   font-size: 28px;
   font-weight: bold;
   color: #e94560;
-
-.problems-page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 24px 28px 20px;
-  background: #16213e;
-  border-bottom: 1px solid #1a3a6a;
-}
-
-.problems-page-header h2 {
-  font-size: 24px;
-  color: #fff;
-  margin-bottom: 8px;
-}
-
-.problems-page-header p {
-  color: #a5b3d1;
-  font-size: 14px;
-}
-
-.problems-page-actions {
-  display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.problems-page-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 28px 32px;
-}
-
-.problem-section {
-  margin-bottom: 28px;
-}
-
-.problem-section-title {
-  font-size: 18px;
-  color: #fff;
-  margin-bottom: 14px;
-}
-
-.problem-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.problem-card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 18px;
-  background: #16213e;
-  border: 1px solid #1a3a6a;
-  border-radius: 14px;
-}
-
-.problem-card.selected {
-  border-color: #e94560;
-  box-shadow: 0 0 0 1px rgba(233, 69, 96, 0.25);
-}
-
-.problem-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.problem-card-difficulty,
-.problem-card-current {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.problem-card-difficulty {
-  background: #0f3460;
-  color: #d8e4ff;
-}
-
-.problem-card-current {
-  background: rgba(233, 69, 96, 0.16);
-  color: #ff8ea0;
-}
-
-.problem-card h4 {
-  font-size: 18px;
-  color: #fff;
-}
-
-.problem-card p {
-  color: #a5b3d1;
-  font-size: 14px;
-  line-height: 1.6;
-  flex: 1;
-}
-
-.problem-card-button {
-  align-self: flex-start;
-  padding: 9px 16px;
-  background: #e94560;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.problem-card-button:hover {
-  background: #c73652;
-}
-
-.learn-empty-state {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.learn-empty-card {
-  max-width: 480px;
-  padding: 28px;
-  background: #16213e;
-  border: 1px solid #1a3a6a;
-  border-radius: 16px;
-  text-align: center;
-}
-
-.learn-empty-card h2 {
-  font-size: 24px;
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.learn-empty-card p {
-  color: #a5b3d1;
-  font-size: 14px;
-  line-height: 1.7;
-  margin-bottom: 24px;
-}
   background: none;
   border: none;
   padding: 0;
@@ -231,11 +82,6 @@
 }
 
 .header-title-link {
-
-  .home-page .learn-welcome {
-    align-items: flex-start;
-    padding-bottom: 32px;
-  }
   background: none;
   border: none;
   padding: 0;
@@ -858,12 +704,49 @@
     padding: 24px 16px;
   }
 
+  .home-page .learn-welcome {
+    align-items: flex-start;
+    padding-bottom: 32px;
+  }
+
   .welcome-content h2 {
     font-size: 24px;
   }
 
   .welcome-actions {
     flex-direction: column;
+  }
+
+  .problems-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 20px 16px 16px;
+  }
+
+  .problems-page-actions {
+    flex-direction: column;
+  }
+
+  .problems-page-body {
+    padding: 16px;
+  }
+
+  .problem-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .problem-card-button {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .learn-empty-state {
+    padding: 16px;
+  }
+
+  .learn-empty-card {
+    padding: 24px 16px;
   }
 
   .guide-start-button,
@@ -921,7 +804,8 @@
 .header-link:focus-visible,
 .start-coding-button:focus-visible,
 .back-to-learn:focus-visible,
-.guide-start-button:focus-visible {
+.guide-start-button:focus-visible,
+.problem-card-button:focus-visible {
   outline: 2px solid #e94560;
   outline-offset: 2px;
 }
@@ -1088,6 +972,164 @@
 .guide-start-button:hover {
   background: #1a3a6a;
   color: #fff;
+}
+
+/* Problems page */
+.problems-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.problems-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px 20px;
+  background: #16213e;
+  border-bottom: 1px solid #1a3a6a;
+}
+
+.problems-page-header h2 {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.problems-page-header p {
+  color: #a5b3d1;
+  font-size: 14px;
+}
+
+.problems-page-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.problems-page-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px 32px;
+}
+
+.problem-section {
+  margin-bottom: 28px;
+}
+
+.problem-section-title {
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.problem-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.problem-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  background: #16213e;
+  border: 1px solid #1a3a6a;
+  border-radius: 14px;
+}
+
+.problem-card.selected {
+  border-color: #e94560;
+  box-shadow: 0 0 0 1px rgba(233, 69, 96, 0.25);
+}
+
+.problem-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.problem-card-difficulty,
+.problem-card-current {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.problem-card-difficulty {
+  background: #0f3460;
+  color: #d8e4ff;
+}
+
+.problem-card-current {
+  background: rgba(233, 69, 96, 0.16);
+  color: #ff8ea0;
+}
+
+.problem-card h4 {
+  font-size: 18px;
+  color: #fff;
+}
+
+.problem-card p {
+  color: #a5b3d1;
+  font-size: 14px;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.problem-card-button {
+  align-self: flex-start;
+  padding: 9px 16px;
+  background: #e94560;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.problem-card-button:hover {
+  background: #c73652;
+}
+
+.learn-empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.learn-empty-card {
+  max-width: 480px;
+  padding: 28px;
+  background: #16213e;
+  border: 1px solid #1a3a6a;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.learn-empty-card h2 {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.learn-empty-card p {
+  color: #a5b3d1;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 24px;
 }
 
 /* ===== Editor Page ===== */
