@@ -108,6 +108,9 @@
   - Windows 日本語パス配下の PowerShell で `npm run build` が `dist/` 生成後に exit code 1 で終了することを再現済み
   - `npx tsc -b` は成功する一方、`npx vite build --debug` も同環境で異常終了することを再確認済み
   - README / REVIEW に「ローカル Windows 日本語パスでは build が不安定であり、配布用 build は GitHub Actions を正経路とする」旨を記載済み
+  - 2026-04-29: `main` への push 後に GitHub Actions `Build & Deploy` の success を確認し、`https://mr-129.github.io/lisp-playground/` で公開を確認済み
+  - 2026-04-29: 公開 URL 上で学習ページ → エディタ → REPL の主要導線スモークテストを実施し、結果を [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) に記録済み
+  - 2026-04-29: モバイルレイアウト修正の再デプロイ後、公開 URL 上で 390px / 320px 幅の学習ページ、エディタ、REPL を確認し、横方向オーバーフローが解消されたことを確認済み
 
 ### T-004 対応機能・未対応機能の明文化
 
@@ -181,6 +184,8 @@
   - `src/App.tsx` で起動時に存在しない問題 ID を除外しつつ solved state を復元するように対応済み
   - `src/pages/EditorPage.tsx` で正答時のみ solved 状態を更新するように対応済み
   - `src/__tests__/App.test.tsx` と `src/utils/__tests__/storage.test.ts` で保存・復元・不正 ID 除外を検証済み
+  - 2026-04-29: GitHub Pages 公開環境でも `basic-01` の正答後に `lisp-playground-problem-id`, `lisp-playground-code`, `lisp-playground-solved-problem-ids` が保存されることを確認済み
+  - 2026-04-29: 公開環境で再読込後にエディタの現在問題表示、CodeMirror 内容、学習ページの選択中問題が復元されることを確認済み。詳細は [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md)
 
 ### T-102 学習進捗 UI
 
@@ -284,7 +289,7 @@
 - **依存関係**: T-105
 - **実装内容**:
   - `tier`, `tags`, `courseId`, `pathOrder` などの属性を追加する
-  - 既存 35 問に仮割当てを行う
+  - 既存 38 問に仮割当てを行う
 - **完了条件**:
   - 全問題に商品設計用のメタデータが付与される
   - データ整合性テストが追加される

@@ -2,9 +2,10 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年4月25日 — T-101 完了とレビュー文書の整合性を反映
+**最終更新**: 2026年4月29日 — 公開後確認ログ、GitHub Pages スモークテスト、モバイル表示確認結果を反映
 
-**関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針
+**関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
+**公開後確認ログ**: [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) — GitHub Pages 公開後の確認結果
 
 ---
 
@@ -30,7 +31,7 @@
 
 | 観点 | 評価 | 備考 |
 |------|------|------|
-| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。REPL・永続化実装済、問題35問 |
+| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。REPL・永続化実装済、問題38問 |
 | コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest テスト 403件追加済 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
@@ -323,7 +324,7 @@
 | loop-01 | dotimesループ | ループ | 初級 | ✅ | ✅ |
 | loop-02 | dolistループ | ループ | 初級 | ✅ | ✅ |
 
-**結果: 全35問とも正確** ✅
+**結果: 全38問とも正確** ✅
 
 ### カテゴリ別充実度
 
@@ -373,8 +374,19 @@
 3. `package-lock.json` をバージョン管理に含めること
 4. Windows 日本語パス配下では `npm run build` と `npx vite build --debug` の双方が異常終了することを確認した。ローカル確認は `npx tsc -b` までに留め、配布用 build は GitHub Actions (`ubuntu-latest`) を正経路とする
 
+### 2026年4月29日の公開後確認
+
+- GitHub Pages の公開 URL は `https://mr-129.github.io/lisp-playground/`
+- `Build & Deploy` workflow の success を確認済み
+- 学習ページ、エディタ、REPL の主要導線は公開環境でスモークテストを通過済み
+- localStorage の問題 ID、コード、解答済み ID 保存と再読込後の復元も公開環境で確認済み
+- 問題一覧に表示される全 38 問の解答総当たり実行が公開環境で通過済み
+- 公開環境で 390px / 320px のモバイル表示確認を実施し、学習ページ、エディタ、REPL ともに横方向オーバーフローがないことを確認済み
+- 詳細な確認手順と未確認範囲は [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) に記録
+
 ---
 
 *このドキュメントは Lisp Playground v1.0.0 の初期レビュー時点のものです。*
 *2026-04-12: BUG-001, SEC-001, SEC-002, ACC-001, ACC-002, CQ-003 の修正を反映。Vitest テスト 184 件を追加。*
 *2026-04-20: react-router-dom によるページ分割（LearnPage / EditorPage）、LispGuide コンポーネント追加、UIコンポーネントテスト追加。localStorage永続化、Lisp構文ハイライト、Web Worker非同期実行を実装（合計 306 テスト）。*
+*2026-04-29: GitHub Pages 公開後確認ログを追加し、主要導線のスモークテスト、localStorage 復元、38 問総当たり、モバイル表示確認結果を反映。*
