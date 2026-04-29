@@ -41,6 +41,7 @@ function renderEditorPage(props: Partial<Parameters<typeof EditorPage>[0]> = {})
     code: '(+ 1 2)',
     setCode: vi.fn(),
     selectedProblem: null,
+    onProblemSolved: vi.fn(),
     output: '',
     setOutput: vi.fn(),
     returnValue: '',
@@ -103,10 +104,12 @@ describe('EditorPage', () => {
     const setReturnValue = vi.fn();
     const setError = vi.fn();
     const setIsCorrect = vi.fn();
+    const onProblemSolved = vi.fn();
 
     renderEditorPage({
       code: '(print (+ 1 2))',
       selectedProblem: mockProblem,
+      onProblemSolved,
       setOutput,
       setReturnValue,
       setError,
@@ -117,14 +120,17 @@ describe('EditorPage', () => {
     await waitFor(() => {
       expect(setIsCorrect).toHaveBeenCalledWith(true);
     });
+    expect(onProblemSolved).toHaveBeenCalledWith('test-01');
   });
 
   it('不正解の場合 false を設定する', async () => {
     const setIsCorrect = vi.fn();
+    const onProblemSolved = vi.fn();
 
     renderEditorPage({
       code: '(print (+ 2 2))',
       selectedProblem: mockProblem,
+      onProblemSolved,
       setOutput: vi.fn(),
       setReturnValue: vi.fn(),
       setError: vi.fn(),
@@ -135,14 +141,17 @@ describe('EditorPage', () => {
     await waitFor(() => {
       expect(setIsCorrect).toHaveBeenCalledWith(false);
     });
+    expect(onProblemSolved).not.toHaveBeenCalled();
   });
 
   it('エラー時は正解判定しない', async () => {
     const setIsCorrect = vi.fn();
+    const onProblemSolved = vi.fn();
 
     renderEditorPage({
       code: '(undefined-func)',
       selectedProblem: mockProblem,
+      onProblemSolved,
       setOutput: vi.fn(),
       setReturnValue: vi.fn(),
       setError: vi.fn(),
@@ -153,6 +162,7 @@ describe('EditorPage', () => {
     await waitFor(() => {
       expect(setIsCorrect).toHaveBeenCalledWith(null);
     });
+    expect(onProblemSolved).not.toHaveBeenCalled();
   });
 
   it('エディタにコードが表示される', () => {

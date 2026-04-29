@@ -16,6 +16,17 @@ const mockProblem: Problem = {
   solution: '(+ 1 2)',
 };
 
+const anotherProblem: Problem = {
+  id: 'test-02',
+  title: '別の問題',
+  category: 'テスト',
+  difficulty: 'beginner',
+  description: '## 別問題\n\n別の問題です。',
+  hint: '別のヒント',
+  initialCode: '; 別テスト',
+  solution: '(+ 3 4)',
+};
+
 function renderLearnPage(props: Partial<Parameters<typeof LearnPage>[0]> = {}) {
   const defaultProps = {
     selectedProblem: null,
@@ -78,5 +89,39 @@ describe('LearnPage', () => {
     
     fireEvent.click(toggleBtn);
     expect(toggleBtn).toHaveTextContent('▶');
+  });
+
+  it('問題を切り替えるとヒントと解答の表示状態がリセットされる', () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <LearnPage
+          selectedProblem={mockProblem}
+          onSelectProblem={vi.fn()}
+          onShowSolution={vi.fn()}
+          onNavigateToEditor={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByText('💡 ヒントを表示'));
+    fireEvent.click(screen.getByText('📖 解答を表示'));
+
+    expect(screen.getByText('ヒント')).toBeInTheDocument();
+    expect(screen.getByText('(+ 1 2)')).toBeInTheDocument();
+
+    rerender(
+      <MemoryRouter>
+        <LearnPage
+          selectedProblem={anotherProblem}
+          onSelectProblem={vi.fn()}
+          onShowSolution={vi.fn()}
+          onNavigateToEditor={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('別の問題')).toBeInTheDocument();
+    expect(screen.queryByText('ヒント')).not.toBeInTheDocument();
+    expect(screen.queryByText('(+ 1 2)')).not.toBeInTheDocument();
   });
 });

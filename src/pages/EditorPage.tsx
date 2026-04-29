@@ -9,6 +9,7 @@ interface EditorPageProps {
   code: string;
   setCode: (code: string) => void;
   selectedProblem: Problem | null;
+  onProblemSolved: (problemId: string) => void;
   output: string;
   setOutput: (output: string) => void;
   returnValue: string;
@@ -20,7 +21,7 @@ interface EditorPageProps {
 }
 
 export function EditorPage({
-  code, setCode, selectedProblem,
+  code, setCode, selectedProblem, onProblemSolved,
   output, setOutput, returnValue, setReturnValue,
   error, setError, isCorrect, setIsCorrect,
 }: EditorPageProps) {
@@ -50,6 +51,9 @@ export function EditorPage({
           correct = correct && result.returnValue === selectedProblem.expectedReturnValue;
         }
         setIsCorrect(correct);
+        if (correct) {
+          onProblemSolved(selectedProblem.id);
+        }
       } else {
         setIsCorrect(null);
       }
@@ -58,7 +62,7 @@ export function EditorPage({
     } finally {
       setIsRunning(false);
     }
-  }, [code, isRunning, selectedProblem, setOutput, setReturnValue, setError, setIsCorrect]);
+  }, [code, isRunning, onProblemSolved, selectedProblem, setOutput, setReturnValue, setError, setIsCorrect]);
 
   return (
     <div className="editor-page">

@@ -109,6 +109,10 @@ npm run build
 
 `dist/` フォルダに静的ファイルが生成されます。
 
+> **Windows ローカルビルド補足**: 日本語パス配下では、`npm run build` と `npx vite build --debug` の双方が異常終了することを確認しています。
+> `npx tsc -b` は通るため、ローカルでは型検査確認までは実施できます。
+> 配布用の正規 build は GitHub Actions (`ubuntu-latest`) を利用してください。
+
 ### プレビュー
 
 ```bash
@@ -137,26 +141,27 @@ Vitest によるテストスイートが用意されています。
 | `evaluator.test.ts` | 評価器・特殊形式・ビルトイン | 101 |
 | `integration.test.ts` | executeLisp E2E パイプライン | 25 |
 | `repl.test.ts` | executeLispRepl 環境引き継ぎ | 8 |
+| `security.test.ts` | 安全装置・仕様差分の回帰 | 13 |
 
 #### UI コンポーネントテスト (`src/components/__tests__/`, `src/pages/__tests__/`)
 
 | テストファイル | 対象 | テスト数 |
 |---|---|---|
-| `Header.test.tsx` | ナビゲーションヘッダー | 10 |
-| `OutputPanel.test.tsx` | 実行結果パネル | 18 |
-| `ProblemList.test.tsx` | 問題一覧サイドバー | 15 |
-| `ProblemView.test.tsx` | 問題表示・ヒント・解答 | 18 |
-| `LispGuide.test.tsx` | Lisp 構文ガイド | 11 |
-| `LearnPage.test.tsx` | 学習ページ統合 | 12 |
-| `EditorPage.test.tsx` | エディタページ統合 | 10 |
+| `Header.test.tsx` | ナビゲーションヘッダー | 7 |
+| `OutputPanel.test.tsx` | 実行結果パネル | 7 |
+| `ProblemList.test.tsx` | 問題一覧サイドバー | 5 |
+| `ProblemView.test.tsx` | 問題表示・ヒント・解答 | 8 |
+| `LispGuide.test.tsx` | Lisp 構文ガイド | 15 |
+| `App.test.tsx` | アプリ状態復元・進捗保存 | 3 |
+| `LearnPage.test.tsx` | 学習ページ統合 | 9 |
+| `EditorPage.test.tsx` | エディタページ統合 | 9 |
 | `ReplPage.test.tsx` | REPLページ統合 | 10 |
 | `problems.test.ts` | 問題データ整合性 | 89 |
-
-| `storage.test.ts` | localStorage 永続化 | 11 |
+| `storage.test.ts` | localStorage 永続化 | 19 |
 | `lisp-language.test.ts` | Lisp 構文ハイライト | 13 |
 | `worker.test.ts` | Web Worker 実行 | 4 |
 
-| **合計** | | **378** |
+| **合計** | | **403** |
 
 ---
 
@@ -188,7 +193,9 @@ LispEditerApp/
 │   │       ├── environment.test.ts
 │   │       ├── parser.test.ts
 │   │       ├── evaluator.test.ts
-│   │       └── integration.test.ts
+│   │       ├── integration.test.ts
+│   │       ├── repl.test.ts
+│   │       └── security.test.ts
 │   ├── editor/                 # CodeMirror 拡張
 │   │   └── lisp-language.ts    # Lisp 構文ハイライト定義
 │   ├── worker/                 # Web Worker
@@ -213,9 +220,20 @@ LispEditerApp/
 │       ├── problems.ts         # 問題データ定義
 │       └── __tests__/          # データ整合性テスト
 ├── docs/
-│   └── REVIEW.md              # コードレビュー・課題管理
+│   ├── REVIEW.md               # コードレビュー・課題管理
+│   ├── PLATFORM_STRATEGY.md    # プラットフォーム戦略
+│   └── IMPLEMENTATION_TASKS.md # 実装バックログ
 └── dist/                       # ビルド出力 (git管理外)
 ```
+
+
+## 現在の制限事項
+
+- `defmacro`、`macrolet` などのマクロ機能は未対応です。
+- package system、CLOS、構造体、condition system、stream/file I/O などの Common Lisp 全機能は実装していません。
+- `format` は `~A`, `~S`, `~D`, `~%`, `~~` を中心とした限定実装です。
+- `executeLisp` の各呼び出しは独立しており、状態を引き継ぐのは REPL モードのみです。
+- 学習サイトとして必要な主要機能を優先しているため、Common Lisp 完全互換は現時点の目標ではありません。
 
 ---
 

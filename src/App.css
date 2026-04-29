@@ -1,9 +1,33 @@
 /* App Layout */
 .app {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: 8px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: #f3f6ff;
+  color: #0a0f1e;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-180%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  outline: 2px solid #e94560;
+  outline-offset: 2px;
+  transform: translateY(0);
 }
 
 /* Header */
@@ -116,6 +140,11 @@
   overflow: hidden;
 }
 
+.app-body:focus {
+  outline: 2px solid #e94560;
+  outline-offset: -2px;
+}
+
 /* Sidebar */
 .sidebar {
   display: flex;
@@ -203,7 +232,7 @@
 .category-title {
   font-size: 11px;
   text-transform: uppercase;
-  color: #5a6a8a;
+  color: #a5b3d1;
   padding: 8px 8px 4px;
   letter-spacing: 0.5px;
 }
@@ -422,7 +451,7 @@
 
 .shortcut-hint {
   font-size: 11px;
-  color: #5a6a8a;
+  color: #a5b3d1;
 }
 
 .run-button {
@@ -526,7 +555,7 @@
 
 .output-section-label {
   font-size: 11px;
-  color: #5a6a8a;
+  color: #a5b3d1;
   text-transform: uppercase;
   margin-bottom: 4px;
   letter-spacing: 0.5px;
@@ -547,7 +576,7 @@
 }
 
 .output-placeholder {
-  color: #3a4a6a;
+  color: #7f90b2;
   font-size: 14px;
   text-align: center;
   padding: 40px 20px;

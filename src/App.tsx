@@ -1,13 +1,28 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, type MouseEvent } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { LearnPage } from './pages/LearnPage';
 import { EditorPage } from './pages/EditorPage';
 import { ReplPage } from './pages/ReplPage';
 import { Problem } from './types';
-import { saveCode, loadCode, saveProblemId, loadProblemId } from './utils/storage';
+import {
+  saveCode,
+  loadCode,
+  saveProblemId,
+  loadProblemId,
+  saveSolvedProblemIds,
+  loadSolvedProblemIds,
+} from './utils/storage';
 import { problems } from './data/problems';
 import './App.css';
+
+const VALID_PROBLEM_IDS = new Set(problems.map((problem) => problem.id));
+
+function getInitialSolvedProblemIds(): string[] {
+  return Array.from(
+    new Set(loadSolvedProblemIds().filter((problemId) => VALID_PROBLEM_IDS.has(problemId)))
+  );
+}
 
 const DEFAULT_CODE = `; Lisp Playground へようこそ！
 ; ここにCommon Lispのコードを入力して実行できます。
@@ -47,6 +62,7 @@ function App() {
     return null;
   });
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [solvedProblemIds, setSolvedProblemIds] = useState<string[]>(getInitialSolvedProblemIds);
 
   // Persist code to localStorage on change
   useEffect(() => {
@@ -57,6 +73,10 @@ function App() {
   useEffect(() => {
     saveProblemId(selectedProblem?.id ?? null);
   }, [selectedProblem]);
+
+  useEffect(() => {
+    saveSolvedProblemIds(solvedProblemIds);
+  }, [solvedProblemIds]);
 
   const handleSelectProblem = useCallback((problem: Problem) => {
     setSelectedProblem(problem);
@@ -81,11 +101,29 @@ function App() {
     setIsCorrect(null);
   }, []);
 
+  const handleProblemSolved = useCallback((problemId: string) => {
+    setSolvedProblemIds((previousIds) => {
+      if (previousIds.includes(problemId)) {
+        return previousIds;
+      }
+
+      return [...previousIds, problemId];
+    });
+  }, []);
+
+  const handleSkipToMain = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    document.getElementById('main-content')?.focus();
+  }, []);
+
   return (
     <HashRouter>
       <div className="app">
+        <a className="skip-link" href="#main-content" onClick={handleSkipToMain}>
+          メインコンテンツへスキップ
+        </a>
         <Header />
-        <div className="app-body">
+        <main id="main-content" className="app-body" tabIndex={-1}>
           <Routes>
             <Route
               path="/"
@@ -105,6 +143,7 @@ function App() {
                   code={code}
                   setCode={setCode}
                   selectedProblem={selectedProblem}
+                  onProblemSolved={handleProblemSolved}
                   output={output}
                   setOutput={setOutput}
                   returnValue={returnValue}
@@ -121,7 +160,7 @@ function App() {
               element={<ReplPage />}
             />
           </Routes>
-        </div>
+        </main>
       </div>
     </HashRouter>
   );
