@@ -111,6 +111,7 @@
   - 2026-04-29: `main` への push 後に GitHub Actions `Build & Deploy` の success を確認し、`https://mr-129.github.io/lisp-playground/` で公開を確認済み
   - 2026-04-29: 公開 URL 上で学習ページ → エディタ → REPL の主要導線スモークテストを実施し、結果を [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) に記録済み
   - 2026-04-29: モバイルレイアウト修正の再デプロイ後、公開 URL 上で 390px / 320px 幅の学習ページ、エディタ、REPL を確認し、横方向オーバーフローが解消されたことを確認済み
+  - 2026-04-29: `29c898a` の再デプロイ後、公開 URL 上で home 画面、問題一覧ページ、ヘッダーロゴの戻り導線、エディタからの問題一覧復帰導線を確認し、390px / 320px 幅でも問題ないことを確認済み
 
 ### T-004 対応機能・未対応機能の明文化
 

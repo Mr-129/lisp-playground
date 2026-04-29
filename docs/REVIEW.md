@@ -2,7 +2,7 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年4月29日 — 公開後確認ログ、GitHub Pages スモークテスト、モバイル表示確認結果を反映
+**最終更新**: 2026年4月29日 — 公開後確認ログ、GitHub Pages スモークテスト、モバイル表示、home / 問題一覧導線確認結果を反映
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開後確認ログ**: [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) — GitHub Pages 公開後の確認結果
@@ -32,7 +32,7 @@
 | 観点 | 評価 | 備考 |
 |------|------|------|
 | 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。REPL・永続化実装済、問題38問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest テスト 403件追加済 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest テスト 412件追加済 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -210,11 +210,11 @@
 #### ✅ ~~🟡 CQ-003: テストコードが存在しない~~ **→ 修正済**
 - **ファイル**: `src/interpreter/__tests__/`, `src/components/__tests__/`, `src/pages/__tests__/`
 - **重要度**: Minor（学習プロジェクトとしては許容）
-- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UI/アプリ統合テストを追加（合計 403 テスト）
+- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UI/アプリ統合テストを追加（合計 412 テスト）
   - `src/interpreter/__tests__/` — 205 テスト（types, environment, parser, evaluator, integration, repl, security）
-  - `src/components/__tests__/` — 42 テスト（Header, OutputPanel, ProblemList, ProblemView, LispGuide）
-  - `src/pages/__tests__/` — 28 テスト（LearnPage, EditorPage, ReplPage）
-  - `src/__tests__/` — 3 テスト（App の状態復元・進捗保存）
+  - `src/components/__tests__/` — 44 テスト（Header, OutputPanel, ProblemList, ProblemView, LispGuide）
+  - `src/pages/__tests__/` — 33 テスト（HomePage, ProblemsPage, LearnPage, EditorPage, ReplPage）
+  - `src/__tests__/` — 5 テスト（App の状態復元・進捗保存・ルーティング）
   - `src/data`, `src/utils`, `src/editor`, `src/worker` — 125 テスト
 
 ---
@@ -227,7 +227,10 @@
 [ユーザーアクセス]
      ↓
 [HashRouter (react-router-dom)]
-     ├─ / → [LearnPage] → [LispGuide] / [ProblemView]
+  ├─ / → [HomePage]
+  ├─ /problems → [ProblemsPage]
+  ├─ /learn → [LearnPage] → [ProblemView]
+  ├─ /guide → [LearnPage] → [LispGuide]
   ├─ /editor → [EditorPage]
   │                  ↓
   │         [CodeMirror エディタ]
@@ -243,11 +246,11 @@
 ### 良い点 ✅
 
 1. **完全クライアントサイド** — サーバー依存なし、デプロイが容易
-2. **3ページ構成** — 学習ページ、エディタページ、REPL ページの分離で関心の分離を実現
+2. **主要ルートの分離** — home、問題一覧、学習詳細、エディタ、REPL を分け、導線ごとの責務を整理
 3. **コンポーネント分離** — Editor / Output / Problem / Guide が明確に分離
 4. **インタプリタの独立性** — React に依存せず、純粋な TypeScript
 5. **問題データの宣言的定義** — TypeScript の型安全性を活用
-6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 403件
+6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 412件
 
 ### 改善が望ましい点 ⚠️
 
@@ -256,7 +259,7 @@
 | ~~同期実行~~ | ~~UI スレッドで直接評価~~ | ✅ Web Worker に分離済 | — |
 | 状態管理 | useState の組み合わせ | useReducer or Zustand | 中 |
 | ~~コードの永続化~~ | ~~なし（リロードで消失）~~ | ✅ localStorage 実装済 | — |
-| テスタビリティ | ~~テストなし~~ Vitest 403件 | ✅ 対応済 | — |
+| テスタビリティ | ~~テストなし~~ Vitest 412件 | ✅ 対応済 | — |
 | CSS 管理 | 単一ファイル | CSS Modules or Tailwind | 低 |
 
 ---
@@ -382,6 +385,7 @@
 - localStorage の問題 ID、コード、解答済み ID 保存と再読込後の復元も公開環境で確認済み
 - 問題一覧に表示される全 38 問の解答総当たり実行が公開環境で通過済み
 - 公開環境で 390px / 320px のモバイル表示確認を実施し、学習ページ、エディタ、REPL ともに横方向オーバーフローがないことを確認済み
+- `29c898a` の公開環境で home 画面、問題一覧ページ、ヘッダーロゴの戻り導線、エディタからの問題一覧復帰導線を確認済み
 - 詳細な確認手順と未確認範囲は [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) に記録
 
 ---
@@ -389,4 +393,4 @@
 *このドキュメントは Lisp Playground v1.0.0 の初期レビュー時点のものです。*
 *2026-04-12: BUG-001, SEC-001, SEC-002, ACC-001, ACC-002, CQ-003 の修正を反映。Vitest テスト 184 件を追加。*
 *2026-04-20: react-router-dom によるページ分割（LearnPage / EditorPage）、LispGuide コンポーネント追加、UIコンポーネントテスト追加。localStorage永続化、Lisp構文ハイライト、Web Worker非同期実行を実装（合計 306 テスト）。*
-*2026-04-29: GitHub Pages 公開後確認ログを追加し、主要導線のスモークテスト、localStorage 復元、38 問総当たり、モバイル表示確認結果を反映。*
+*2026-04-29: GitHub Pages 公開後確認ログを追加し、主要導線のスモークテスト、localStorage 復元、38 問総当たり、モバイル表示、home / 問題一覧導線確認結果を反映。*
