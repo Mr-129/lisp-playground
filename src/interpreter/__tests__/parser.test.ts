@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { tokenize, readFromString } from '../parser';
+import { tokenize, readFromString, parse } from '../parser';
 import { makeNumber, makeString, makeSymbol, NIL } from '../types';
 
 describe('tokenize', () => {
@@ -25,6 +25,17 @@ describe('tokenize', () => {
   it('エスケープ文字を処理する', () => {
     const tokens = tokenize('"a\\nb"');
     expect(tokens[0].value).toBe('a\nb');
+  });
+
+  it('未知のエスケープ文字はそのまま取り込む', () => {
+    const tokens = tokenize('"a\\qb"');
+    expect(tokens[0].value).toBe('aqb');
+  });
+
+  it('文字列中の改行を保持しつつ次のトークン位置を進める', () => {
+    const tokens = tokenize('"a\nb" 42');
+    expect(tokens[0]).toEqual(expect.objectContaining({ type: 'string', value: 'a\nb' }));
+    expect(tokens[1]).toEqual(expect.objectContaining({ type: 'number', value: '42', line: 2 }));
   });
 
   it('シンボルをトークナイズする', () => {
@@ -146,5 +157,15 @@ describe('readFromString (parse)', () => {
 
   it('余分な閉じ括弧でエラー', () => {
     expect(() => readFromString(')')).toThrow("予期しない ')'");
+  });
+
+  it('クォートの直後に式がなければエラー', () => {
+    expect(() => readFromString("'")).toThrow('予期しない入力の終わり');
+  });
+
+  it('未対応トークンはエラー', () => {
+    expect(() => parse([
+      { type: 'comma', value: ',', line: 1, col: 1 },
+    ])).toThrow('不明なトークン: ,');
   });
 });

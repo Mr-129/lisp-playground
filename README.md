@@ -187,7 +187,7 @@ npm run test:coverage
 Vitest によるテストスイートが用意されています。
 
 `npm run test:coverage` を実行すると、HTML レポートが `coverage/` に出力されます。
-2026-04-29 時点の coverage ベースラインは All files で Stmts 92.06 / Branch 81.85 / Funcs 97.66 / Lines 98.41 です。
+2026-04-30 時点の coverage ベースラインは All files で Stmts 92.73 / Branch 83.00 / Funcs 97.66 / Lines 99.03 です。
 
 #### インタプリタテスト (`src/interpreter/__tests__/`)
 
@@ -195,7 +195,8 @@ Vitest によるテストスイートが用意されています。
 |---|---|---|
 | `types.test.ts` | LispValue ヘルパー関数 | 26 |
 | `environment.test.ts` | レキシカルスコープ管理 | 9 |
-| `parser.test.ts` | トークナイザ + パーサー | 23 |
+| `parser.test.ts` | トークナイザ + パーサー | 27 |
+| `index.test.ts` | executeLisp / executeLispRepl の境界ケース | 3 |
 | `evaluator.test.ts` | 評価器・特殊形式・ビルトイン・出力再束縛 | 149 |
 | `integration.test.ts` | executeLisp E2E パイプライン | 25 |
 | `repl.test.ts` | executeLispRepl 環境引き継ぎ | 8 |
@@ -224,7 +225,7 @@ Vitest によるテストスイートが用意されています。
 | `worker.test.ts` | Worker 管理・フォールバック | 5 |
 | `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
 
-| **合計** | | **512** |
+| **合計** | | **519** |
 
 ---
 
@@ -258,6 +259,7 @@ LispEditerApp/
 │   │       ├── types.test.ts
 │   │       ├── environment.test.ts
 │   │       ├── parser.test.ts
+│   │       ├── index.test.ts
 │   │       ├── evaluator.test.ts
 │   │       ├── integration.test.ts
 │   │       ├── repl.test.ts
