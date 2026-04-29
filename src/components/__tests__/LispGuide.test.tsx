@@ -1,13 +1,16 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { LispGuide } from '../LispGuide';
 
 function renderWithRouter() {
   return render(
-    <MemoryRouter>
-      <LispGuide />
+    <MemoryRouter initialEntries={['/guide']}>
+      <Routes>
+        <Route path="/guide" element={<LispGuide />} />
+        <Route path="/problems" element={<div>problems-page</div>} />
+      </Routes>
     </MemoryRouter>
   );
 }
@@ -68,9 +71,9 @@ describe('LispGuide', () => {
     expect(screen.getByText('クロージャ')).toBeInTheDocument();
   });
 
-  it('参考リソースセクションを表示する', () => {
+  it('参考セクションを表示する', () => {
     renderWithRouter();
-    expect(screen.getByText(/参考リソース/)).toBeInTheDocument();
+    expect(screen.getByText(/参考/)).toBeInTheDocument();
   });
 
   it('HyperSpec リンクを含む', () => {
@@ -88,5 +91,11 @@ describe('LispGuide', () => {
   it('フッターに「問題一覧に戻る」ボタンがある', () => {
     renderWithRouter();
     expect(screen.getByText('← 問題一覧に戻る')).toBeInTheDocument();
+  });
+
+  it('「問題一覧に戻る」ボタンで問題一覧ページへ戻れる', () => {
+    renderWithRouter();
+    fireEvent.click(screen.getByText('← 問題一覧に戻る'));
+    expect(screen.getByText('problems-page')).toBeInTheDocument();
   });
 });

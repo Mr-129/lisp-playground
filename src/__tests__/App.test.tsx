@@ -8,6 +8,14 @@ vi.mock('../components/Header', () => ({
   Header: () => <div>header</div>,
 }));
 
+vi.mock('../pages/HomePage', () => ({
+  HomePage: () => <div>home-page</div>,
+}));
+
+vi.mock('../pages/ProblemsPage', () => ({
+  ProblemsPage: () => <div>problems-page</div>,
+}));
+
 vi.mock('../pages/LearnPage', () => ({
   LearnPage: () => <div>learn-page</div>,
 }));
@@ -48,6 +56,22 @@ describe('App', () => {
   beforeEach(() => {
     localStorage.clear();
     window.location.hash = '#/editor';
+  });
+
+  it('ルート「/」でホーム画面を表示する', () => {
+    window.location.hash = '#/';
+
+    render(<App />);
+
+    expect(screen.getByText('home-page')).toBeInTheDocument();
+  });
+
+  it('ルート「/problems」で問題一覧ページを表示する', () => {
+    window.location.hash = '#/problems';
+
+    render(<App />);
+
+    expect(screen.getByText('problems-page')).toBeInTheDocument();
   });
 
   it('正解済み問題IDを localStorage に保存する', async () => {

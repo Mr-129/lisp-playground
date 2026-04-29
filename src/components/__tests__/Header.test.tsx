@@ -34,12 +34,17 @@ describe('Header', () => {
     expect(screen.getByText('🖊️ エディタ')).toBeInTheDocument();
   });
 
-  it('「/」パスで学習ボタンがactiveになる', () => {
-    renderWithRouter('/');
+  it('「/problems」パスで学習ボタンがactiveになる', () => {
+    renderWithRouter('/problems');
     const learnButton = screen.getByText('📚 学習');
     expect(learnButton).toHaveClass('active');
     const editorButton = screen.getByText('🖊️ エディタ');
     expect(editorButton).not.toHaveClass('active');
+  });
+
+  it('「/learn」パスでも学習ボタンがactiveになる', () => {
+    renderWithRouter('/learn');
+    expect(screen.getByText('📚 学習')).toHaveClass('active');
   });
 
   it('「/editor」パスでエディタボタンがactiveになる', () => {

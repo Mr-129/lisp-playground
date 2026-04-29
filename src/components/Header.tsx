@@ -3,6 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 export function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isLearningRoute =
+    location.pathname === '/problems' ||
+    location.pathname === '/learn' ||
+    location.pathname === '/guide';
 
   return (
     <header className="app-header">
@@ -15,8 +19,8 @@ export function Header() {
       </div>
       <nav className="header-nav">
         <button
-          className={`header-nav-button ${location.pathname === '/' ? 'active' : ''}`}
-          onClick={() => navigate('/')}
+          className={`header-nav-button ${isLearningRoute ? 'active' : ''}`}
+          onClick={() => navigate('/problems')}
         >
           📚 学習
         </button>

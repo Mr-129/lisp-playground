@@ -387,7 +387,7 @@ foo         ; シンボルアトム
 
         {/* 参照リンク */}
         <section className="guide-section guide-references">
-          <h3>📚 参考リソース（一次情報）</h3>
+          <h3>📚 参考</h3>
           <ul className="reference-list">
             <li>
               <a href="https://www.lispworks.com/documentation/HyperSpec/Front/" target="_blank" rel="noopener noreferrer">
@@ -430,7 +430,7 @@ foo         ; シンボルアトム
 
         <div className="guide-footer">
           <p>上記の構文を理解したら、問題を選択して実際にコードを書いてみましょう！</p>
-          <button className="guide-start-button" onClick={() => navigate('/')}>
+          <button className="guide-start-button" onClick={() => navigate('/problems')}>
             ← 問題一覧に戻る
           </button>
         </div>

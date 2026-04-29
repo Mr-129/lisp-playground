@@ -67,7 +67,7 @@ export function EditorPage({
   return (
     <div className="editor-page">
       <div className="editor-page-header">
-        <button className="back-to-learn" onClick={() => navigate('/')}>
+        <button className="back-to-learn" onClick={() => navigate('/problems')}>
           ← 問題一覧に戻る
         </button>
         {selectedProblem && (

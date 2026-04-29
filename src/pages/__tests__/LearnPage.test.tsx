@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { LearnPage } from '../LearnPage';
 import { Problem } from '../../types';
 
@@ -27,7 +27,10 @@ const anotherProblem: Problem = {
   solution: '(+ 3 4)',
 };
 
-function renderLearnPage(props: Partial<Parameters<typeof LearnPage>[0]> = {}) {
+function renderLearnPage(
+  props: Partial<Parameters<typeof LearnPage>[0]> = {},
+  initialPath = '/learn'
+) {
   const defaultProps = {
     selectedProblem: null,
     onSelectProblem: vi.fn(),
@@ -36,28 +39,26 @@ function renderLearnPage(props: Partial<Parameters<typeof LearnPage>[0]> = {}) {
     ...props,
   };
   return render(
-    <MemoryRouter>
-      <LearnPage {...defaultProps} />
+    <MemoryRouter initialEntries={[initialPath]}>
+      <Routes>
+        <Route path="/learn" element={<LearnPage {...defaultProps} />} />
+        <Route path="/guide" element={<LearnPage {...defaultProps} initialView="guide" />} />
+        <Route path="/problems" element={<div>problems-page</div>} />
+        <Route path="/editor" element={<div>editor-page</div>} />
+      </Routes>
     </MemoryRouter>
   );
 }
 
 describe('LearnPage', () => {
-  it('ウェルカムメッセージを表示する', () => {
+  it('問題未選択時に案内カードを表示する', () => {
     renderLearnPage();
-    expect(screen.getByText(/Lisp Playground へようこそ/)).toBeInTheDocument();
+    expect(screen.getByText('問題を選択してください')).toBeInTheDocument();
   });
 
-  it('学習ステップを表示する', () => {
+  it('問題一覧ページへの導線を表示する', () => {
     renderLearnPage();
-    expect(screen.getByText('構文ガイドを読む')).toBeInTheDocument();
-    expect(screen.getByText('問題を選ぶ')).toBeInTheDocument();
-    expect(screen.getByText('コードを書いて実行')).toBeInTheDocument();
-  });
-
-  it('構文ガイドボタンがある', () => {
-    renderLearnPage();
-    expect(screen.getByText('📘 構文ガイドを読む')).toBeInTheDocument();
+    expect(screen.getByText('📚 問題一覧ページへ')).toBeInTheDocument();
   });
 
   it('フリーモードボタンがある', () => {
@@ -73,6 +74,11 @@ describe('LearnPage', () => {
   it('構文ガイドボタンをクリックするとガイドが表示される', () => {
     renderLearnPage();
     fireEvent.click(screen.getByLabelText('構文ガイドを表示'));
+    expect(screen.getByText(/Common Lisp 基本構文ガイド/)).toBeInTheDocument();
+  });
+
+  it('guide ルートでは初期表示でガイドを表示する', () => {
+    renderLearnPage({}, '/guide');
     expect(screen.getByText(/Common Lisp 基本構文ガイド/)).toBeInTheDocument();
   });
 
@@ -93,13 +99,20 @@ describe('LearnPage', () => {
 
   it('問題を切り替えるとヒントと解答の表示状態がリセットされる', () => {
     const { rerender } = render(
-      <MemoryRouter>
-        <LearnPage
-          selectedProblem={mockProblem}
-          onSelectProblem={vi.fn()}
-          onShowSolution={vi.fn()}
-          onNavigateToEditor={vi.fn()}
-        />
+      <MemoryRouter initialEntries={['/learn']}>
+        <Routes>
+          <Route
+            path="/learn"
+            element={
+              <LearnPage
+                selectedProblem={mockProblem}
+                onSelectProblem={vi.fn()}
+                onShowSolution={vi.fn()}
+                onNavigateToEditor={vi.fn()}
+              />
+            }
+          />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -110,13 +123,20 @@ describe('LearnPage', () => {
     expect(screen.getByText('(+ 1 2)')).toBeInTheDocument();
 
     rerender(
-      <MemoryRouter>
-        <LearnPage
-          selectedProblem={anotherProblem}
-          onSelectProblem={vi.fn()}
-          onShowSolution={vi.fn()}
-          onNavigateToEditor={vi.fn()}
-        />
+      <MemoryRouter initialEntries={['/learn']}>
+        <Routes>
+          <Route
+            path="/learn"
+            element={
+              <LearnPage
+                selectedProblem={anotherProblem}
+                onSelectProblem={vi.fn()}
+                onShowSolution={vi.fn()}
+                onNavigateToEditor={vi.fn()}
+              />
+            }
+          />
+        </Routes>
       </MemoryRouter>
     );
 

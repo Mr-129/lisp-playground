@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ProblemList } from '../components/ProblemList';
 import { ProblemView } from '../components/ProblemView';
 import { LispGuide } from '../components/LispGuide';
@@ -10,17 +10,32 @@ interface LearnPageProps {
   onSelectProblem: (problem: Problem) => void;
   onShowSolution: () => void;
   onNavigateToEditor: () => void;
+  initialView?: 'problem' | 'guide';
 }
 
-export function LearnPage({ selectedProblem, onSelectProblem, onShowSolution, onNavigateToEditor }: LearnPageProps) {
+export function LearnPage({
+  selectedProblem,
+  onSelectProblem,
+  onShowSolution,
+  onNavigateToEditor,
+  initialView = 'problem',
+}: LearnPageProps) {
   const navigate = useNavigate();
-  const [showGuide, setShowGuide] = useState(false);
+  const location = useLocation();
+  const [showGuide, setShowGuide] = useState(initialView === 'guide');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    setShowGuide(initialView === 'guide');
+  }, [initialView]);
 
   const handleSelectProblem = useCallback((problem: Problem) => {
     onSelectProblem(problem);
     setShowGuide(false);
-  }, [onSelectProblem]);
+    if (location.pathname === '/guide') {
+      navigate('/learn');
+    }
+  }, [location.pathname, navigate, onSelectProblem]);
 
   const handleStartCoding = useCallback(() => {
     onNavigateToEditor();
@@ -37,7 +52,10 @@ export function LearnPage({ selectedProblem, onSelectProblem, onShowSolution, on
           <>
             <button
               className={`guide-mode-button ${showGuide ? 'active' : ''}`}
-              onClick={() => setShowGuide(true)}
+              onClick={() => {
+                setShowGuide(true);
+                navigate('/guide');
+              }}
               aria-label="構文ガイドを表示"
             >
               📘 構文ガイド
@@ -66,38 +84,15 @@ export function LearnPage({ selectedProblem, onSelectProblem, onShowSolution, on
             </div>
           </div>
         ) : (
-          <div className="learn-welcome">
-            <div className="welcome-content">
-              <h2>λ Lisp Playground へようこそ</h2>
-              <p>Common Lisp を対話的に学べる学習環境です。</p>
-              <div className="welcome-steps">
-                <div className="welcome-step">
-                  <span className="step-number">1</span>
-                  <div>
-                    <strong>構文ガイドを読む</strong>
-                    <p>まずは左のサイドバーから「📘 構文ガイド」をクリックして、Lispの基本構文を学びましょう。</p>
-                  </div>
-                </div>
-                <div className="welcome-step">
-                  <span className="step-number">2</span>
-                  <div>
-                    <strong>問題を選ぶ</strong>
-                    <p>サイドバーの問題一覧から、難易度に合った問題を選びましょう。</p>
-                  </div>
-                </div>
-                <div className="welcome-step">
-                  <span className="step-number">3</span>
-                  <div>
-                    <strong>コードを書いて実行</strong>
-                    <p>「エディタで解く」ボタンでエディタに移動し、コードを書いて実行しましょう。</p>
-                  </div>
-                </div>
-              </div>
+          <div className="learn-empty-state">
+            <div className="learn-empty-card">
+              <h2>問題を選択してください</h2>
+              <p>問題一覧ページで問題文を選ぶか、構文ガイドから学習を始められます。</p>
               <div className="welcome-actions">
-                <button className="guide-start-button" onClick={() => setShowGuide(true)}>
-                  📘 構文ガイドを読む
+                <button className="guide-start-button" type="button" onClick={() => navigate('/problems')}>
+                  📚 問題一覧ページへ
                 </button>
-                <button className="start-coding-button" onClick={() => navigate('/editor')}>
+                <button className="start-coding-button" type="button" onClick={() => navigate('/editor')}>
                   🖊️ フリーモードで始める
                 </button>
               </div>

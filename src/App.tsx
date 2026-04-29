@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect, type MouseEvent } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
+import { HomePage } from './pages/HomePage';
+import { ProblemsPage } from './pages/ProblemsPage';
 import { LearnPage } from './pages/LearnPage';
 import { EditorPage } from './pages/EditorPage';
 import { ReplPage } from './pages/ReplPage';
@@ -125,14 +127,36 @@ function App() {
         <Header />
         <main id="main-content" className="app-body" tabIndex={-1}>
           <Routes>
+            <Route path="/" element={<HomePage />} />
             <Route
-              path="/"
+              path="/problems"
+              element={
+                <ProblemsPage
+                  selectedProblemId={selectedProblem?.id ?? null}
+                  onSelectProblem={handleSelectProblem}
+                />
+              }
+            />
+            <Route
+              path="/learn"
               element={
                 <LearnPage
                   selectedProblem={selectedProblem}
                   onSelectProblem={handleSelectProblem}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}
+                />
+              }
+            />
+            <Route
+              path="/guide"
+              element={
+                <LearnPage
+                  selectedProblem={selectedProblem}
+                  onSelectProblem={handleSelectProblem}
+                  onShowSolution={handleShowSolution}
+                  onNavigateToEditor={handleNavigateToEditor}
+                  initialView="guide"
                 />
               }
             />
