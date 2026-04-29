@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
+import { useState } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { LearnPage } from '../LearnPage';
 import { Problem } from '../../types';
 
@@ -27,6 +28,12 @@ const anotherProblem: Problem = {
   solution: '(+ 3 4)',
 };
 
+function LocationDisplay() {
+  const location = useLocation();
+
+  return <div data-testid="location-path">{location.pathname}</div>;
+}
+
 function renderLearnPage(
   props: Partial<Parameters<typeof LearnPage>[0]> = {},
   initialPath = '/learn'
@@ -40,6 +47,7 @@ function renderLearnPage(
   };
   return render(
     <MemoryRouter initialEntries={[initialPath]}>
+      <LocationDisplay />
       <Routes>
         <Route path="/learn" element={<LearnPage {...defaultProps} />} />
         <Route path="/guide" element={<LearnPage {...defaultProps} initialView="guide" />} />
@@ -48,6 +56,42 @@ function renderLearnPage(
       </Routes>
     </MemoryRouter>
   );
+}
+
+function renderStatefulLearnPage(initialPath = '/guide') {
+  const onSelectProblem = vi.fn();
+  const onNavigateToEditor = vi.fn();
+
+  function LearnPageHarness({ initialView = 'problem' }: { initialView?: 'problem' | 'guide' }) {
+    const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
+
+    return (
+      <LearnPage
+        selectedProblem={selectedProblem}
+        onSelectProblem={(problem) => {
+          onSelectProblem(problem);
+          setSelectedProblem(problem);
+        }}
+        onShowSolution={vi.fn()}
+        onNavigateToEditor={onNavigateToEditor}
+        initialView={initialView}
+      />
+    );
+  }
+
+  const view = render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <LocationDisplay />
+      <Routes>
+        <Route path="/learn" element={<LearnPageHarness />} />
+        <Route path="/guide" element={<LearnPageHarness initialView="guide" />} />
+        <Route path="/problems" element={<div>problems-page</div>} />
+        <Route path="/editor" element={<div>editor-page</div>} />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  return { ...view, onSelectProblem, onNavigateToEditor };
 }
 
 describe('LearnPage', () => {
@@ -143,5 +187,46 @@ describe('LearnPage', () => {
     expect(screen.getByText('別の問題')).toBeInTheDocument();
     expect(screen.queryByText('ヒント')).not.toBeInTheDocument();
     expect(screen.queryByText('(+ 1 2)')).not.toBeInTheDocument();
+  });
+
+  it('guide ルートで問題を選ぶと learn へ遷移し問題ビューを表示する', () => {
+    const { onSelectProblem } = renderStatefulLearnPage('/guide');
+
+    fireEvent.click(screen.getAllByText('初めてのS式')[0]);
+
+    expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-01' }));
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn');
+    expect(screen.getAllByText('初めてのS式').length).toBeGreaterThan(0);
+    expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
+  });
+
+  it('問題ビューのエディタボタンで editor へ遷移しコールバックを呼ぶ', () => {
+    const onNavigateToEditor = vi.fn();
+
+    renderLearnPage({ selectedProblem: mockProblem, onNavigateToEditor });
+
+    fireEvent.click(screen.getByText('🖊️ エディタで解く →'));
+
+    expect(onNavigateToEditor).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('editor-page')).toBeInTheDocument();
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/editor');
+  });
+
+  it('空状態の問題一覧ボタンで problems へ遷移する', () => {
+    renderLearnPage();
+
+    fireEvent.click(screen.getByText('📚 問題一覧ページへ'));
+
+    expect(screen.getByText('problems-page')).toBeInTheDocument();
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/problems');
+  });
+
+  it('空状態のフリーモードボタンで editor へ遷移する', () => {
+    renderLearnPage();
+
+    fireEvent.click(screen.getByText('🖊️ フリーモードで始める'));
+
+    expect(screen.getByText('editor-page')).toBeInTheDocument();
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/editor');
   });
 });

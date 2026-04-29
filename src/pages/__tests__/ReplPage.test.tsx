@@ -28,6 +28,11 @@ describe('ReplPage', () => {
     expect(screen.getByLabelText('REPL 入力')).toBeInTheDocument();
   });
 
+  it('初期表示で入力欄にフォーカスする', () => {
+    renderRepl();
+    expect(screen.getByLabelText('REPL 入力')).toHaveFocus();
+  });
+
   it('空の入力では送信ボタンが無効', () => {
     renderRepl();
     const button = screen.getByLabelText('式を評価');
@@ -42,6 +47,29 @@ describe('ReplPage', () => {
 
     expect(screen.getByText('→ 3')).toBeInTheDocument();
     expect(screen.getByText('(+ 1 2)')).toBeInTheDocument();
+  });
+
+  it('空白だけの入力で Enter を押しても評価しない', () => {
+    renderRepl();
+    const input = screen.getByLabelText('REPL 入力');
+
+    fireEvent.change(input, { target: { value: '   ' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(screen.getByText('Common Lisp REPL へようこそ！')).toBeInTheDocument();
+    expect(input).toHaveValue('   ');
+    expect(screen.queryByText(/→/)).not.toBeInTheDocument();
+  });
+
+  it('Shift+Enter では送信せず改行入力のままにする', () => {
+    renderRepl();
+    const input = screen.getByLabelText('REPL 入力');
+
+    fireEvent.change(input, { target: { value: '(+ 1 2)' } });
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: true });
+
+    expect(input).toHaveValue('(+ 1 2)');
+    expect(screen.queryByText('→ 3')).not.toBeInTheDocument();
   });
 
   it('環境を引き継いで次の式で使える', () => {
@@ -104,5 +132,78 @@ describe('ReplPage', () => {
     fireEvent.keyDown(input, { key: 'Enter' });
 
     expect(screen.getByText('→ 25')).toBeInTheDocument();
+  });
+
+  it('入力履歴を ArrowUp でさかのぼれる', () => {
+    renderRepl();
+    const input = screen.getByLabelText('REPL 入力');
+
+    fireEvent.change(input, { target: { value: '(+ 1 2)' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    fireEvent.change(input, { target: { value: '(+ 3 4)' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    expect(input).toHaveValue('(+ 3 4)');
+
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    expect(input).toHaveValue('(+ 1 2)');
+  });
+
+  it('履歴がないとき ArrowUp を押しても入力を変えない', () => {
+    renderRepl();
+    const input = screen.getByLabelText('REPL 入力');
+
+    fireEvent.change(input, { target: { value: '(draft)' } });
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+
+    expect(input).toHaveValue('(draft)');
+  });
+
+  it('入力履歴を ArrowDown で進めて最後は空入力に戻る', () => {
+    renderRepl();
+    const input = screen.getByLabelText('REPL 入力');
+
+    fireEvent.change(input, { target: { value: '(+ 1 2)' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    fireEvent.change(input, { target: { value: '(+ 3 4)' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    expect(input).toHaveValue('(+ 1 2)');
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(input).toHaveValue('(+ 3 4)');
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(input).toHaveValue('');
+  });
+
+  it('履歴選択中でないとき ArrowDown を押しても入力を変えない', () => {
+    renderRepl();
+    const input = screen.getByLabelText('REPL 入力');
+
+    fireEvent.change(input, { target: { value: '(draft)' } });
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+    expect(input).toHaveValue('(draft)');
+  });
+
+  it('履歴追加時に出力エリアを末尾へスクロールする', () => {
+    const view = renderRepl();
+    const input = screen.getByLabelText('REPL 入力');
+    const output = view.container.querySelector('.repl-output') as HTMLDivElement;
+
+    Object.defineProperty(output, 'scrollHeight', {
+      value: 240,
+      configurable: true,
+    });
+    output.scrollTop = 0;
+
+    fireEvent.change(input, { target: { value: '(+ 1 2)' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(output.scrollTop).toBe(240);
   });
 });

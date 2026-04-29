@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { evaluate, createGlobalEnv, resetEvaluationDepth, OutputFn } from '../evaluator';
+import { evaluate, createGlobalEnv, rebindOutputBuiltins, resetEvaluationDepth, OutputFn } from '../evaluator';
 import { readFromString } from '../parser';
 import { printValue, Environment } from '../types';
 
@@ -40,8 +40,24 @@ describe('evaluator — 特殊形式', () => {
     expect(evalCode('(cond ((= 1 2) "a") ((= 1 1) "b") (t "c"))')).toBe('"b"');
   });
 
+  it('COND はどの節も真でなければ NIL を返す', () => {
+    expect(evalCode('(cond ((= 1 2) "a") ((= 2 3) "b"))')).toBe('NIL');
+  });
+
+  it('COND の各節がリストでないとエラー', () => {
+    expect(() => evalCode('(cond t)')).toThrow('condの各節はリストである必要があります');
+  });
+
   it('WHEN — 真', () => {
     expect(evalCode('(when t 42)')).toBe('42');
+  });
+
+  it('WHEN — 真で複数式を順に評価する', () => {
+    expect(evalCode('(when t 1 2 3)')).toBe('3');
+  });
+
+  it('WHEN — 真でも body がなければ NIL を返す', () => {
+    expect(evalCode('(when t)')).toBe('NIL');
   });
 
   it('WHEN — 偽', () => {
@@ -50,6 +66,10 @@ describe('evaluator — 特殊形式', () => {
 
   it('UNLESS — 偽', () => {
     expect(evalCode('(unless nil 42)')).toBe('42');
+  });
+
+  it('UNLESS — 真', () => {
+    expect(evalCode('(unless t 42)')).toBe('NIL');
   });
 
   it('AND', () => {
@@ -75,16 +95,32 @@ describe('evaluator — 特殊形式', () => {
     expect(evalCode('(let ((x 10) (y 20)) (+ x y))')).toBe('30');
   });
 
+  it('LET はシンボルだけの束縛を NIL で初期化する', () => {
+    expect(evalCode('(let (x) x)')).toBe('NIL');
+  });
+
   it('LET*', () => {
     expect(evalCode('(let* ((x 10) (y (+ x 5))) y)')).toBe('15');
+  });
+
+  it('LET* はシンボルだけの束縛を NIL で初期化する', () => {
+    expect(evalCode('(let* (x) x)')).toBe('NIL');
   });
 
   it('SETQ', () => {
     expect(evalCode('(defvar *x* 0) (setq *x* 42) *x*')).toBe('42');
   });
 
+  it('SETQ は未定義変数を新規束縛する', () => {
+    expect(evalCode('(setq *fresh* 7) *fresh*')).toBe('7');
+  });
+
   it('DEFVAR', () => {
     expect(evalCode('(defvar *val* 100) *val*')).toBe('100');
+  });
+
+  it('DEFVAR は初期値省略時に NIL を束縛する', () => {
+    expect(evalCode('(defvar *empty*) *empty*')).toBe('NIL');
   });
 
   it('DEFVAR は既存値を上書きしない', () => {
@@ -103,6 +139,18 @@ describe('evaluator — 特殊形式', () => {
     expect(evalCode('(funcall (lambda (x) (* x x)) 5)')).toBe('25');
   });
 
+  it('LAMBDA の &REST パラメータ', () => {
+    expect(evalCode('(funcall (lambda (&rest xs) (length xs)) 1 2 3)')).toBe('3');
+  });
+
+  it('LAMBDA の &REST は引数がないと NIL を束縛する', () => {
+    expect(evalCode('(funcall (lambda (&rest xs) xs))')).toBe('NIL');
+  });
+
+  it('LAMBDA の &REST は固定引数の後続をまとめる', () => {
+    expect(evalCode('(funcall (lambda (x &rest xs) (list x (length xs))) 1 2 3)')).toBe('(1 2)');
+  });
+
   it('FUNCALL', () => {
     expect(evalCode('(defun sq (x) (* x x)) (funcall #\'sq 6)')).toBe('36');
   });
@@ -113,6 +161,27 @@ describe('evaluator — 特殊形式', () => {
 
   it('FUNCTION / #\'', () => {
     expect(evalCode("(funcall #'+ 10 20)")).toBe('30');
+  });
+
+  it('FUNCTION は lambda フォームも受け取れる', () => {
+    expect(evalCode('(funcall (function (lambda (x) (+ x 1))) 4)')).toBe('5');
+  });
+
+  it.each([
+    ['(let 42 1)', 'letの束縛リストが不正です'],
+    ['(let ((1 2)) 1)', 'letの変数名はシンボルである必要があります'],
+    ['(let* 42 1)', 'let*の束縛リストが不正です'],
+    ['(let* ((1 2)) 1)', 'let*の変数名はシンボルである必要があります'],
+    ['(setq 1 2)', 'setqの対象はシンボルである必要があります'],
+    ['(defvar 1 2)', 'defvarの対象はシンボルである必要があります'],
+    ['(defun 1 (x) x)', 'defunの関数名はシンボルである必要があります'],
+    ['(defun foo 1 x)', 'defunのパラメータリストが不正です'],
+    ['(defun foo (1) x)', 'パラメータはシンボルである必要があります'],
+    ['(funcall (lambda 1 42))', 'lambdaのパラメータリストが不正です'],
+    ['(funcall (lambda (1) 42) 0)', 'パラメータはシンボルである必要があります'],
+    ['(function 42)', '#functionの引数が不正です'],
+  ])('不正な特殊形式 %s でエラーを投げる', (source, message) => {
+    expect(() => evalCode(source)).toThrow(message);
   });
 
   it('DOTIMES', () => {
@@ -132,6 +201,14 @@ describe('evaluator — 特殊形式', () => {
           (if (= i 5) (return i))
           (setq i (+ i 1))))
     `)).toBe('5');
+  });
+
+  it('LOOP は RETURN がないと無限ループ検出エラーになる', () => {
+    expect(() => evalCode('(loop)')).toThrow('無限ループを検出しました');
+  });
+
+  it('非関数を呼び出すとエラーを投げる', () => {
+    expect(() => evalCode('(1 2)')).toThrow('1 は関数ではありません');
   });
 });
 
@@ -205,15 +282,23 @@ describe('evaluator — リスト操作', () => {
     expect(evalCode("(third '(a b c))")).toBe('C');
   });
   it('NTH', () => expect(evalCode("(nth 1 '(a b c))")).toBe('B'));
+  it('NTH of NIL', () => expect(evalCode('(nth 0 nil)')).toBe('NIL'));
   it('CONS', () => expect(evalCode("(cons 1 '(2 3))")).toBe('(1 2 3)'));
+  it('CONS with NIL', () => expect(evalCode('(cons 1 nil)')).toBe('(1)'));
+  it('CONS with atom', () => expect(evalCode('(cons 1 2)')).toBe('(1 2)'));
   it('LIST', () => expect(evalCode('(list 1 2 3)')).toBe('(1 2 3)'));
   it('APPEND', () => expect(evalCode("(append '(1 2) '(3 4))")).toBe('(1 2 3 4)'));
+  it('APPEND skips NIL and appends atoms as-is', () => expect(evalCode('(append nil 1 nil 2)')).toBe('(1 2)'));
+  it('APPEND of only NIL returns NIL', () => expect(evalCode('(append nil nil)')).toBe('NIL'));
   it('LENGTH', () => expect(evalCode("(length '(a b c))")).toBe('3'));
+  it('LENGTH は不正な型でエラー', () => expect(() => evalCode('(length 42)')).toThrow('length: リストまたは文字列が期待されます'));
   it('REVERSE', () => expect(evalCode("(reverse '(1 2 3))")).toBe('(3 2 1)'));
+  it('REVERSE of NIL', () => expect(evalCode('(reverse nil)')).toBe('NIL'));
   it('LAST', () => expect(evalCode("(last '(1 2 3))")).toBe('(3)'));
   it('MEMBER', () => expect(evalCode("(member 2 '(1 2 3))")).toBe('(2 3)'));
   it('REMOVE', () => expect(evalCode("(remove 2 '(1 2 3 2))")).toBe('(1 3)'));
   it('ASSOC', () => expect(evalCode("(assoc 'b '((a 1) (b 2) (c 3)))")).toBe('(B 2)'));
+  it('ASSOC returns NIL when key is absent', () => expect(evalCode("(assoc 'z '((a 1) (b 2) (c 3)))")).toBe('NIL'));
 });
 
 describe('evaluator — 高階関数', () => {
@@ -256,6 +341,14 @@ describe('evaluator — 文字列操作', () => {
     expect(evalCode("(concatenate 'string \"hello\" \" \" \"world\")")).toBe('"hello world"');
   });
 
+  it('CONCATENATE は文字列以外を printValue で連結する', () => {
+    expect(evalCode("(concatenate 'string \"a\" 1 'b)")).toBe('"a1B"');
+  });
+
+  it('CONCATENATE の最初の引数が string 指定でないとエラー', () => {
+    expect(() => evalCode("(concatenate 'list \"a\")")).toThrow("concatenate: 最初の引数は 'string である必要があります");
+  });
+
   it('STRING-UPCASE', () => {
     expect(evalCode('(string-upcase "hello")')).toBe('"HELLO"');
   });
@@ -266,6 +359,18 @@ describe('evaluator — 文字列操作', () => {
 
   it('SUBSEQ', () => {
     expect(evalCode('(subseq "hello" 1 3)')).toBe('"el"');
+  });
+
+  it('SUBSEQ はリストも切り出せる', () => {
+    expect(evalCode("(subseq '(a b c d) 1 3)")).toBe('(B C)');
+  });
+
+  it('SUBSEQ of NIL returns NIL', () => {
+    expect(evalCode('(subseq nil 0 1)')).toBe('NIL');
+  });
+
+  it('SUBSEQ の対象が文字列・リスト・NIL 以外だとエラー', () => {
+    expect(() => evalCode('(subseq 42 0 1)')).toThrow('subseq: 文字列またはリストが期待されます');
   });
 
   it('STRING=', () => {
@@ -279,6 +384,14 @@ describe('evaluator — 文字列操作', () => {
 
   it('PARSE-INTEGER', () => {
     expect(evalCode('(parse-integer "123")')).toBe('123');
+  });
+
+  it('PARSE-INTEGER は整数化できない文字列でエラー', () => {
+    expect(() => evalCode('(parse-integer "abc")')).toThrow('parse-integer: "abc" は整数に変換できません');
+  });
+
+  it('PARSE-INTEGER の対象が文字列でないとエラー', () => {
+    expect(() => evalCode('(parse-integer 123)')).toThrow('parse-integer: 文字列が期待されます');
   });
 });
 
@@ -305,6 +418,58 @@ describe('evaluator — 入出力', () => {
   it('FORMAT t', () => {
     evalCode('(format t "hello~%world")');
     expect(outputBuffer).toBe('hello\nworld');
+  });
+
+  it('FORMAT は ~S ~D ~~ と未知ディレクティブを処理する', () => {
+    expect(evalCode('(format nil "~S ~D ~~ ~Q" (quote a) 42)')).toBe('"A 42 ~ ~Q"');
+  });
+
+  it('FORMAT のフォーマット文字列が文字列でないとエラー', () => {
+    expect(() => evalCode('(format nil 42)')).toThrow('format: フォーマット文字列が期待されます');
+  });
+});
+
+describe('evaluator — rebindOutputBuiltins', () => {
+  it('既存環境の出力系ビルトインを新しい出力先へ差し替える', () => {
+    let reboundOutput = '';
+
+    rebindOutputBuiltins(env, (text) => {
+      reboundOutput += text;
+    });
+
+    evalCode('(print 1) (princ "x") (terpri) (format t "~S ~D ~~ ~Q" (quote a) 42)');
+
+    expect(outputBuffer).toBe('');
+    expect(reboundOutput).toBe('1\nx\nA 42 ~ ~Q');
+  });
+
+  it('format nil は rebind 後も文字列を返し出力しない', () => {
+    let reboundOutput = '';
+
+    rebindOutputBuiltins(env, (text) => {
+      reboundOutput += text;
+    });
+
+    expect(evalCode('(format nil "~A" 5)')).toBe('"5"');
+    expect(reboundOutput).toBe('');
+  });
+
+  it('rebind 後の format でもフォーマット文字列型を検証する', () => {
+    rebindOutputBuiltins(env, () => {});
+
+    expect(() => evalCode('(format t 42)')).toThrow('format: フォーマット文字列が期待されます');
+  });
+
+  it('rebind 後の format でも ~% で改行を出力する', () => {
+    let reboundOutput = '';
+
+    rebindOutputBuiltins(env, (text) => {
+      reboundOutput += text;
+    });
+
+    evalCode('(format t "a~%b")');
+
+    expect(reboundOutput).toBe('a\nb');
   });
 });
 

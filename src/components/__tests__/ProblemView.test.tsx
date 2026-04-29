@@ -22,6 +22,30 @@ const mockProblemNoHint: Problem = {
   hint: undefined,
 };
 
+const mockProblemWithInlineCode: Problem = {
+  ...mockProblem,
+  id: 'test-03',
+  description: 'インラインコード `(+ 1 2)` を含む説明です。',
+};
+
+const mockProblemInlineAtEdges: Problem = {
+  ...mockProblem,
+  id: 'test-04',
+  description: '`(+ 1 2)` と **強調**',
+};
+
+const mockProblemWithSubHeading: Problem = {
+  ...mockProblem,
+  id: 'test-05',
+  description: '### 小見出し',
+};
+
+const mockProblemInlineOnly: Problem = {
+  ...mockProblem,
+  id: 'test-06',
+  description: '`(+ 1 2)`',
+};
+
 describe('ProblemView', () => {
   it('問題タイトルを表示する', () => {
     render(<ProblemView problem={mockProblem} onShowSolution={() => {}} />);
@@ -32,6 +56,12 @@ describe('ProblemView', () => {
     render(<ProblemView problem={mockProblem} onShowSolution={() => {}} />);
     // h3 in markdown becomes h4 in SimpleMarkdown renderer
     expect(screen.getByRole('heading', { level: 3, name: 'テスト' })).toBeInTheDocument();
+  });
+
+  it('### 見出しを h4 としてレンダリングする', () => {
+    render(<ProblemView problem={mockProblemWithSubHeading} onShowSolution={() => {}} />);
+
+    expect(screen.getByRole('heading', { level: 4, name: '小見出し' })).toBeInTheDocument();
   });
 
   it('太字テキストをレンダリングする', () => {
@@ -49,6 +79,16 @@ describe('ProblemView', () => {
     expect(screen.getByText('これはヒントです')).toBeInTheDocument();
   });
 
+  it('ヒントボタンを再度クリックするとヒントを隠す', () => {
+    render(<ProblemView problem={mockProblem} onShowSolution={() => {}} />);
+
+    fireEvent.click(screen.getByText('💡 ヒントを表示'));
+    expect(screen.getByText('これはヒントです')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('💡 ヒントを隠す'));
+    expect(screen.queryByText('これはヒントです')).not.toBeInTheDocument();
+  });
+
   it('解答ボタンをクリックすると解答が表示される', () => {
     const onShowSolution = vi.fn();
     render(<ProblemView problem={mockProblem} onShowSolution={onShowSolution} />);
@@ -56,6 +96,19 @@ describe('ProblemView', () => {
     fireEvent.click(screen.getByText('📖 解答を表示'));
     expect(screen.getByText('(print (+ 1 2))')).toBeInTheDocument();
     expect(onShowSolution).toHaveBeenCalled();
+  });
+
+  it('解答ボタンを再度クリックすると解答を隠し callback は初回だけ呼ぶ', () => {
+    const onShowSolution = vi.fn();
+    render(<ProblemView problem={mockProblem} onShowSolution={onShowSolution} />);
+
+    fireEvent.click(screen.getByText('📖 解答を表示'));
+    expect(screen.getByText('(print (+ 1 2))')).toBeInTheDocument();
+    expect(onShowSolution).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByText('📖 解答を隠す'));
+    expect(screen.queryByText('(print (+ 1 2))')).not.toBeInTheDocument();
+    expect(onShowSolution).toHaveBeenCalledTimes(1);
   });
 
   it('ヒントがない場合、ヒントボタンを表示しない', () => {
@@ -72,5 +125,27 @@ describe('ProblemView', () => {
   it('コードブロックをレンダリングする', () => {
     render(<ProblemView problem={mockProblem} onShowSolution={() => {}} />);
     expect(screen.getByText('(+ 1 2)')).toBeInTheDocument();
+  });
+
+  it('インラインコードをレンダリングする', () => {
+    render(<ProblemView problem={mockProblemWithInlineCode} onShowSolution={() => {}} />);
+
+    const inlineCode = screen.getByText('(+ 1 2)', { selector: 'code' });
+    expect(inlineCode).toBeInTheDocument();
+    expect(inlineCode).toHaveClass('md-inline-code');
+    expect(screen.getByText(/インラインコード/)).toBeInTheDocument();
+  });
+
+  it('先頭がインラインコードで末尾が強調の説明をレンダリングする', () => {
+    render(<ProblemView problem={mockProblemInlineAtEdges} onShowSolution={() => {}} />);
+
+    expect(screen.getByText('(+ 1 2)', { selector: 'code' })).toBeInTheDocument();
+    expect(screen.getByText('強調', { selector: 'strong' })).toBeInTheDocument();
+  });
+
+  it('インラインコードだけの説明をレンダリングする', () => {
+    render(<ProblemView problem={mockProblemInlineOnly} onShowSolution={() => {}} />);
+
+    expect(screen.getByText('(+ 1 2)', { selector: 'code' })).toBeInTheDocument();
   });
 });

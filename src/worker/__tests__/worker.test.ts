@@ -112,4 +112,36 @@ describe('executeLispAsync', () => {
     // Falls back to sync execution
     expect(result.returnValue).toBe('3');
   });
+
+  it('returns an error when worker sends an invalid response payload', async () => {
+    let workerInstance: MockWorker | null = null;
+    // @ts-expect-error - mock Worker
+    globalThis.Worker = class {
+      onmessage: ((e: MessageEvent) => void) | null = null;
+      onerror: ((e: ErrorEvent) => void) | null = null;
+      postMessage = vi.fn();
+      terminate = vi.fn();
+      constructor() {
+        workerInstance = this as unknown as MockWorker;
+      }
+    };
+
+    const { executeLispAsync } = await import('../index');
+    const promise = executeLispAsync('(+ 1 2)');
+
+    workerInstance!.onmessage!({
+      data: {
+        id: 1,
+        result: 'invalid-payload',
+      },
+    } as unknown as MessageEvent);
+
+    const result = await promise;
+    expect(result).toEqual({
+      output: '',
+      returnValue: '',
+      error: 'ワーカーから不正なレスポンスを受信しました',
+    });
+    expect(workerInstance!.terminate).toHaveBeenCalled();
+  });
 });

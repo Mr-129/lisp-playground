@@ -17,7 +17,19 @@ vi.mock('../pages/ProblemsPage', () => ({
 }));
 
 vi.mock('../pages/LearnPage', () => ({
-  LearnPage: () => <div>learn-page</div>,
+  LearnPage: ({
+    onShowSolution,
+    onNavigateToEditor,
+  }: {
+    onShowSolution: () => void;
+    onNavigateToEditor: () => void;
+  }) => (
+    <div>
+      <div>learn-page</div>
+      <button type="button" onClick={onShowSolution}>show-solution</button>
+      <button type="button" onClick={onNavigateToEditor}>navigate-to-editor</button>
+    </div>
+  ),
 }));
 
 vi.mock('../pages/ReplPage', () => ({
@@ -86,6 +98,20 @@ describe('App', () => {
     });
   });
 
+  it('同じ問題を2回正解しても solved ID を重複保存しない', async () => {
+    localStorage.setItem(STORAGE_KEY_PROBLEM, VALID_PROBLEM_ID);
+
+    render(<App />);
+
+    const solvedButton = screen.getByText('solved');
+    fireEvent.click(solvedButton);
+    fireEvent.click(solvedButton);
+
+    await waitFor(() => {
+      expect(localStorage.getItem(STORAGE_KEY_SOLVED_PROBLEMS)).toBe(JSON.stringify([VALID_PROBLEM_ID]));
+    });
+  });
+
   it('読み込み時に存在しない問題IDを除外して保存し直す', async () => {
     localStorage.setItem(
       STORAGE_KEY_SOLVED_PROBLEMS,
@@ -97,6 +123,34 @@ describe('App', () => {
     await waitFor(() => {
       expect(localStorage.getItem(STORAGE_KEY_SOLVED_PROBLEMS)).toBe(JSON.stringify([VALID_PROBLEM_ID]));
     });
+  });
+
+  it('保存済みの問題IDが不正なとき selectedProblem を null にする', async () => {
+    localStorage.setItem(STORAGE_KEY_PROBLEM, 'missing-problem-id');
+
+    render(<App />);
+
+    expect(screen.getByTestId('selected-problem-id')).toHaveTextContent('none');
+
+    await waitFor(() => {
+      expect(localStorage.getItem(STORAGE_KEY_PROBLEM)).toBeNull();
+    });
+  });
+
+  it('問題未選択で show-solution が呼ばれてもコードを変更しない', async () => {
+    window.location.hash = '#/learn';
+
+    render(<App />);
+
+    fireEvent.click(screen.getByText('show-solution'));
+
+    fireEvent.click(screen.getByText('navigate-to-editor'));
+
+    await waitFor(() => {
+      expect(window.location.hash).toBe('#/learn');
+    });
+
+    expect(localStorage.getItem('lisp-playground-code')).toContain('; Lisp Playground へようこそ！');
   });
 
   it('スキップリンクで現在のルートを維持したままメインコンテンツへ移動できる', () => {
