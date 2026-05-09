@@ -2,6 +2,10 @@
   "name": "lisp-editer-app",
   "private": true,
   "version": "1.0.0",
+  "engines": {
+    "node": "20.x || 22.x",
+    "npm": ">=9"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

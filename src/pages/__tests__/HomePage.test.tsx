@@ -25,13 +25,13 @@ describe('HomePage', () => {
 
   it('問題一覧ボタンから問題一覧ページへ移動できる', () => {
     renderHomePage();
-    fireEvent.click(screen.getByText('📚 問題一覧を見る'));
+    fireEvent.click(screen.getByText('📚 問題から始める'));
     expect(screen.getByText('problems-page')).toBeInTheDocument();
   });
 
   it('構文ガイドボタンから構文ガイドへ移動できる', () => {
     renderHomePage();
-    fireEvent.click(screen.getByText('📘 構文ガイドを読む'));
+    fireEvent.click(screen.getByText('📘 はじめに構文ガイド'));
     expect(screen.getByText('guide-page')).toBeInTheDocument();
   });
 });

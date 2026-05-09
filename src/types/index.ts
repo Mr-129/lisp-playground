@@ -1,3 +1,5 @@
+import type { JudgeSpec } from '../judge';
+
 export interface Problem {
   id: string;
   title: string;
@@ -9,4 +11,8 @@ export interface Problem {
   expectedOutput?: string;
   expectedReturnValue?: string;
   solution: string;
+  judge?: JudgeSpec;
+  order: number;
+  estimatedMinutes: number;
+  learningGoals: string[];
 }

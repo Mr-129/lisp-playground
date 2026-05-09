@@ -6,6 +6,7 @@ import { Problem } from '../../types';
 
 const mockProblem: Problem = {
   id: 'test-01',
+  order: 1,
   title: 'テスト問題',
   category: 'テスト',
   difficulty: 'beginner',
@@ -13,6 +14,8 @@ const mockProblem: Problem = {
   hint: 'これはヒントです',
   initialCode: '; テストコード',
   expectedOutput: '3\n',
+  estimatedMinutes: 5,
+  learningGoals: ['test-goal'],
   solution: '(print (+ 1 2))',
 };
 

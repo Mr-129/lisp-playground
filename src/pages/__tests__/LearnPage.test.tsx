@@ -8,23 +8,29 @@ import { Problem } from '../../types';
 
 const mockProblem: Problem = {
   id: 'test-01',
+  order: 1,
   title: 'テスト問題',
   category: 'テスト',
   difficulty: 'beginner',
   description: '## テスト\n\nテスト問題の説明です。',
   hint: 'ヒント',
   initialCode: '; テスト',
+  estimatedMinutes: 5,
+  learningGoals: ['test-goal'],
   solution: '(+ 1 2)',
 };
 
 const anotherProblem: Problem = {
   id: 'test-02',
+  order: 2,
   title: '別の問題',
   category: 'テスト',
   difficulty: 'beginner',
   description: '## 別問題\n\n別の問題です。',
   hint: '別のヒント',
   initialCode: '; 別テスト',
+  estimatedMinutes: 7,
+  learningGoals: ['another-goal'],
   solution: '(+ 3 4)',
 };
 
@@ -40,6 +46,7 @@ function renderLearnPage(
 ) {
   const defaultProps = {
     selectedProblem: null,
+    solvedProblemIds: [],
     onSelectProblem: vi.fn(),
     onShowSolution: vi.fn(),
     onNavigateToEditor: vi.fn(),
@@ -68,6 +75,7 @@ function renderStatefulLearnPage(initialPath = '/guide') {
     return (
       <LearnPage
         selectedProblem={selectedProblem}
+        solvedProblemIds={[]}
         onSelectProblem={(problem) => {
           onSelectProblem(problem);
           setSelectedProblem(problem);
@@ -150,6 +158,7 @@ describe('LearnPage', () => {
             element={
               <LearnPage
                 selectedProblem={mockProblem}
+                solvedProblemIds={[]}
                 onSelectProblem={vi.fn()}
                 onShowSolution={vi.fn()}
                 onNavigateToEditor={vi.fn()}
@@ -174,6 +183,7 @@ describe('LearnPage', () => {
             element={
               <LearnPage
                 selectedProblem={anotherProblem}
+                solvedProblemIds={[]}
                 onSelectProblem={vi.fn()}
                 onShowSolution={vi.fn()}
                 onNavigateToEditor={vi.fn()}
@@ -192,11 +202,11 @@ describe('LearnPage', () => {
   it('guide ルートで問題を選ぶと learn へ遷移し問題ビューを表示する', () => {
     const { onSelectProblem } = renderStatefulLearnPage('/guide');
 
-    fireEvent.click(screen.getAllByText('初めてのS式')[0]);
+    fireEvent.click(screen.getAllByText(/初めてのS式/)[0]);
 
     expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-01' }));
     expect(screen.getByTestId('location-path')).toHaveTextContent('/learn');
-    expect(screen.getAllByText('初めてのS式').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
   });
 

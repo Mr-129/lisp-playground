@@ -1,7 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Editor } from '../components/Editor';
 import { OutputPanel } from '../components/OutputPanel';
+import { runProblemJudge } from '../judge';
+import type { JudgeRunResult } from '../judge';
 import { executeLispAsync } from '../worker';
 import { Problem } from '../types';
 
@@ -27,6 +29,11 @@ export function EditorPage({
 }: EditorPageProps) {
   const navigate = useNavigate();
   const [isRunning, setIsRunning] = useState(false);
+  const [judgeResult, setJudgeResult] = useState<JudgeRunResult | null>(null);
+
+  useEffect(() => {
+    setJudgeResult(null);
+  }, [selectedProblem?.id]);
 
   const handleRun = useCallback(async () => {
     if (isRunning) return;
@@ -35,6 +42,7 @@ export function EditorPage({
     setReturnValue('');
     setError(undefined);
     setIsCorrect(null);
+    setJudgeResult(null);
 
     try {
       const result = await executeLispAsync(code);
@@ -43,21 +51,24 @@ export function EditorPage({
       setError(result.error);
 
       if (selectedProblem && !result.error) {
-        let correct = true;
-        if (selectedProblem.expectedOutput !== undefined) {
-          correct = correct && result.output === selectedProblem.expectedOutput;
-        }
-        if (selectedProblem.expectedReturnValue !== undefined) {
-          correct = correct && result.returnValue === selectedProblem.expectedReturnValue;
-        }
-        setIsCorrect(correct);
-        if (correct) {
-          onProblemSolved(selectedProblem.id);
+        const nextJudgeResult = await runProblemJudge(selectedProblem, code);
+        setJudgeResult(nextJudgeResult);
+
+        if (nextJudgeResult) {
+          const correct = nextJudgeResult.passed;
+          setIsCorrect(correct);
+          if (correct) {
+            onProblemSolved(selectedProblem.id);
+          }
+        } else {
+          setIsCorrect(null);
         }
       } else {
+        setJudgeResult(null);
         setIsCorrect(null);
       }
     } catch (e) {
+      setJudgeResult(null);
       setError(e instanceof Error ? e.message : '実行中にエラーが発生しました');
     } finally {
       setIsRunning(false);
@@ -89,6 +100,7 @@ export function EditorPage({
           error={error}
           isCorrect={isCorrect}
           isRunning={isRunning}
+          judgeResult={judgeResult}
         />
       </div>
     </div>

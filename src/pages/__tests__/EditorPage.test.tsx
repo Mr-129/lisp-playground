@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { useState } from 'react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { EditorPage } from '../EditorPage';
 import { Problem } from '../../types';
@@ -32,6 +33,7 @@ vi.mock('../../editor/lisp-language', () => ({
 
 const mockProblem: Problem = {
   id: 'test-01',
+  order: 1,
   title: 'テスト問題',
   category: 'テスト',
   difficulty: 'beginner',
@@ -39,6 +41,8 @@ const mockProblem: Problem = {
   initialCode: '(+ 1 2)',
   expectedOutput: '3\n',
   expectedReturnValue: '3',
+  estimatedMinutes: 5,
+  learningGoals: ['editor-goal'],
   solution: '(print (+ 1 2))',
 };
 
@@ -54,6 +58,29 @@ const returnValueOnlyProblem: Problem = {
   expectedOutput: undefined,
 };
 
+const judgeProblem: Problem = {
+  ...mockProblem,
+  id: 'judge-01',
+  expectedOutput: undefined,
+  expectedReturnValue: undefined,
+  initialCode: '(defun add (a b) (+ a b))',
+  judge: {
+    kind: 'function',
+    functionName: 'add',
+    cases: [
+      {
+        id: 'case-1',
+        label: '1+2',
+        visibility: 'visible',
+        run: { code: '(print (add 1 2))' },
+        expect: {
+          output: { value: '3\n', comparison: 'exact' },
+        },
+      },
+    ],
+  },
+};
+
 beforeEach(() => {
   executeLispAsyncMock.mockReset();
   executeLispAsyncMock.mockImplementation(async (code: string) => {
@@ -66,6 +93,10 @@ beforeEach(() => {
         return { output: '4\n', returnValue: '4', error: undefined };
       case '(undefined-func)':
         return { output: '', returnValue: '', error: 'Undefined function: undefined-func' };
+      case '(defun add (a b) (+ a b))':
+        return { output: '', returnValue: 'ADD', error: undefined };
+      case '(defun add (a b) (+ a b))\n(print (add 1 2))':
+        return { output: '3\n', returnValue: '3', error: undefined };
       default:
         return { output: '', returnValue: '', error: undefined };
     }
@@ -96,6 +127,52 @@ function renderEditorPage(props: Partial<Parameters<typeof EditorPage>[0]> = {})
       </Routes>
     </MemoryRouter>
   ), props: defaultProps };
+}
+
+function renderEditorPageWithState(props: Partial<Parameters<typeof EditorPage>[0]> = {}) {
+  const defaultProps = {
+    code: '(+ 1 2)',
+    selectedProblem: null,
+    onProblemSolved: vi.fn(),
+    ...props,
+  };
+
+  function StatefulEditorPage() {
+    const [code, setCode] = useState(defaultProps.code);
+    const [output, setOutput] = useState('');
+    const [returnValue, setReturnValue] = useState('');
+    const [error, setError] = useState<string | undefined>();
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+
+    return (
+      <MemoryRouter initialEntries={['/editor']}>
+        <Routes>
+          <Route
+            path="/editor"
+            element={(
+              <EditorPage
+                code={code}
+                setCode={setCode}
+                selectedProblem={defaultProps.selectedProblem}
+                onProblemSolved={defaultProps.onProblemSolved}
+                output={output}
+                setOutput={setOutput}
+                returnValue={returnValue}
+                setReturnValue={setReturnValue}
+                error={error}
+                setError={setError}
+                isCorrect={isCorrect}
+                setIsCorrect={setIsCorrect}
+              />
+            )}
+          />
+          <Route path="/problems" element={<div>problems-page</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+  }
+
+  return { ...render(<StatefulEditorPage />), props: defaultProps };
 }
 
 describe('EditorPage', () => {
@@ -212,6 +289,44 @@ describe('EditorPage', () => {
       expect(setIsCorrect).toHaveBeenCalledWith(true);
     });
     expect(onProblemSolved).toHaveBeenCalledWith('test-return-only');
+  });
+
+  it('judge 指定のある問題を judge レイヤー経由で採点する', async () => {
+    const setIsCorrect = vi.fn();
+    const onProblemSolved = vi.fn();
+
+    renderEditorPage({
+      code: judgeProblem.initialCode,
+      selectedProblem: judgeProblem,
+      onProblemSolved,
+      setOutput: vi.fn(),
+      setReturnValue: vi.fn(),
+      setError: vi.fn(),
+      setIsCorrect,
+    });
+
+    fireEvent.click(screen.getByLabelText('コードを実行'));
+
+    await waitFor(() => {
+      expect(setIsCorrect).toHaveBeenCalledWith(true);
+    });
+    expect(onProblemSolved).toHaveBeenCalledWith('judge-01');
+  });
+
+  it('judge のケース概要を OutputPanel に表示する', async () => {
+    renderEditorPageWithState({
+      code: judgeProblem.initialCode,
+      selectedProblem: judgeProblem,
+    });
+
+    fireEvent.click(screen.getByLabelText('コードを実行'));
+
+    await waitFor(() => {
+      expect(screen.getByText('1+2')).toBeInTheDocument();
+    });
+    const summary = screen.getByLabelText('採点サマリー');
+    expect(within(summary).getByText('公開ケース')).toBeInTheDocument();
+    expect(within(summary).getByText(/1\s*\/\s*1/)).toBeInTheDocument();
   });
 
   it('不正解の場合 false を設定する', async () => {

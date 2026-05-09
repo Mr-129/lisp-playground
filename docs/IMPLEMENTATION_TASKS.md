@@ -2,7 +2,7 @@
 
 **作成日**: 2026年4月21日  
 **位置づけ**: 内部向け実装タスク一覧  
-**関連文書**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md)
+**関連文書**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md), [PROBLEM_ROADMAP_JP.md](./PROBLEM_ROADMAP_JP.md)
 
 ---
 
@@ -26,7 +26,7 @@
 
 ## 2. 推奨実行順
 
-最初の 10 タスクは、次の順番で進める。
+最初の 11 タスクは、次の順番で進める。
 
 | 順番 | ID | タスク | 理由 |
 |---|---|---|---|
@@ -36,10 +36,11 @@
 | 4 | T-004 | 対応機能・未対応機能の明文化 | 期待値コントロールを行う |
 | 5 | T-101 | 解答済み問題の保存 | 再訪理由を作る最小機能 |
 | 6 | T-102 | 学習進捗 UI | 進捗が見える状態にする |
-| 7 | T-103 | 最近見た問題・ブックマーク | 継続利用を増やす |
-| 8 | T-104 | 問題とガイドの検索 | 辞典としての価値を上げる |
-| 9 | T-105 | 学習パスの導入 | 初学者の迷いを減らす |
-| 10 | T-201 | 問題データの商品属性追加 | 有料導線の前提を整える |
+| 7 | T-102A | 採点モデル設計 | 問題拡張前に判定基盤を固める |
+| 8 | T-103 | 最近見た問題・ブックマーク | 継続利用を増やす |
+| 9 | T-104 | 問題とガイドの検索 | 辞典としての価値を上げる |
+| 10 | T-105 | 学習パスの導入 | 初学者の迷いを減らす |
+| 11 | T-201 | 問題データの商品属性追加 | 有料導線の前提を整える |
 
 ---
 
@@ -191,7 +192,7 @@
 
 ### T-102 学習進捗 UI
 
-- **ステータス**: `todo`
+- **ステータス**: `done`
 - **目的**: どこまで進んだかを一覧で見えるようにする
 - **対象ファイル**:
   - [src/components/ProblemList.tsx](../src/components/ProblemList.tsx)
@@ -206,8 +207,45 @@
   - 問題一覧上で完了状態が分かる
   - 進捗数値が実データと一致する
 
-### T-103 最近見た問題とブックマーク
+- **実施メモ**:
+  - `src/pages/ProblemsPage.tsx` に全体進捗ダッシュボード、次のおすすめ問題、カテゴリ別完了数を追加済み
+  - `src/components/ProblemList.tsx` と `src/components/ProblemView.tsx` で solved 表示、問題順、学習目標、想定学習時間を表示するよう更新済み
+  - `src/App.tsx` から solved state を `ProblemsPage` / `LearnPage` へ受け渡し、`npm test` 545 件通過と Node 22 での build 成功を確認済み
 
+### T-102A 採点モデル設計
+
+- **ステータス**: `done`
+- **目的**: 問題拡張前に、採点方式を将来拡張しやすい形で整理する
+- **対象ファイル**:
+  - [src/types/index.ts](../src/types/index.ts)
+  - [src/pages/EditorPage.tsx](../src/pages/EditorPage.tsx)
+  - [src/components/OutputPanel.tsx](../src/components/OutputPanel.tsx)
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - 新規 judge レイヤー
+- **依存関係**: T-102
+- **実装内容**:
+  - 現行の `expectedOutput` / `expectedReturnValue` 比較の制約を整理する
+  - `program` / `function` judge を軸にした採点モデルを定義する
+  - visible / hidden test、互換レイヤー、段階移行方針を決める
+- **完了条件**:
+  - 今後の問題拡張で採用する採点モデルが文書化されている
+  - 既存 51 問を壊さない移行方針が明文化されている
+
+- **実施メモ**:
+  - [PROBLEM_JUDGING_MODEL.md](./PROBLEM_JUDGING_MODEL.md) を追加し、judge 設定ベースへの移行方針を整理済み
+  - 初期採用は `program` judge と `function` judge の 2 種類に限定し、互換レイヤー経由で既存 51 問を維持する方針を確定
+  - `EditorPage` 直結の採点ロジックを将来的に `src/judge/` へ切り出す設計とした
+  - `src/judge/` に `types.ts`, `compare.ts`, `legacy.ts`, `runJudge.ts` の初期実装を追加し、`EditorPage` から legacy 互換 judge を呼び出す基盤まで実装済み
+  - `src/judge/__tests__/runJudge.test.ts` と `src/pages/__tests__/EditorPage.test.tsx` で judge 基盤と既存判定互換を確認済み
+  - **2026-05-09 完了: 全 51 問の Legacy → Explicit judge 移行**
+    - `src/data/problems.ts` の全問題から `expectedOutput` / `expectedReturnValue` を削除
+    - 各問題に `judge.kind: 'program'`、`visible` ケース 1 件 + `hidden` ケース 1 件、`run.code: ''`、`expect.output.comparison: 'exact'` の構成を追加
+    - 移行バッチ: basic 系 → binding 系 → cond 系 → loop 系 → list 系 → higher 系 → recursion 系 → closure 系 → scope/type/challenge 系 → string/math 系
+    - `src/data/problems.ts` に `expectedOutput` / `expectedReturnValue` の残存が **0 件** であることを確認済み
+    - `npm test -- --run src/data/__tests__/problems.test.ts` で 58/58 passed（全テスト通過）
+    - 型エラー: なし
+
+### T-103 最近見た問題とブックマーク
 - **ステータス**: `todo`
 - **目的**: 中断と再開をしやすくする
 - **対象ファイル**:
@@ -215,7 +253,7 @@
   - [src/App.tsx](../src/App.tsx)
   - [src/components/ProblemList.tsx](../src/components/ProblemList.tsx)
   - [src/components/ProblemView.tsx](../src/components/ProblemView.tsx)
-- **依存関係**: T-101
+- **依存関係**: T-101, T-102A
 - **実装内容**:
   - recently viewed の保存
   - bookmark の保存
@@ -291,7 +329,7 @@
 - **依存関係**: T-105
 - **実装内容**:
   - `tier`, `tags`, `courseId`, `pathOrder` などの属性を追加する
-  - 既存 38 問に仮割当てを行う
+  - 既存 51 問に仮割当てを行う
 - **完了条件**:
   - 全問題に商品設計用のメタデータが付与される
   - データ整合性テストが追加される
@@ -480,11 +518,77 @@
 
 ## 9. 次に実行するべきタスク
 
-最初の実装対象は **T-102 学習進捗 UI** とする。
+次の実装対象は **T-103 最近見た問題とブックマーク** とする。  
+前回更新: 2026-05-09
 
 理由は次の通り。
 
-1. T-101 が完了し、保存した solved 状態を見える化する価値が次に大きい
-2. T-103 以降のブックマークや学習パスにも流用できる UI 土台になる
-3. 学習者にとって完了感が出て、継続利用の理由が明確になる
-4. 実装済みの localStorage 基盤をそのまま活用できる
+1. T-101、T-102、T-102A が揃い、継続利用機能へ進む前提が整った
+2. ブックマークと最近見た問題が入ると、問題拡張前でも継続利用価値を上げやすい
+3. T-104 の検索や T-105 の学習パス導入前に、学習再開の基本導線を固められる
+4. 既存の localStorage 基盤をそのまま再利用でき、実装範囲も比較的閉じている
+
+---
+
+## 10. 全体進捗サマリー
+
+最終更新: 2026-05-09
+
+| Phase | タスク数 | 完了 | 進捗 |
+|---|---|---|---|
+| Phase 0: 信頼性・立ち位置 | 5 (T-001〜T-005) | 5 | 100% |
+| Phase 1: 継続利用基盤 | 7 (T-101〜T-106, T-102A) | 4 | 57% |
+| Phase 1.5: 商品設計前提 | 3 (T-201〜T-203) | 0 | 0% |
+| Phase 2: 計測・導線整備 | 4 (T-301〜T-304) | 0 | 0% |
+| Phase 3: 初回サブスク実験 | 4 (T-401〜T-404) | 0 (blocked) | 0% |
+| **合計** | **23** | **9** | **39%** |
+
+### 完了済みタスク一覧
+
+| ID | タスク名 | 完了日 |
+|---|---|---|
+| T-001 | `#'` reader macro 対応 | 2026-04 |
+| T-002 | 問題切替時の ProblemView 状態リーク修正 | 2026-04 |
+| T-003 | Windows 日本語パス下の build 安定化確認 | 2026-04 |
+| T-004 | 対応機能・未対応機能の明文化 | 2026-04 |
+| T-005 | エラーメッセージ改善の下調べ | 2026-04 |
+| T-101 | 解答済み問題の保存 | 2026-04 |
+| T-102 | 学習進捗 UI | 2026-04 |
+| T-102A | 採点モデル設計 + 全 51 問 Explicit judge 移行 | 2026-05-09 |
+
+### 未着手タスク（実施推奨順）
+
+| 順番 | ID | タスク名 | 依存 |
+|---|---|---|---|
+| 1 | T-103 | 最近見た問題とブックマーク | T-101, T-102A |
+| 2 | T-106 | REPL 履歴の永続化 | なし |
+| 3 | T-104 | 問題とガイドの検索 | なし |
+| 4 | T-105 | 学習パスの導入 | T-101, T-102 |
+| 5 | T-201 | 問題データに商品属性を追加 | T-105 |
+| 6 | T-202 | コース単位の表示設計 | T-201 |
+| 7 | T-203 | ロック済みコンテンツ UI の土台 | T-201 |
+| 8 | T-301 | イベント計測の抽象化 | T-101, T-104 |
+| 9 | T-302 | CTA と価格導線の追加 | T-301 |
+| 10 | T-303 | 価格ページの静的実装 | T-302 |
+| 11 | T-304 | メール獲得導線 | T-303 |
+| — | T-401〜T-404 | 認証・課金・有料コンテンツ | T-303, T-304（blocked） |
+
+### 採点モデル移行の完了状況（T-102A サブ項目）
+
+全 51 問が Explicit judge 形式へ移行済み。`expectedOutput` / `expectedReturnValue` の残存は 0 件。
+
+| カテゴリ | 問題数 | 移行完了 |
+|---|---|---|
+| 基本構文 | 7 | ✅ |
+| 条件分岐 | 4 | ✅ |
+| 数値計算 | 3 | ✅ |
+| 文字列操作 | 4 | ✅ |
+| リスト操作 | 7 | ✅ |
+| ループ | 4 | ✅ |
+| 高階関数 | 8 | ✅ |
+| 再帰 | 5 | ✅ |
+| クロージャ | 3 | ✅ |
+| スコープ | 2 | ✅ |
+| 型判定 | 1 | ✅ |
+| 総合問題 | 3 | ✅ |
+| **合計** | **51** | **✅ 全件** |

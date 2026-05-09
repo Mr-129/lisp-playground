@@ -7,6 +7,7 @@ import { Problem } from '../types';
 
 interface LearnPageProps {
   selectedProblem: Problem | null;
+  solvedProblemIds: string[];
   onSelectProblem: (problem: Problem) => void;
   onShowSolution: () => void;
   onNavigateToEditor: () => void;
@@ -15,6 +16,7 @@ interface LearnPageProps {
 
 export function LearnPage({
   selectedProblem,
+  solvedProblemIds,
   onSelectProblem,
   onShowSolution,
   onNavigateToEditor,
@@ -62,6 +64,7 @@ export function LearnPage({
             </button>
             <ProblemList
               selectedId={selectedProblem?.id ?? null}
+              solvedProblemIds={solvedProblemIds}
               onSelect={handleSelectProblem}
             />
           </>
@@ -75,6 +78,7 @@ export function LearnPage({
             <ProblemView
               key={selectedProblem.id}
               problem={selectedProblem}
+              isSolved={solvedProblemIds.includes(selectedProblem.id)}
               onShowSolution={onShowSolution}
             />
             <div className="learn-actions">

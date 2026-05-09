@@ -51,7 +51,7 @@ describe('App integration', () => {
 
     render(<App />);
 
-    const selectedCardTitle = await screen.findByRole('heading', { level: 4, name: '変数の定義' });
+    const selectedCardTitle = await screen.findByRole('heading', { level: 4, name: /変数の定義/ });
     const selectedCard = selectedCardTitle.closest('article');
 
     expect(selectedCard).toHaveClass('selected');
@@ -68,7 +68,7 @@ describe('App integration', () => {
     });
 
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
-    expect(screen.getAllByText('初めてのS式').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
   });
 
   it('保存済みの問題IDがある状態で LearnPage を開くと問題詳細を直接表示する', async () => {
@@ -78,7 +78,7 @@ describe('App integration', () => {
     render(<App />);
 
     expect(await screen.findByText('💡 ヒントを表示')).toBeInTheDocument();
-    expect(screen.getAllByText('初めてのS式').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
   });
 

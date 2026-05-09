@@ -3,18 +3,39 @@ import { useState } from 'react';
 
 interface ProblemViewProps {
   problem: Problem;
+  isSolved?: boolean;
   onShowSolution: () => void;
 }
 
-export function ProblemView({ problem, onShowSolution }: ProblemViewProps) {
+const DIFFICULTY_LABEL: Record<Problem['difficulty'], string> = {
+  beginner: '初級',
+  intermediate: '中級',
+  advanced: '上級',
+};
+
+export function ProblemView({ problem, isSolved = false, onShowSolution }: ProblemViewProps) {
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
 
   return (
     <div className="problem-view">
       <div className="problem-header">
+        <div className="problem-meta-row">
+          <span className="problem-meta-chip">No. {problem.order}</span>
+          <span className="problem-meta-chip">{problem.category}</span>
+          <span className="problem-meta-chip">{DIFFICULTY_LABEL[problem.difficulty]}</span>
+          <span className="problem-meta-chip">{problem.estimatedMinutes}分</span>
+          {isSolved && <span className="problem-meta-chip solved">クリア済み</span>}
+        </div>
         <h2>{problem.title}</h2>
       </div>
+      {problem.learningGoals.length > 0 && (
+        <div className="problem-goals">
+          {problem.learningGoals.map((goal) => (
+            <span key={goal} className="problem-goal-chip">{goal}</span>
+          ))}
+        </div>
+      )}
       <div className="problem-description">
         <SimpleMarkdown text={problem.description} />
       </div>

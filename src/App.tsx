@@ -133,6 +133,7 @@ function App() {
               element={
                 <ProblemsPage
                   selectedProblemId={selectedProblem?.id ?? null}
+                  solvedProblemIds={solvedProblemIds}
                   onSelectProblem={handleSelectProblem}
                 />
               }
@@ -142,6 +143,7 @@ function App() {
               element={
                 <LearnPage
                   selectedProblem={selectedProblem}
+                  solvedProblemIds={solvedProblemIds}
                   onSelectProblem={handleSelectProblem}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}
@@ -153,6 +155,7 @@ function App() {
               element={
                 <LearnPage
                   selectedProblem={selectedProblem}
+                  solvedProblemIds={solvedProblemIds}
                   onSelectProblem={handleSelectProblem}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}

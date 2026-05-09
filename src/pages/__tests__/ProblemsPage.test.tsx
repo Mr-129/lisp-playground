@@ -12,7 +12,7 @@ function renderProblemsPage(selectedProblemId: string | null = null) {
       <Routes>
         <Route
           path="/problems"
-          element={<ProblemsPage selectedProblemId={selectedProblemId} onSelectProblem={onSelectProblem} />}
+          element={<ProblemsPage selectedProblemId={selectedProblemId} solvedProblemIds={[]} onSelectProblem={onSelectProblem} />}
         />
         <Route path="/learn" element={<div>learn-page</div>} />
         <Route path="/guide" element={<div>guide-page</div>} />
@@ -42,7 +42,7 @@ describe('ProblemsPage', () => {
   it('選択中の問題に現在の問題ラベルと selected クラスを付ける', () => {
     renderProblemsPage('basic-02');
 
-    const selectedCard = screen.getByRole('heading', { level: 4, name: '変数の定義' }).closest('article');
+    const selectedCard = screen.getByRole('heading', { level: 4, name: /変数の定義/ }).closest('article');
 
     expect(selectedCard).toHaveClass('selected');
     expect(within(selectedCard as HTMLElement).getByText('現在の問題')).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe('ProblemsPage', () => {
   it('問題カードに説明要約を表示しコードブロックは含めない', () => {
     renderProblemsPage();
 
-    const problemCard = screen.getByRole('heading', { level: 4, name: '初めてのS式' }).closest('article');
+    const problemCard = screen.getByRole('heading', { level: 4, name: /初めてのS式/ }).closest('article');
 
     expect(problemCard).toHaveTextContent('S式（S-expression）');
     expect(problemCard).not.toHaveTextContent('(+ 1 2)');
