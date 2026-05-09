@@ -2,7 +2,7 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年5月8日 — 学習進捗 UI 実装、問題数 51 件、テスト 545 件、関連ドキュメント同期を反映
+**最終更新**: 2026年5月9日 — Node 24 build 調査、Playwright E2E スモークテスト追加、関連ドキュメント同期を反映
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開後確認ログ**: [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) — GitHub Pages 公開後の確認結果
@@ -32,7 +32,7 @@
 | 観点 | 評価 | 備考 |
 |------|------|------|
 | 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。REPL・永続化・進捗 UI 実装済、問題 51 問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest テスト 545 件通過済 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 545 件 + Playwright 3 件の回帰確認 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -300,7 +300,7 @@
 | 15 | ダーク/ライトテーマ切り替え | 中 | 中 |
 | 16 | 問題の JSON/YAML 外部ファイル化 | 中 | 中 |
 | 17 | ~~Vitest によるインタプリタ単体テスト + UIテスト~~ | 中 | 大 | ✅ 完了 |
-| 18 | Playwright E2E テスト | 低 | 大 |
+| 18 | ~~Playwright E2E テスト~~ | 低 | 大 | ✅ 完了 |
 | 19 | PWA 対応（オフライン利用） | 低 | 中 |
 | 20 | ステップ実行デバッガ | 低 | 大 |
 | 21 | コード共有機能（URL エンコード） | 低 | 中 |
@@ -375,7 +375,7 @@
 1. `React.StrictMode` が有効（開発時の二重レンダリングに注意）
 2. `.gitignore` が未作成 → `node_modules/`, `dist/` を除外すること
 3. `package-lock.json` をバージョン管理に含めること
-4. Windows 日本語パス配下では `npm run build` と `npx vite build --debug` の双方が異常終了することを確認した。ローカル確認は `npx tsc -b` までに留め、配布用 build は GitHub Actions (`ubuntu-latest`) を正経路とする
+4. build の安定運用対象は Node 20 / 22 とする。2026-05-09 時点の再調査では、Node 24.13.0 で一度だけ `0xC0000409` 相当の異常終了が出たが、その後の Node 24 での `npm run build` 5回、`npx vite build` 5回はすべて成功し、恒常再現しなかった。現時点では unsupported runtime 上の間欠的事象として扱い、ローカル build 検証と配布用 build は引き続き Node 20 / 22 または GitHub Actions (`ubuntu-latest`) を正経路とする。Node 24 対応の追加調査は再発時にのみ再開する
 
 ### 2026年4月29日の公開後確認
 
@@ -396,3 +396,5 @@
 *2026-04-20: react-router-dom によるページ分割（LearnPage / EditorPage）、LispGuide コンポーネント追加、UIコンポーネントテスト追加。localStorage永続化、Lisp構文ハイライト、Web Worker非同期実行を実装（合計 306 テスト）。*
 *2026-04-29: GitHub Pages 公開後確認ログを追加し、主要導線のスモークテスト、localStorage 復元、38 問総当たり、モバイル表示、home / 問題一覧導線、問題一覧ページスタイル復旧確認結果を反映。*
 *2026-05-08: 学習進捗 UI、問題 51 問化、テスト 545 件、Node 22 での production build 成功を反映。*
+*2026-05-09: Playwright を導入し、home / guide / problems / editor / repl の主要導線と REPL 実行フローに対するローカル E2E スモークテスト 3 件を追加。*
+*2026-05-09: Node 24 build 異常終了の再調査結果を反映。Node 20 / 22 を安定運用対象とし、Node 24 は再発時のみ追加調査する方針を追記。*

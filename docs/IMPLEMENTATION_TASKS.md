@@ -106,9 +106,11 @@
   - 失敗が残る場合も、回避方法が文書化されている
 
 - **実施メモ**:
-  - Windows 日本語パス配下の PowerShell で `npm run build` が `dist/` 生成後に exit code 1 で終了することを再現済み
-  - `npx tsc -b` は成功する一方、`npx vite build --debug` も同環境で異常終了することを再確認済み
+  - 2026-04-30: Node 20 / 22 では同一ワークスペース・同一日本語パス配下でも `vite build` 成功を確認済み。安定運用対象は Node 20 / 22 とする
+  - 2026-05-09: Node 24.13.0 で一度だけ `npm run build` が Windows 異常終了コード `0xC0000409` 相当で終了したが、その後の再検証では `npm run build` 5回、`npx vite build` 5回とも成功し、恒常再現しなかった
+  - 2026-05-09: `npx tsc -b` は一貫して成功し、Windows Application log に `node.exe` の crash 記録や dump も見当たらなかったため、現時点では unsupported runtime 上の間欠的な環境要因として扱う
   - README / REVIEW に「ローカル Windows 日本語パスでは build が不安定であり、配布用 build は GitHub Actions を正経路とする」旨を記載済み
+  - Node 24 対応の恒久修正は現時点では着手しない。再発時に dump / event log を追加取得して調査を再開する
   - 2026-04-29: `main` への push 後に GitHub Actions `Build & Deploy` の success を確認し、`https://mr-129.github.io/lisp-playground/` で公開を確認済み
   - 2026-04-29: 公開 URL 上で学習ページ → エディタ → REPL の主要導線スモークテストを実施し、結果を [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) に記録済み
   - 2026-04-29: モバイルレイアウト修正の再デプロイ後、公開 URL 上で 390px / 320px 幅の学習ページ、エディタ、REPL を確認し、横方向オーバーフローが解消されたことを確認済み
@@ -506,7 +508,6 @@
 次は、現時点では backlog に置くが実行順の後ろに回す。
 
 - ダーク / ライトテーマ
-- Playwright E2E
 - PWA 対応
 - ステップ実行デバッガ
 - コード共有 URL

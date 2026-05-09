@@ -8,3 +8,5 @@ coverage/
 build.log
 out.txt
 err.txt
+playwright-report/
+test-results/

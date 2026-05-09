@@ -194,12 +194,17 @@ npm run test:watch
 
 # V8 coverage レポートを再計測
 npm run test:coverage
+
+# Playwright による主要導線の E2E スモークテスト
+npm run test:e2e
 ```
 
 Vitest によるテストスイートが用意されています。
 
 `npm run test:coverage` を実行すると、HTML レポートが `coverage/` に出力されます。
 2026-04-30 時点の coverage ベースラインは All files で Stmts 92.73 / Branch 83.00 / Funcs 97.66 / Lines 99.03 です。
+
+`npm run test:e2e` は Playwright の Chromium を使って、home / guide / problems / editor / repl の主要導線と REPL の基本実行フローを headless で確認します。
 
 #### インタプリタテスト (`src/interpreter/__tests__/`)
 
