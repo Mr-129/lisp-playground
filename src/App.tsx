@@ -93,6 +93,8 @@ function App() {
   const [bookmarkedProblemIds, setBookmarkedProblemIds] = useState<string[]>(
     getInitialBookmarkedProblemIds
   );
+  const [learningSearchQuery, setLearningSearchQuery] = useState('');
+  const [selectedGuideSectionId, setSelectedGuideSectionId] = useState<string | null>(null);
 
   // Persist code to localStorage on change
   useEffect(() => {
@@ -133,6 +135,7 @@ function App() {
 
   const handleSelectProblem = useCallback((problem: Problem) => {
     setSelectedProblem(problem);
+    setSelectedGuideSectionId(null);
     setCode(problem.initialCode);
     setOutput('');
     setReturnValue('');
@@ -211,7 +214,11 @@ function App() {
                   solvedProblemIds={solvedProblemIds}
                   recentProblemIds={recentlyViewedProblemIds}
                   bookmarkedProblemIds={bookmarkedProblemIds}
+                  searchQuery={learningSearchQuery}
+                  selectedGuideSectionId={selectedGuideSectionId}
                   onSelectProblem={handleSelectProblem}
+                  onSearchQueryChange={setLearningSearchQuery}
+                  onSelectGuideSection={setSelectedGuideSectionId}
                   onToggleBookmark={handleToggleBookmark}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}
@@ -226,7 +233,11 @@ function App() {
                   solvedProblemIds={solvedProblemIds}
                   recentProblemIds={recentlyViewedProblemIds}
                   bookmarkedProblemIds={bookmarkedProblemIds}
+                  searchQuery={learningSearchQuery}
+                  selectedGuideSectionId={selectedGuideSectionId}
                   onSelectProblem={handleSelectProblem}
+                  onSearchQueryChange={setLearningSearchQuery}
+                  onSelectGuideSection={setSelectedGuideSectionId}
                   onToggleBookmark={handleToggleBookmark}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}

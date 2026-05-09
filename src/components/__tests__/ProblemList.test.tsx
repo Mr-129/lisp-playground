@@ -123,4 +123,32 @@ describe('ProblemList', () => {
 
     expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ id: 'cat2-01', title: '問題C' }));
   });
+
+  it('searchQuery で一致する問題だけ表示する', () => {
+    render(
+      <ProblemList
+        selectedId={null}
+        solvedProblemIds={[]}
+        searchQuery="カテゴリ2"
+        onSelect={() => {}}
+      />
+    );
+
+    expect(screen.getByText(/問題C/)).toBeInTheDocument();
+    expect(screen.queryByText(/問題A/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/問題B/)).not.toBeInTheDocument();
+  });
+
+  it('searchQuery に一致しない場合は空メッセージを表示する', () => {
+    render(
+      <ProblemList
+        selectedId={null}
+        solvedProblemIds={[]}
+        searchQuery="存在しない語句"
+        onSelect={() => {}}
+      />
+    );
+
+    expect(screen.getByText('一致する問題はありません。')).toBeInTheDocument();
+  });
 });

@@ -6,6 +6,7 @@ interface ProblemListProps {
   solvedProblemIds: string[];
   recentProblemIds?: string[];
   bookmarkedProblemIds?: string[];
+  searchQuery?: string;
   onSelect: (problem: Problem) => void;
 }
 
@@ -24,6 +25,28 @@ const DIFFICULTY_COLOR: Record<string, string> = {
   advanced: '#f44336',
 };
 
+function normalizeSearchText(text: string): string {
+  return text.trim().toLocaleLowerCase();
+}
+
+function matchesProblemSearch(problem: Problem, normalizedSearchQuery: string): boolean {
+  if (!normalizedSearchQuery) {
+    return true;
+  }
+
+  const searchableText = [
+    problem.title,
+    problem.category,
+    DIFFICULTY_LABEL[problem.difficulty],
+    problem.description,
+    problem.learningGoals.join(' '),
+  ]
+    .join(' ')
+    .toLocaleLowerCase();
+
+  return searchableText.includes(normalizedSearchQuery);
+}
+
 function resolveProblems(problemIds: string[]): Problem[] {
   return problemIds
     .map((problemId) => PROBLEM_BY_ID.get(problemId))
@@ -35,13 +58,23 @@ export function ProblemList({
   solvedProblemIds,
   recentProblemIds = [],
   bookmarkedProblemIds = [],
+  searchQuery = '',
   onSelect,
 }: ProblemListProps) {
   const categories = getProblemsByCategory();
   const solvedSet = new Set(solvedProblemIds);
   const bookmarkedSet = new Set(bookmarkedProblemIds);
-  const recentlyViewedProblems = resolveProblems(recentProblemIds).slice(0, RECENT_PROBLEM_LIMIT);
-  const bookmarkedProblems = resolveProblems(bookmarkedProblemIds);
+  const normalizedSearchQuery = normalizeSearchText(searchQuery);
+  const filterProblem = (problem: Problem) => matchesProblemSearch(problem, normalizedSearchQuery);
+  const recentlyViewedProblems = resolveProblems(recentProblemIds)
+    .filter(filterProblem)
+    .slice(0, RECENT_PROBLEM_LIMIT);
+  const bookmarkedProblems = resolveProblems(bookmarkedProblemIds).filter(filterProblem);
+  const visibleCategories = Array.from(categories.entries())
+    .map(([category, categoryProblems]) => [category, categoryProblems.filter(filterProblem)] as const)
+    .filter(([, categoryProblems]) => categoryProblems.length > 0);
+  const hasVisibleProblems =
+    visibleCategories.length > 0 || bookmarkedProblems.length > 0 || recentlyViewedProblems.length > 0;
 
   const renderProblemButton = (problem: Problem, compact = false) => (
     <button
@@ -97,7 +130,10 @@ export function ProblemList({
             )}
           </div>
         )}
-        {Array.from(categories.entries()).map(([category, probs]) => (
+        {!hasVisibleProblems && normalizedSearchQuery && (
+          <p className="problem-search-empty">一致する問題はありません。</p>
+        )}
+        {visibleCategories.map(([category, probs]) => (
           <div key={category} className="problem-category">
             <h3 className="category-title">
               <span>{category}</span>

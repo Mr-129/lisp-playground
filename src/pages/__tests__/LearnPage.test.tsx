@@ -47,7 +47,11 @@ function renderLearnPage(
   const defaultProps = {
     selectedProblem: null,
     solvedProblemIds: [],
+    searchQuery: '',
+    selectedGuideSectionId: null,
     onSelectProblem: vi.fn(),
+    onSearchQueryChange: vi.fn(),
+    onSelectGuideSection: vi.fn(),
     onShowSolution: vi.fn(),
     onNavigateToEditor: vi.fn(),
     ...props,
@@ -71,15 +75,21 @@ function renderStatefulLearnPage(initialPath = '/guide') {
 
   function LearnPageHarness({ initialView = 'problem' }: { initialView?: 'problem' | 'guide' }) {
     const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedGuideSectionId, setSelectedGuideSectionId] = useState<string | null>(null);
 
     return (
       <LearnPage
         selectedProblem={selectedProblem}
         solvedProblemIds={[]}
+        searchQuery={searchQuery}
+        selectedGuideSectionId={selectedGuideSectionId}
         onSelectProblem={(problem) => {
           onSelectProblem(problem);
           setSelectedProblem(problem);
         }}
+        onSearchQueryChange={setSearchQuery}
+        onSelectGuideSection={setSelectedGuideSectionId}
         onShowSolution={vi.fn()}
         onNavigateToEditor={onNavigateToEditor}
         initialView={initialView}
@@ -121,6 +131,11 @@ describe('LearnPage', () => {
   it('サイドバーに構文ガイドボタンがある', () => {
     renderLearnPage();
     expect(screen.getByLabelText('構文ガイドを表示')).toBeInTheDocument();
+  });
+
+  it('検索入力を表示する', () => {
+    renderLearnPage();
+    expect(screen.getByLabelText('問題とガイドを検索')).toBeInTheDocument();
   });
 
   it('構文ガイドボタンをクリックするとガイドが表示される', () => {
@@ -238,5 +253,31 @@ describe('LearnPage', () => {
 
     expect(screen.getByText('editor-page')).toBeInTheDocument();
     expect(screen.getByTestId('location-path')).toHaveTextContent('/editor');
+  });
+
+  it('検索入力で問題一覧を絞り込める', () => {
+    const onSearchQueryChange = vi.fn();
+
+    renderLearnPage({ onSearchQueryChange });
+
+    fireEvent.change(screen.getByLabelText('問題とガイドを検索'), {
+      target: { value: '初めてのS式' },
+    });
+
+    expect(onSearchQueryChange).toHaveBeenCalledWith('初めてのS式');
+  });
+
+  it('ガイド検索結果から guide へ遷移し、検索語を維持したまま対象セクションを表示する', () => {
+    renderStatefulLearnPage('/learn');
+
+    fireEvent.change(screen.getByLabelText('問題とガイドを検索'), {
+      target: { value: 'mapcar' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '高階関数' }));
+
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/guide');
+    expect(screen.getByLabelText('問題とガイドを検索')).toHaveValue('mapcar');
+    expect(screen.getByRole('heading', { name: '高階関数' })).toBeInTheDocument();
+    expect(screen.queryByText('Lispとは')).not.toBeInTheDocument();
   });
 });

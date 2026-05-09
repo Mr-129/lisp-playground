@@ -4,11 +4,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { LispGuide } from '../LispGuide';
 
-function renderWithRouter() {
+function renderWithRouter(props: Partial<Parameters<typeof LispGuide>[0]> = {}) {
   return render(
     <MemoryRouter initialEntries={['/guide']}>
       <Routes>
-        <Route path="/guide" element={<LispGuide />} />
+        <Route path="/guide" element={<LispGuide {...props} />} />
         <Route path="/problems" element={<div>problems-page</div>} />
       </Routes>
     </MemoryRouter>
@@ -97,5 +97,18 @@ describe('LispGuide', () => {
     renderWithRouter();
     fireEvent.click(screen.getByText('← 問題一覧に戻る'));
     expect(screen.getByText('problems-page')).toBeInTheDocument();
+  });
+
+  it('searchQuery で一致するガイドセクションだけ表示する', () => {
+    renderWithRouter({ searchQuery: 'mapcar' });
+
+    expect(screen.getByRole('heading', { name: '高階関数' })).toBeInTheDocument();
+    expect(screen.queryByText('Lispとは')).not.toBeInTheDocument();
+  });
+
+  it('一致しない検索語では空メッセージを表示する', () => {
+    renderWithRouter({ searchQuery: 'not-found-keyword' });
+
+    expect(screen.getByText(/一致するガイド項目はありません。/)).toBeInTheDocument();
   });
 });

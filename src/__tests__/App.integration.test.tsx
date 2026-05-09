@@ -102,4 +102,31 @@ describe('App integration', () => {
     expect(screen.getByTestId('editor-error')).toHaveTextContent('none');
     expect(screen.getByTestId('editor-is-correct')).toHaveTextContent('null');
   });
+
+  it('問題とガイドの検索語を Learn と Guide 間で維持する', async () => {
+    window.location.hash = '#/learn';
+
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText('問題とガイドを検索'), {
+      target: { value: 'mapcar' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '高階関数' }));
+
+    await waitFor(() => {
+      expect(window.location.hash).toBe('#/guide');
+    });
+
+    expect(screen.getByLabelText('問題とガイドを検索')).toHaveValue('mapcar');
+    expect(screen.getByRole('heading', { name: '高階関数' })).toBeInTheDocument();
+    expect(screen.queryByText('Lispとは')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('構文ガイドを表示'));
+
+    await waitFor(() => {
+      expect(window.location.hash).toBe('#/guide');
+    });
+
+    expect(screen.getByLabelText('問題とガイドを検索')).toHaveValue('mapcar');
+  });
 });

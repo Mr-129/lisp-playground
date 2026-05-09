@@ -1,15 +1,86 @@
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export function LispGuide() {
+export interface GuideSectionSummary {
+  id: string;
+  title: string;
+  keywords: string[];
+}
+
+const GUIDE_SECTIONS: GuideSectionSummary[] = [
+  { id: 'guide-intro', title: 'Lispとは', keywords: ['common lisp', 'john mccarthy', '同図像性', 'homoiconicity'] },
+  { id: 'guide-s-expr', title: 'S式（S-expression）', keywords: ['s式', 'atom', 'list', 'prefix notation', '前置記法'] },
+  { id: 'guide-types', title: '基本データ型', keywords: ['整数', '浮動小数点数', '文字列', 'シンボル', 'nil'] },
+  { id: 'guide-evaluation', title: '評価（Evaluation）とクォート', keywords: ['評価', 'quote', 'クォート', "'", 'quote'] },
+  { id: 'guide-variables', title: '変数の定義と束縛', keywords: ['defvar', 'defparameter', 'setq', 'let', 'let*', 'レキシカルスコープ'] },
+  { id: 'guide-defun', title: '関数の定義（defun）', keywords: ['defun', 'optional', '関数定義'] },
+  { id: 'guide-lambda', title: '無名関数（lambda）', keywords: ['lambda', 'funcall', 'apply', "#'", 'mapcar'] },
+  { id: 'guide-conditions', title: '条件分岐', keywords: ['if', 'cond', 'when', 'unless', 'and', 'or', 'not'] },
+  { id: 'guide-lists', title: 'リスト操作', keywords: ['car', 'cdr', 'cons', 'append', 'nth', 'member'] },
+  { id: 'guide-loops', title: '繰り返し（ループ）', keywords: ['dotimes', 'dolist', '再帰', 'factorial'] },
+  { id: 'guide-hof', title: '高階関数', keywords: ['mapcar', 'reduce', 'remove-if', 'funcall', 'apply'] },
+  { id: 'guide-closures', title: 'クロージャ', keywords: ['closure', 'make-adder', 'make-counter', 'lambda'] },
+  { id: 'guide-io', title: '入出力', keywords: ['print', 'princ', 'format', '~A', '~S', '~D'] },
+  { id: 'guide-predicates', title: '比較と述語関数', keywords: ['eq', 'eql', 'equal', 'numberp', 'stringp', 'oddp'] },
+  { id: 'guide-references', title: '📚 参考', keywords: ['hyperspec', 'practical common lisp', 'cltl2', 'reference'] },
+];
+
+function normalizeSearchText(text: string): string {
+  return text.trim().toLocaleLowerCase();
+}
+
+export function filterGuideSections(searchQuery: string): GuideSectionSummary[] {
+  const normalizedSearchQuery = normalizeSearchText(searchQuery);
+
+  if (!normalizedSearchQuery) {
+    return GUIDE_SECTIONS;
+  }
+
+  return GUIDE_SECTIONS.filter((section) => {
+    const searchableText = [section.title, ...section.keywords].join(' ').toLocaleLowerCase();
+    return searchableText.includes(normalizedSearchQuery);
+  });
+}
+
+interface LispGuideProps {
+  searchQuery?: string;
+  selectedSectionId?: string | null;
+}
+
+export function LispGuide({ searchQuery = '', selectedSectionId = null }: LispGuideProps) {
   const navigate = useNavigate();
+  const hasActiveSearch = searchQuery.trim().length > 0;
+  const filteredSections = useMemo(() => filterGuideSections(searchQuery), [searchQuery]);
+  const visibleSectionIds = useMemo(
+    () => new Set(filteredSections.map((section) => section.id)),
+    [filteredSections]
+  );
+
+  useEffect(() => {
+    if (!selectedSectionId) {
+      return;
+    }
+
+    document.getElementById(selectedSectionId)?.scrollIntoView?.({ block: 'start' });
+  }, [selectedSectionId]);
+
+  const shouldShowSection = (sectionId: string) => !hasActiveSearch || visibleSectionIds.has(sectionId);
 
   return (
     <div className="lisp-guide">
       <div className="guide-content">
         <h2 className="guide-main-title">📘 Common Lisp 基本構文ガイド</h2>
+        {hasActiveSearch && (
+          <div className="guide-search-summary" role="status">
+            {filteredSections.length > 0
+              ? `「${searchQuery}」に一致するガイド項目: ${filteredSections.length}件`
+              : `「${searchQuery}」に一致するガイド項目はありません。`}
+          </div>
+        )}
 
         {/* 1. Lispとは */}
-        <section className="guide-section">
+        {shouldShowSection('guide-intro') && (
+        <section id="guide-intro" className="guide-section">
           <h3>Lispとは</h3>
           <p>
             <strong>Lisp</strong>（LISt Processor）は、1958年に<strong>John McCarthy</strong>によって設計された、
@@ -22,9 +93,11 @@ export function LispGuide() {
             これを <strong>同図像性（homoiconicity）</strong>と呼び、マクロによるメタプログラミングを可能にします。
           </p>
         </section>
+        )}
 
         {/* 2. S式 */}
-        <section className="guide-section">
+        {shouldShowSection('guide-s-expr') && (
+        <section id="guide-s-expr" className="guide-section">
           <h3>S式（S-expression）</h3>
           <p>
             Lispのプログラムはすべて<strong>S式</strong>で構成されます。
@@ -49,9 +122,11 @@ foo         ; シンボルアトム
             演算子が常に先頭に来るため、引数の数に制限がなく <code>(+ 1 2 3 4 5)</code> も有効です。
           </div>
         </section>
+        )}
 
         {/* 3. データ型 */}
-        <section className="guide-section">
+        {shouldShowSection('guide-types') && (
+        <section id="guide-types" className="guide-section">
           <h3>基本データ型</h3>
           <table className="guide-table">
             <thead>
@@ -71,9 +146,11 @@ foo         ; シンボルアトム
             <code>nil</code> 以外のすべての値は真（truthy）です。<code>0</code> や <code>""</code> も真です。
           </div>
         </section>
+        )}
 
         {/* 4. 評価とクォート */}
-        <section className="guide-section">
+        {shouldShowSection('guide-evaluation') && (
+        <section id="guide-evaluation" className="guide-section">
           <h3>評価（Evaluation）とクォート</h3>
           <p>
             Lispの処理系は式を<strong>評価（evaluate）</strong>して値を返します。
@@ -93,9 +170,11 @@ foo         ; シンボルアトム
             リストリテラルを書くときに必須です。
           </p>
         </section>
+        )}
 
         {/* 5. 変数 */}
-        <section className="guide-section">
+        {shouldShowSection('guide-variables') && (
+        <section id="guide-variables" className="guide-section">
           <h3>変数の定義と束縛</h3>
           <h4>グローバル変数（defvar / defparameter）</h4>
           <pre className="guide-code">{`;; defvar: 未定義のときだけ値を設定
@@ -124,9 +203,11 @@ foo         ; シンボルアトム
             <code>let</code> で定義された変数はそのブロック内でのみ有効です（<strong>レキシカルスコープ</strong>）。
           </p>
         </section>
+        )}
 
         {/* 6. 関数定義 */}
-        <section className="guide-section">
+        {shouldShowSection('guide-defun') && (
+        <section id="guide-defun" className="guide-section">
           <h3>関数の定義（defun）</h3>
           <pre className="guide-code">{`;; 基本構文
 (defun 関数名 (引数リスト)
@@ -150,9 +231,11 @@ foo         ; シンボルアトム
 (hello)         ; => "Hello, World!"
 (hello "Lisp")  ; => "Hello, Lisp!"`}</pre>
         </section>
+  )}
 
         {/* 7. 無名関数 (lambda) */}
-        <section className="guide-section">
+  {shouldShowSection('guide-lambda') && (
+  <section id="guide-lambda" className="guide-section">
           <h3>無名関数（lambda）</h3>
           <pre className="guide-code">{`;; lambda で無名関数を作成
 (lambda (x) (* x x))
@@ -173,9 +256,11 @@ foo         ; シンボルアトム
             <code>(funcall #'+ 1 2 3)</code> → 6、<code>(apply #'+ '(1 2 3))</code> → 6
           </div>
         </section>
+        )}
 
         {/* 8. 条件分岐 */}
-        <section className="guide-section">
+        {shouldShowSection('guide-conditions') && (
+        <section id="guide-conditions" className="guide-section">
           <h3>条件分岐</h3>
 
           <h4>if式</h4>
@@ -222,9 +307,11 @@ foo         ; シンボルアトム
 (not nil)        ; => T
 (not 42)         ; => NIL`}</pre>
         </section>
+  )}
 
         {/* 9. リスト操作 */}
-        <section className="guide-section">
+  {shouldShowSection('guide-lists') && (
+  <section id="guide-lists" className="guide-section">
           <h3>リスト操作</h3>
           <p>
             Lispの名前は <strong>LISt Processor</strong> に由来します。
@@ -259,9 +346,11 @@ foo         ; シンボルアトム
             現代では <code>first</code> / <code>rest</code> というエイリアスも使えます。
           </div>
         </section>
+        )}
 
         {/* 10. ループ */}
-        <section className="guide-section">
+        {shouldShowSection('guide-loops') && (
+        <section id="guide-loops" className="guide-section">
           <h3>繰り返し（ループ）</h3>
 
           <h4>dotimes（回数指定ループ）</h4>
@@ -283,9 +372,11 @@ foo         ; シンボルアトム
 
 (factorial 5)   ; => 120`}</pre>
         </section>
+  )}
 
         {/* 11. 高階関数 */}
-        <section className="guide-section">
+  {shouldShowSection('guide-hof') && (
+  <section id="guide-hof" className="guide-section">
           <h3>高階関数</h3>
           <p>
             関数を引数として受け取ったり、関数を返したりする関数を<strong>高階関数</strong>と呼びます。
@@ -307,9 +398,11 @@ foo         ; シンボルアトム
 ;; apply: 引数をリストで渡す
 (apply #'+ '(1 2 3))                       ; => 6`}</pre>
         </section>
+  )}
 
         {/* 12. クロージャ */}
-        <section className="guide-section">
+  {shouldShowSection('guide-closures') && (
+  <section id="guide-closures" className="guide-section">
           <h3>クロージャ</h3>
           <p>
             クロージャは、関数とその定義時の環境（変数の束縛）を一緒に保持する仕組みです。
@@ -335,9 +428,11 @@ foo         ; シンボルアトム
 (funcall *c*)    ; => 2
 (funcall *c*)    ; => 3`}</pre>
         </section>
+  )}
 
         {/* 13. 出力 */}
-        <section className="guide-section">
+  {shouldShowSection('guide-io') && (
+  <section id="guide-io" className="guide-section">
           <h3>入出力</h3>
           <pre className="guide-code">{`;; print: 値を出力（改行あり、読み取り可能形式）
 (print "Hello")     ; "Hello" と出力
@@ -356,9 +451,11 @@ foo         ; シンボルアトム
 ;; ~%  改行
 ;; ~{~A ~}  リストの各要素をフォーマット`}</pre>
         </section>
+  )}
 
         {/* 14. 比較と述語 */}
-        <section className="guide-section">
+  {shouldShowSection('guide-predicates') && (
+  <section id="guide-predicates" className="guide-section">
           <h3>比較と述語関数</h3>
           <pre className="guide-code">{`;; 数値の比較
 (= 1 1)       ; => T
@@ -384,9 +481,11 @@ foo         ; シンボルアトム
 (eql 1 1)        ; => T  同一の型と値か
 (equal '(1) '(1)) ; => T 構造的に等しいか`}</pre>
         </section>
+  )}
 
         {/* 参照リンク */}
-        <section className="guide-section guide-references">
+  {shouldShowSection('guide-references') && (
+  <section id="guide-references" className="guide-section guide-references">
           <h3>📚 参考</h3>
           <ul className="reference-list">
             <li>
@@ -427,6 +526,7 @@ foo         ; シンボルアトム
             </li>
           </ul>
         </section>
+        )}
 
         <div className="guide-footer">
           <p>上記の構文を理解したら、問題を選択して実際にコードを書いてみましょう！</p>
