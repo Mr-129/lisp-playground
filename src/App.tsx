@@ -14,16 +14,44 @@ import {
   loadProblemId,
   saveSolvedProblemIds,
   loadSolvedProblemIds,
+  saveRecentlyViewedProblemIds,
+  loadRecentlyViewedProblemIds,
+  saveBookmarkedProblemIds,
+  loadBookmarkedProblemIds,
 } from './utils/storage';
 import { problems } from './data/problems';
 import './App.css';
 
 const VALID_PROBLEM_IDS = new Set(problems.map((problem) => problem.id));
+const PROBLEM_BY_ID = new Map(problems.map((problem) => [problem.id, problem]));
+
+function normalizeProblemIds(problemIds: string[]): string[] {
+  return Array.from(new Set(problemIds.filter((problemId) => VALID_PROBLEM_IDS.has(problemId))));
+}
+
+function prependProblemId(problemIds: string[], problemId: string): string[] {
+  return [problemId, ...problemIds.filter((id) => id !== problemId)];
+}
+
+function getInitialSelectedProblem(): Problem | null {
+  const savedId = loadProblemId();
+  if (!savedId) {
+    return null;
+  }
+
+  return PROBLEM_BY_ID.get(savedId) ?? null;
+}
 
 function getInitialSolvedProblemIds(): string[] {
-  return Array.from(
-    new Set(loadSolvedProblemIds().filter((problemId) => VALID_PROBLEM_IDS.has(problemId)))
-  );
+  return normalizeProblemIds(loadSolvedProblemIds());
+}
+
+function getInitialRecentlyViewedProblemIds(): string[] {
+  return normalizeProblemIds(loadRecentlyViewedProblemIds());
+}
+
+function getInitialBookmarkedProblemIds(): string[] {
+  return normalizeProblemIds(loadBookmarkedProblemIds());
 }
 
 const DEFAULT_CODE = `; Lisp Playground へようこそ！
@@ -56,15 +84,15 @@ function App() {
   const [output, setOutput] = useState('');
   const [returnValue, setReturnValue] = useState('');
   const [error, setError] = useState<string | undefined>();
-  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(() => {
-    const savedId = loadProblemId();
-    if (savedId) {
-      return problems.find(p => p.id === savedId) ?? null;
-    }
-    return null;
-  });
+  const [selectedProblem, setSelectedProblem] = useState<Problem | null>(getInitialSelectedProblem);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [solvedProblemIds, setSolvedProblemIds] = useState<string[]>(getInitialSolvedProblemIds);
+  const [recentlyViewedProblemIds, setRecentlyViewedProblemIds] = useState<string[]>(
+    getInitialRecentlyViewedProblemIds
+  );
+  const [bookmarkedProblemIds, setBookmarkedProblemIds] = useState<string[]>(
+    getInitialBookmarkedProblemIds
+  );
 
   // Persist code to localStorage on change
   useEffect(() => {
@@ -77,8 +105,31 @@ function App() {
   }, [selectedProblem]);
 
   useEffect(() => {
+    if (!selectedProblem) {
+      return;
+    }
+
+    setRecentlyViewedProblemIds((previousIds) => {
+      const nextIds = prependProblemId(previousIds, selectedProblem.id);
+      const isUnchanged =
+        nextIds.length === previousIds.length &&
+        nextIds.every((problemId, index) => problemId === previousIds[index]);
+
+      return isUnchanged ? previousIds : nextIds;
+    });
+  }, [selectedProblem]);
+
+  useEffect(() => {
     saveSolvedProblemIds(solvedProblemIds);
   }, [solvedProblemIds]);
+
+  useEffect(() => {
+    saveRecentlyViewedProblemIds(recentlyViewedProblemIds);
+  }, [recentlyViewedProblemIds]);
+
+  useEffect(() => {
+    saveBookmarkedProblemIds(bookmarkedProblemIds);
+  }, [bookmarkedProblemIds]);
 
   const handleSelectProblem = useCallback((problem: Problem) => {
     setSelectedProblem(problem);
@@ -113,6 +164,20 @@ function App() {
     });
   }, []);
 
+  const handleToggleBookmark = useCallback((problemId: string) => {
+    if (!VALID_PROBLEM_IDS.has(problemId)) {
+      return;
+    }
+
+    setBookmarkedProblemIds((previousIds) => {
+      if (previousIds.includes(problemId)) {
+        return previousIds.filter((id) => id !== problemId);
+      }
+
+      return [problemId, ...previousIds];
+    });
+  }, []);
+
   const handleSkipToMain = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     document.getElementById('main-content')?.focus();
@@ -144,7 +209,10 @@ function App() {
                 <LearnPage
                   selectedProblem={selectedProblem}
                   solvedProblemIds={solvedProblemIds}
+                  recentProblemIds={recentlyViewedProblemIds}
+                  bookmarkedProblemIds={bookmarkedProblemIds}
                   onSelectProblem={handleSelectProblem}
+                  onToggleBookmark={handleToggleBookmark}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}
                 />
@@ -156,7 +224,10 @@ function App() {
                 <LearnPage
                   selectedProblem={selectedProblem}
                   solvedProblemIds={solvedProblemIds}
+                  recentProblemIds={recentlyViewedProblemIds}
+                  bookmarkedProblemIds={bookmarkedProblemIds}
                   onSelectProblem={handleSelectProblem}
+                  onToggleBookmark={handleToggleBookmark}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}
                   initialView="guide"

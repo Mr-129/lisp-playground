@@ -4,6 +4,8 @@ import { useState } from 'react';
 interface ProblemViewProps {
   problem: Problem;
   isSolved?: boolean;
+  isBookmarked?: boolean;
+  onToggleBookmark?: () => void;
   onShowSolution: () => void;
 }
 
@@ -13,7 +15,13 @@ const DIFFICULTY_LABEL: Record<Problem['difficulty'], string> = {
   advanced: '上級',
 };
 
-export function ProblemView({ problem, isSolved = false, onShowSolution }: ProblemViewProps) {
+export function ProblemView({
+  problem,
+  isSolved = false,
+  isBookmarked = false,
+  onToggleBookmark = () => {},
+  onShowSolution,
+}: ProblemViewProps) {
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
 
@@ -40,8 +48,17 @@ export function ProblemView({ problem, isSolved = false, onShowSolution }: Probl
         <SimpleMarkdown text={problem.description} />
       </div>
       <div className="problem-actions">
+        <button
+          type="button"
+          className={`bookmark-button ${isBookmarked ? 'active' : ''}`}
+          aria-pressed={isBookmarked}
+          onClick={onToggleBookmark}
+        >
+          {isBookmarked ? '★ ブックマーク済み' : '☆ ブックマーク'}
+        </button>
         {problem.hint && (
           <button
+            type="button"
             className="hint-button"
             onClick={() => setShowHint(!showHint)}
           >
@@ -49,6 +66,7 @@ export function ProblemView({ problem, isSolved = false, onShowSolution }: Probl
           </button>
         )}
         <button
+          type="button"
           className="solution-button"
           onClick={() => {
             setShowSolution(!showSolution);

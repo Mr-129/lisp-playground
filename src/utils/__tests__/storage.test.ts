@@ -7,6 +7,10 @@ import {
   loadProblemId,
   saveSolvedProblemIds,
   loadSolvedProblemIds,
+  saveRecentlyViewedProblemIds,
+  loadRecentlyViewedProblemIds,
+  saveBookmarkedProblemIds,
+  loadBookmarkedProblemIds,
 } from '../storage';
 
 describe('storage', () => {
@@ -132,6 +136,68 @@ describe('storage', () => {
       });
       expect(loadSolvedProblemIds()).toEqual([]);
       spy.mockRestore();
+    });
+  });
+
+  describe('saveRecentlyViewedProblemIds / loadRecentlyViewedProblemIds', () => {
+    it('saves and loads recently viewed problem IDs', () => {
+      saveRecentlyViewedProblemIds(['basic-01', 'cond-01']);
+      expect(loadRecentlyViewedProblemIds()).toEqual(['basic-01', 'cond-01']);
+    });
+
+    it('deduplicates recently viewed problem IDs when saving', () => {
+      saveRecentlyViewedProblemIds(['basic-01', 'cond-01', 'basic-01']);
+      expect(loadRecentlyViewedProblemIds()).toEqual(['basic-01', 'cond-01']);
+    });
+
+    it('returns an empty array for invalid recently viewed data', () => {
+      localStorage.setItem('lisp-playground-recently-viewed-problem-ids', '{invalid json');
+      expect(loadRecentlyViewedProblemIds()).toEqual([]);
+    });
+
+    it('handles localStorage unavailable gracefully for recently viewed IDs', () => {
+      const setSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('QuotaExceededError');
+      });
+      expect(() => saveRecentlyViewedProblemIds(['basic-01'])).not.toThrow();
+      setSpy.mockRestore();
+
+      const getSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('SecurityError');
+      });
+      expect(loadRecentlyViewedProblemIds()).toEqual([]);
+      getSpy.mockRestore();
+    });
+  });
+
+  describe('saveBookmarkedProblemIds / loadBookmarkedProblemIds', () => {
+    it('saves and loads bookmarked problem IDs', () => {
+      saveBookmarkedProblemIds(['basic-01', 'cond-01']);
+      expect(loadBookmarkedProblemIds()).toEqual(['basic-01', 'cond-01']);
+    });
+
+    it('deduplicates bookmarked problem IDs when saving', () => {
+      saveBookmarkedProblemIds(['basic-01', 'basic-01', 'cond-01']);
+      expect(loadBookmarkedProblemIds()).toEqual(['basic-01', 'cond-01']);
+    });
+
+    it('returns an empty array for invalid bookmarked data', () => {
+      localStorage.setItem('lisp-playground-bookmarked-problem-ids', JSON.stringify({ id: 'basic-01' }));
+      expect(loadBookmarkedProblemIds()).toEqual([]);
+    });
+
+    it('handles localStorage unavailable gracefully for bookmarked IDs', () => {
+      const setSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('QuotaExceededError');
+      });
+      expect(() => saveBookmarkedProblemIds(['basic-01'])).not.toThrow();
+      setSpy.mockRestore();
+
+      const getSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('SecurityError');
+      });
+      expect(loadBookmarkedProblemIds()).toEqual([]);
+      getSpy.mockRestore();
     });
   });
 });

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { ProblemList } from '../ProblemList';
 import { Problem } from '../../types';
 
@@ -89,5 +89,38 @@ describe('ProblemList', () => {
     
     fireEvent.click(screen.getByText(/問題B/).closest('button')!);
     expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ id: 'cat1-02', title: '問題B' }));
+  });
+
+  it('最近見た問題とブックマークのショートカットを表示する', () => {
+    render(
+      <ProblemList
+        selectedId={null}
+        solvedProblemIds={[]}
+        recentProblemIds={['cat1-02', 'cat1-01']}
+        bookmarkedProblemIds={['cat2-01']}
+        onSelect={() => {}}
+      />
+    );
+
+    expect(screen.getByText('最近見た問題')).toBeInTheDocument();
+    expect(screen.getByText('★ ブックマーク')).toBeInTheDocument();
+  });
+
+  it('ショートカットから問題を選択できる', () => {
+    const onSelect = vi.fn();
+    render(
+      <ProblemList
+        selectedId={null}
+        solvedProblemIds={[]}
+        recentProblemIds={['cat1-02']}
+        bookmarkedProblemIds={['cat2-01']}
+        onSelect={onSelect}
+      />
+    );
+
+    const bookmarkedSection = screen.getByText('★ ブックマーク').parentElement;
+    fireEvent.click(within(bookmarkedSection as HTMLElement).getByRole('button', { name: /問題C/ }));
+
+    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ id: 'cat2-01', title: '問題C' }));
   });
 });

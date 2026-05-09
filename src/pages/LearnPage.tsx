@@ -8,7 +8,10 @@ import { Problem } from '../types';
 interface LearnPageProps {
   selectedProblem: Problem | null;
   solvedProblemIds: string[];
+  recentProblemIds?: string[];
+  bookmarkedProblemIds?: string[];
   onSelectProblem: (problem: Problem) => void;
+  onToggleBookmark?: (problemId: string) => void;
   onShowSolution: () => void;
   onNavigateToEditor: () => void;
   initialView?: 'problem' | 'guide';
@@ -17,7 +20,10 @@ interface LearnPageProps {
 export function LearnPage({
   selectedProblem,
   solvedProblemIds,
+  recentProblemIds = [],
+  bookmarkedProblemIds = [],
   onSelectProblem,
+  onToggleBookmark = () => {},
   onShowSolution,
   onNavigateToEditor,
   initialView = 'problem',
@@ -65,6 +71,8 @@ export function LearnPage({
             <ProblemList
               selectedId={selectedProblem?.id ?? null}
               solvedProblemIds={solvedProblemIds}
+              recentProblemIds={recentProblemIds}
+              bookmarkedProblemIds={bookmarkedProblemIds}
               onSelect={handleSelectProblem}
             />
           </>
@@ -79,6 +87,8 @@ export function LearnPage({
               key={selectedProblem.id}
               problem={selectedProblem}
               isSolved={solvedProblemIds.includes(selectedProblem.id)}
+              isBookmarked={bookmarkedProblemIds.includes(selectedProblem.id)}
+              onToggleBookmark={() => onToggleBookmark(selectedProblem.id)}
               onShowSolution={onShowSolution}
             />
             <div className="learn-actions">

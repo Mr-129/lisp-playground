@@ -275,11 +275,48 @@
   border-left: 3px solid #e94560;
 }
 
+.problem-shortcuts {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a3a6a;
+}
+
+.problem-shortcut-section + .problem-shortcut-section {
+  margin-top: 8px;
+}
+
+.problem-shortcut-title {
+  padding: 6px 8px 4px;
+  color: #7f90b2;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+
+.problem-item.compact {
+  padding: 7px 10px;
+}
+
+.problem-title-stack {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .problem-title {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.problem-subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #7f90b2;
+  font-size: 11px;
 }
 
 .difficulty-badge {
@@ -369,10 +406,12 @@
 
 .problem-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
 }
 
+.bookmark-button,
 .hint-button,
 .solution-button {
   padding: 6px 14px;
@@ -385,10 +424,17 @@
   transition: all 0.2s;
 }
 
+.bookmark-button:hover,
 .hint-button:hover,
 .solution-button:hover {
   background: #1a3a6a;
   color: #fff;
+}
+
+.bookmark-button.active {
+  background: #5a3b00;
+  border-color: #c69214;
+  color: #ffe6a8;
 }
 
 .hint-box {
@@ -1705,6 +1751,10 @@
   color: #4caf50;
   font-size: 12px;
   font-weight: 700;
+}
+
+.problem-status-icon.bookmarked {
+  color: #f6c453;
 }
 
 .problem-meta-row {

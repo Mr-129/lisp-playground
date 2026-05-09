@@ -114,6 +114,37 @@ describe('ProblemView', () => {
     expect(onShowSolution).toHaveBeenCalledTimes(1);
   });
 
+  it('ブックマークボタンをクリックすると callback を呼ぶ', () => {
+    const onToggleBookmark = vi.fn();
+
+    render(
+      <ProblemView
+        problem={mockProblem}
+        onShowSolution={() => {}}
+        onToggleBookmark={onToggleBookmark}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '☆ ブックマーク' }));
+
+    expect(onToggleBookmark).toHaveBeenCalledTimes(1);
+  });
+
+  it('ブックマーク済み状態を表示する', () => {
+    render(
+      <ProblemView
+        problem={mockProblem}
+        onShowSolution={() => {}}
+        isBookmarked
+      />
+    );
+
+    expect(screen.getByRole('button', { name: '★ ブックマーク済み' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+  });
+
   it('ヒントがない場合、ヒントボタンを表示しない', () => {
     render(<ProblemView problem={mockProblemNoHint} onShowSolution={() => {}} />);
     expect(screen.queryByText('💡 ヒントを表示')).not.toBeInTheDocument();
