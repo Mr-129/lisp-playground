@@ -205,6 +205,7 @@ Vitest によるテストスイートが用意されています。
 2026-04-30 時点の coverage ベースラインは All files で Stmts 92.73 / Branch 83.00 / Funcs 97.66 / Lines 99.03 です。
 
 `npm run test:e2e` は Playwright の Chromium を使って、home / guide / problems / editor / repl の主要導線と REPL の基本実行フローを headless で確認します。
+`npm test` は `src/**/*.{test,spec}.{ts,tsx}` 配下の Vitest スイートのみを対象にし、Playwright の E2E spec は `npm run test:e2e` に分離しています。
 
 #### インタプリタテスト (`src/interpreter/__tests__/`)
 
@@ -225,24 +226,25 @@ Vitest によるテストスイートが用意されています。
 |---|---|---|
 | `Header.test.tsx` | ナビゲーションヘッダー | 15 |
 | `Editor.test.tsx` | CodeMirror ラッパー・ショートカット | 7 |
-| `OutputPanel.test.tsx` | 実行結果パネル | 7 |
-| `ProblemList.test.tsx` | 問題一覧サイドバー | 5 |
-| `ProblemView.test.tsx` | 問題表示・ヒント・解答・Markdown 分岐 | 14 |
+| `OutputPanel.test.tsx` | 実行結果パネル | 9 |
+| `ProblemList.test.tsx` | 問題一覧サイドバー | 7 |
+| `ProblemView.test.tsx` | 問題表示・ヒント・解答・Markdown 分岐 | 16 |
 | `LispGuide.test.tsx` | Lisp 構文ガイド | 16 |
-| `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 8 |
+| `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 12 |
 | `App.integration.test.tsx` | App ルーティング・ページ間状態連携 | 4 |
 | `HomePage.test.tsx` | Home 画面導線 | 3 |
 | `ProblemsPage.test.tsx` | 問題一覧ページ導線 | 6 |
 | `LearnPage.test.tsx` | 学習ページ統合 | 13 |
-| `EditorPage.test.tsx` | エディタページ統合 | 15 |
+| `EditorPage.test.tsx` | エディタページ統合 | 17 |
 | `ReplPage.test.tsx` | REPLページ統合 | 18 |
-| `problems.test.ts` | 問題データ整合性 | 115 |
-| `storage.test.ts` | localStorage 永続化 | 19 |
+| `problems.test.ts` | 問題データ整合性 | 58 |
+| `storage.test.ts` | localStorage 永続化 | 27 |
+| `runJudge.test.ts` | judge レイヤーの採点実行 | 6 |
 | `lisp-language.test.ts` | Lisp 構文ハイライト | 13 |
 | `worker.test.ts` | Worker 管理・フォールバック | 5 |
 | `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
 
-| **合計** | | **545** |
+| **合計** | | **514** |
 
 ---
 
@@ -281,6 +283,12 @@ LispEditerApp/
 │   │       ├── integration.test.ts
 │   │       ├── repl.test.ts
 │   │       └── security.test.ts
+│   ├── judge/                  # 採点レイヤー
+│   │   ├── runJudge.ts         # judge 実行の公開 API
+│   │   ├── legacy.ts           # 既存問題との互換レイヤー
+│   │   ├── compare.ts          # 出力・戻り値比較処理
+│   │   ├── types.ts            # judge 型定義
+│   │   └── __tests__/          # judge 単体テスト
 │   ├── editor/                 # CodeMirror 拡張
 │   │   └── lisp-language.ts    # Lisp 構文ハイライト定義
 │   ├── worker/                 # Web Worker
