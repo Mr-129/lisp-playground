@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ReplPage } from '../ReplPage';
@@ -13,6 +13,10 @@ function renderRepl() {
 }
 
 describe('ReplPage', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('ウェルカムメッセージを表示する', () => {
     renderRepl();
     expect(screen.getByText('Common Lisp REPL へようこそ！')).toBeInTheDocument();
@@ -110,6 +114,48 @@ describe('ReplPage', () => {
 
     expect(screen.queryByText('→ 3')).not.toBeInTheDocument();
     expect(screen.getByText('Common Lisp REPL へようこそ！')).toBeInTheDocument();
+  });
+
+  it('保存した履歴を再読み込み後に復元し、定義済み関数を続けて使える', () => {
+    const firstView = renderRepl();
+    const firstInput = screen.getByLabelText('REPL 入力');
+
+    fireEvent.change(firstInput, { target: { value: '(defun sq (x) (* x x))' } });
+    fireEvent.keyDown(firstInput, { key: 'Enter' });
+    fireEvent.change(firstInput, { target: { value: '(sq 5)' } });
+    fireEvent.keyDown(firstInput, { key: 'Enter' });
+
+    expect(screen.getByText('→ 25')).toBeInTheDocument();
+
+    firstView.unmount();
+
+    renderRepl();
+
+    expect(screen.getByText('(defun sq (x) (* x x))')).toBeInTheDocument();
+    expect(screen.getByText('→ 25')).toBeInTheDocument();
+
+    const restoredInput = screen.getByLabelText('REPL 入力');
+    fireEvent.change(restoredInput, { target: { value: '(sq 6)' } });
+    fireEvent.keyDown(restoredInput, { key: 'Enter' });
+
+    expect(screen.getByText('→ 36')).toBeInTheDocument();
+  });
+
+  it('クリアボタンで保存済みの履歴も削除する', () => {
+    const firstView = renderRepl();
+    const input = screen.getByLabelText('REPL 入力');
+
+    fireEvent.change(input, { target: { value: '(+ 1 2)' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    fireEvent.click(screen.getByText('🗑️ クリア'));
+
+    firstView.unmount();
+
+    renderRepl();
+
+    expect(screen.getByText('Common Lisp REPL へようこそ！')).toBeInTheDocument();
+    expect(screen.queryByText('(+ 1 2)')).not.toBeInTheDocument();
+    expect(screen.queryByText('→ 3')).not.toBeInTheDocument();
   });
 
   it('print出力を表示する', () => {

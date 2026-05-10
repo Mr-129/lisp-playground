@@ -169,7 +169,7 @@ export function LearnPage({
                 <button className="guide-start-button" type="button" onClick={() => navigate('/problems')}>
                   📚 問題一覧ページへ
                 </button>
-                <button className="start-coding-button" type="button" onClick={() => navigate('/editor')}>
+                <button className="start-coding-button" type="button" onClick={handleStartCoding}>
                   🖊️ フリーモードで始める
                 </button>
               </div>

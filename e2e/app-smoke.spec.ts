@@ -55,17 +55,36 @@ test.describe('Lisp Playground smoke flows', () => {
     await expect(page.getByRole('button', { name: 'コードを実行' })).toBeVisible();
   });
 
-  test('REPL で式を評価して履歴をクリアできる', async ({ page }) => {
+  test('REPL で式を評価して reload 後も復元し、履歴をクリアできる', async ({ page }) => {
     await page.goto('/#/repl');
 
     const input = page.getByRole('textbox', { name: 'REPL 入力' });
-    await input.fill('(+ 1 2 3)');
+    await input.fill('(defun sq (x) (* x x))');
     await page.getByRole('button', { name: '式を評価' }).click();
 
-    await expect(page.locator('.repl-return').last()).toContainText('6');
-    await expect(page.locator('.repl-entry')).toHaveCount(1);
+    await input.fill('(sq 6)');
+    await page.getByRole('button', { name: '式を評価' }).click();
+
+    await expect(page.locator('.repl-return').last()).toContainText('36');
+    await expect(page.locator('.repl-entry')).toHaveCount(2);
+
+    await page.reload();
+
+    await expect(page.locator('.repl-entry')).toHaveCount(2);
+    await expect(page.locator('.repl-return').last()).toContainText('36');
+
+    await page.getByRole('textbox', { name: 'REPL 入力' }).fill('(sq 7)');
+    await page.getByRole('button', { name: '式を評価' }).click();
+
+    await expect(page.locator('.repl-return').last()).toContainText('49');
+    await expect(page.locator('.repl-entry')).toHaveCount(3);
 
     await page.getByRole('button', { name: /クリア/ }).click();
+    await expect(page.locator('.repl-entry')).toHaveCount(0);
+    await expect(page.getByText('Common Lisp REPL へようこそ！')).toBeVisible();
+
+    await page.reload();
+
     await expect(page.locator('.repl-entry')).toHaveCount(0);
     await expect(page.getByText('Common Lisp REPL へようこそ！')).toBeVisible();
   });

@@ -1,21 +1,44 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { executeLispRepl, Environment } from '../interpreter';
+import {
+  clearReplSession,
+  loadReplSession,
+  saveReplSession,
+  type ReplHistoryEntry,
+  type ReplSessionSnapshot,
+} from '../utils/storage';
 
-interface ReplEntry {
-  id: number;
-  input: string;
-  output: string;
-  returnValue: string;
-  error?: string;
+type ReplEntry = ReplHistoryEntry;
+
+const EMPTY_REPL_SESSION: ReplSessionSnapshot = {
+  entries: [],
+  inputHistory: [],
+  draftInput: '',
+};
+
+function getNextEntryId(entries: ReplEntry[]): number {
+  return entries.reduce((maxId, entry) => Math.max(maxId, entry.id), 0) + 1;
+}
+
+function restoreEnvironment(entries: ReplEntry[]): Environment | undefined {
+  let restoredEnv: Environment | undefined;
+
+  for (const entry of entries) {
+    const restoredResult = executeLispRepl(entry.input, restoredEnv);
+    restoredEnv = restoredResult.env;
+  }
+
+  return restoredEnv;
 }
 
 export function ReplPage() {
-  const [input, setInput] = useState('');
-  const [history, setHistory] = useState<ReplEntry[]>([]);
-  const [env, setEnv] = useState<Environment | undefined>(undefined);
-  const [inputHistory, setInputHistory] = useState<string[]>([]);
+  const [restoredSession] = useState(() => loadReplSession() ?? EMPTY_REPL_SESSION);
+  const [input, setInput] = useState(() => restoredSession.draftInput);
+  const [history, setHistory] = useState<ReplEntry[]>(() => restoredSession.entries);
+  const [env, setEnv] = useState<Environment | undefined>(() => restoreEnvironment(restoredSession.entries));
+  const [inputHistory, setInputHistory] = useState<string[]>(() => restoredSession.inputHistory);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const nextId = useRef(1);
+  const nextId = useRef(getNextEntryId(restoredSession.entries));
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -28,6 +51,14 @@ export function ReplPage() {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    saveReplSession({
+      entries: history,
+      inputHistory,
+      draftInput: input,
+    });
+  }, [history, inputHistory, input]);
 
   const handleSubmit = useCallback(() => {
     const trimmed = input.trim();
@@ -79,11 +110,13 @@ export function ReplPage() {
   }, [handleSubmit, inputHistory, historyIndex]);
 
   const handleClear = useCallback(() => {
+    clearReplSession();
     setHistory([]);
     setEnv(undefined);
     setInputHistory([]);
     setHistoryIndex(-1);
     setInput('');
+    nextId.current = 1;
   }, []);
 
   return (

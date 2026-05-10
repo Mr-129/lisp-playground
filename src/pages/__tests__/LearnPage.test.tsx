@@ -247,10 +247,13 @@ describe('LearnPage', () => {
   });
 
   it('空状態のフリーモードボタンで editor へ遷移する', () => {
-    renderLearnPage();
+    const onNavigateToEditor = vi.fn();
+
+    renderLearnPage({ onNavigateToEditor });
 
     fireEvent.click(screen.getByText('🖊️ フリーモードで始める'));
 
+    expect(onNavigateToEditor).toHaveBeenCalledTimes(1);
     expect(screen.getByText('editor-page')).toBeInTheDocument();
     expect(screen.getByTestId('location-path')).toHaveTextContent('/editor');
   });

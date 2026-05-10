@@ -2,7 +2,7 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年5月10日 — T-104（問題・ガイド検索）実装、Vitest 522 件 / Playwright 3 件の再確認、関連ドキュメント同期を反映
+**最終更新**: 2026年5月10日 — T-106（REPL 履歴の永続化）実装、Vitest 529 件 / Playwright 3 件の再確認、関連ドキュメント同期を反映
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開後確認ログ**: [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) — GitHub Pages 公開後の確認結果
@@ -31,8 +31,8 @@
 
 | 観点 | 評価 | 備考 |
 |------|------|------|
-| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。REPL・永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索実装済、問題 51 問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 522 件 + Playwright 3 件の回帰確認 |
+| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索実装済、問題 51 問 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 529 件 + Playwright 3 件の回帰確認 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -210,12 +210,12 @@
 #### ✅ ~~🟡 CQ-003: テストコードが存在しない~~ **→ 修正済**
 - **ファイル**: `src/interpreter/__tests__/`, `src/components/__tests__/`, `src/pages/__tests__/`
 - **重要度**: Minor（学習プロジェクトとしては許容）
-- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UI/アプリ統合テストを追加（合計 522 テスト）
+- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UI/アプリ統合テストを追加（合計 529 テスト）
   - `src/interpreter/__tests__/` — 260 テスト（types, environment, parser, evaluator, integration, repl, security）
   - `src/components/__tests__/` — 74 テスト（Header, Editor, OutputPanel, ProblemList, ProblemView, LispGuide）
-  - `src/pages/__tests__/` — 60 テスト（HomePage, ProblemsPage, LearnPage, EditorPage, ReplPage）
+  - `src/pages/__tests__/` — 62 テスト（HomePage, ProblemsPage, LearnPage, EditorPage, ReplPage）
   - `src/__tests__/` — 17 テスト（App の状態復元・進捗保存・ルーティング）
-  - `src/data`, `src/utils`, `src/editor`, `src/worker`, `src/judge` — 111 テスト
+  - `src/data`, `src/utils`, `src/editor`, `src/worker`, `src/judge` — 116 テスト
 
 ---
 
@@ -250,7 +250,7 @@
 3. **コンポーネント分離** — Editor / Output / Problem / Guide が明確に分離
 4. **インタプリタの独立性** — React に依存せず、純粋な TypeScript
 5. **問題データの宣言的定義** — TypeScript の型安全性を活用
-6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 522件
+6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 529件
 
 ### 改善が望ましい点 ⚠️
 
@@ -259,7 +259,7 @@
 | ~~同期実行~~ | ~~UI スレッドで直接評価~~ | ✅ Web Worker に分離済 | — |
 | 状態管理 | useState の組み合わせ | useReducer or Zustand | 中 |
 | ~~コードの永続化~~ | ~~なし（リロードで消失）~~ | ✅ localStorage 実装済 | — |
-| テスタビリティ | ~~テストなし~~ Vitest 522件 | ✅ 対応済 | — |
+| テスタビリティ | ~~テストなし~~ Vitest 529件 | ✅ 対応済 | — |
 | CSS 管理 | 単一ファイル | CSS Modules or Tailwind | 低 |
 
 ---
@@ -292,6 +292,7 @@
 | 12 | ~~進捗管理（解いた問題のチェック保存 + 進捗 UI）~~ | 中 | 小 | ✅ 完了 |
 | 12a | ~~最近見た問題 / ブックマーク~~ | 中 | 小 | ✅ 完了 |
 | 12b | ~~問題 / ガイド検索~~ | 中 | 小 | ✅ 完了 |
+| 12c | ~~REPL 履歴の永続化~~ | 中 | 小 | ✅ 完了 |
 | 13 | CSS カスタムプロパティへの集約 | 中 | 小 | 未着手 |
 | 14 | ~~MAPCAR の複数リスト対応 (BUG-005)~~ | 低 | 小 | ✅ 完了 |
 
@@ -402,3 +403,4 @@
 *2026-05-09: Node 24 build 異常終了の再調査結果を反映。Node 20 / 22 を安定運用対象とし、Node 24 は再発時のみ追加調査する方針を追記。*
 *2026-05-10: 最近見た問題 / ブックマーク機能を反映し、Vitest 514 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
 *2026-05-10: 問題 / ガイド検索を反映し、Vitest 522 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
+*2026-05-10: REPL 履歴の永続化を反映し、Vitest 529 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*

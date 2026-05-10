@@ -11,6 +11,9 @@ import {
   loadRecentlyViewedProblemIds,
   saveBookmarkedProblemIds,
   loadBookmarkedProblemIds,
+  saveReplSession,
+  loadReplSession,
+  clearReplSession,
 } from '../storage';
 
 describe('storage', () => {
@@ -198,6 +201,59 @@ describe('storage', () => {
       });
       expect(loadBookmarkedProblemIds()).toEqual([]);
       getSpy.mockRestore();
+    });
+  });
+
+  describe('saveReplSession / loadReplSession / clearReplSession', () => {
+    const session = {
+      entries: [
+        { id: 1, input: '(defvar *x* 42)', output: '', returnValue: '*X*' },
+        { id: 2, input: '*x*', output: '', returnValue: '42' },
+      ],
+      inputHistory: ['(defvar *x* 42)', '*x*'],
+      draftInput: '(+ 1 2)',
+    };
+
+    it('saves and loads REPL session snapshots', () => {
+      saveReplSession(session);
+      expect(loadReplSession()).toEqual(session);
+    });
+
+    it('returns null when REPL session data is invalid', () => {
+      localStorage.setItem('lisp-playground-repl-session', JSON.stringify({ entries: [{}] }));
+      expect(loadReplSession()).toBeNull();
+    });
+
+    it('removes REPL session when cleared explicitly', () => {
+      saveReplSession(session);
+      clearReplSession();
+      expect(loadReplSession()).toBeNull();
+    });
+
+    it('removes REPL session when saving an empty snapshot', () => {
+      saveReplSession(session);
+      saveReplSession({ entries: [], inputHistory: [], draftInput: '' });
+      expect(loadReplSession()).toBeNull();
+    });
+
+    it('handles localStorage unavailable gracefully for REPL session', () => {
+      const setSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('QuotaExceededError');
+      });
+      expect(() => saveReplSession(session)).not.toThrow();
+      setSpy.mockRestore();
+
+      const getSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('SecurityError');
+      });
+      expect(loadReplSession()).toBeNull();
+      getSpy.mockRestore();
+
+      const removeSpy = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+        throw new Error('SecurityError');
+      });
+      expect(() => clearReplSession()).not.toThrow();
+      removeSpy.mockRestore();
     });
   });
 });
