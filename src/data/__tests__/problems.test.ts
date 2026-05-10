@@ -13,6 +13,7 @@ describe('problems データ', () => {
         expect(p.initialCode).toBeDefined();
         expect(p.solution).toBeTruthy();
         expect(p.learningPath).toBeDefined();
+        expect(p.catalog).toBeDefined();
       }
     });
 
@@ -105,6 +106,64 @@ describe('problems データ', () => {
       const [firstProblem, secondProblem] = getProblemsByLearningPath();
 
       expect(getNextRecommendedProblem([secondProblem.id])?.id).toBe(firstProblem.id);
+    });
+  });
+
+  describe('catalog metadata', () => {
+    it('商品属性の最小セットが揃っている', () => {
+      const validTiers = new Set(['free', 'standard']);
+      const validCourseIds = new Set(['intro-core', 'data-and-control', 'functional-patterns']);
+      const validTags = new Set([
+        'syntax',
+        'conditionals',
+        'math',
+        'lists',
+        'strings',
+        'loops',
+        'higher-order',
+        'recursion',
+        'closures',
+        'scope',
+        'types',
+        'challenge',
+      ]);
+
+      for (const problem of problems) {
+        const catalog = problem.catalog;
+        expect(catalog).toBeDefined();
+        expect(validTiers.has(catalog?.tier ?? '')).toBe(true);
+        expect(validCourseIds.has(catalog?.courseId ?? '')).toBe(true);
+        expect((catalog?.courseOrder ?? 0)).toBeGreaterThan(0);
+        expect((catalog?.tags ?? []).length).toBeGreaterThan(0);
+        expect((catalog?.tags ?? []).every((tag) => validTags.has(tag))).toBe(true);
+      }
+    });
+
+    it('courseOrder がコース単位で連番になる', () => {
+      const courseOrders = new Map<string, number[]>();
+
+      for (const problem of problems) {
+        const courseId = problem.catalog?.courseId;
+        const courseOrder = problem.catalog?.courseOrder;
+
+        expect(courseId).toBeDefined();
+        expect(courseOrder).toBeDefined();
+
+        const orders = courseOrders.get(courseId ?? '') ?? [];
+        orders.push(courseOrder ?? 0);
+        courseOrders.set(courseId ?? '', orders);
+      }
+
+      for (const orders of courseOrders.values()) {
+        const sorted = [...orders].sort((left, right) => left - right);
+        expect(sorted).toEqual(Array.from({ length: sorted.length }, (_, index) => index + 1));
+      }
+    });
+
+    it('初級は free、中級以上は standard に割り当てられる', () => {
+      for (const problem of problems) {
+        expect(problem.catalog?.tier).toBe(problem.difficulty === 'beginner' ? 'free' : 'standard');
+      }
     });
   });
 });

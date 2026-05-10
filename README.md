@@ -238,14 +238,14 @@ Vitest によるテストスイートが用意されています。
 | `LearnPage.test.tsx` | 学習ページ統合 | 16 |
 | `EditorPage.test.tsx` | エディタページ統合 | 17 |
 | `ReplPage.test.tsx` | REPLページ統合 | 20 |
-| `problems.test.ts` | 問題データ整合性 | 62 |
+| `problems.test.ts` | 問題データ整合性 | 65 |
 | `storage.test.ts` | localStorage 永続化 | 32 |
 | `runJudge.test.ts` | judge レイヤーの採点実行 | 6 |
 | `lisp-language.test.ts` | Lisp 構文ハイライト | 13 |
 | `worker.test.ts` | Worker 管理・フォールバック | 5 |
 | `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
 
-| **合計** | | **535** |
+| **合計** | | **538** |
 
 ---
 

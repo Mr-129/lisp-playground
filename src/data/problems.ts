@@ -1,6 +1,6 @@
-import { Problem } from '../types';
+import { Problem, ProblemCatalogInfo, ProblemCourseId, ProblemTag, ProblemTier } from '../types';
 
-type ProblemSeed = Omit<Problem, 'order' | 'estimatedMinutes' | 'learningGoals' | 'learningPath'>
+type ProblemSeed = Omit<Problem, 'order' | 'estimatedMinutes' | 'learningGoals' | 'learningPath' | 'catalog'>
   & Partial<Pick<Problem, 'estimatedMinutes' | 'learningGoals'>>;
 
 const CORE_LEARNING_PATH = {
@@ -31,6 +31,56 @@ const DIFFICULTY_ORDER: Record<Problem['difficulty'], number> = {
   intermediate: 1,
   advanced: 2,
 };
+
+const CATEGORY_TO_COURSE: Record<string, ProblemCourseId> = {
+  '基本構文': 'intro-core',
+  '条件分岐': 'intro-core',
+  '数値計算': 'intro-core',
+  '文字列操作': 'intro-core',
+  'スコープ': 'intro-core',
+  '型判定': 'intro-core',
+  'リスト操作': 'data-and-control',
+  'ループ': 'data-and-control',
+  '高階関数': 'functional-patterns',
+  '再帰': 'functional-patterns',
+  'クロージャ': 'functional-patterns',
+  '総合問題': 'functional-patterns',
+};
+
+const CATEGORY_TO_TAGS: Record<string, ProblemTag[]> = {
+  '基本構文': ['syntax'],
+  '条件分岐': ['conditionals'],
+  '数値計算': ['math'],
+  '文字列操作': ['strings'],
+  'スコープ': ['scope'],
+  '型判定': ['types'],
+  'リスト操作': ['lists'],
+  'ループ': ['loops'],
+  '高階関数': ['higher-order'],
+  '再帰': ['recursion'],
+  'クロージャ': ['closures'],
+  '総合問題': ['challenge'],
+};
+
+function getProblemTier(difficulty: Problem['difficulty']): ProblemTier {
+  return difficulty === 'beginner' ? 'free' : 'standard';
+}
+
+function getProblemCourseId(category: string): ProblemCourseId {
+  const courseId = CATEGORY_TO_COURSE[category];
+  if (!courseId) {
+    throw new Error(`Unknown problem category: ${category}`);
+  }
+  return courseId;
+}
+
+function getProblemTags(category: string): ProblemTag[] {
+  const tags = CATEGORY_TO_TAGS[category];
+  if (!tags) {
+    throw new Error(`Unknown problem category: ${category}`);
+  }
+  return [...tags];
+}
 
 const problemSeeds: ProblemSeed[] = [
   // ===== 基本構文 =====
@@ -2544,17 +2594,34 @@ export const problems: Problem[] = problemSeeds
 
     return left.originalIndex - right.originalIndex;
   })
-  .map(({ problem }, index, sortedProblems) => ({
-    ...problem,
-    order: index + 1,
-    estimatedMinutes: problem.estimatedMinutes ?? DEFAULT_ESTIMATED_MINUTES[problem.difficulty],
-    learningGoals: problem.learningGoals ?? [problem.category],
-    learningPath: {
-      ...CORE_LEARNING_PATH,
-      step: index + 1,
-      prerequisites: index === 0 ? [] : [sortedProblems[index - 1].problem.id],
-    },
-  }));
+  .map((sortedProblem, index, sortedProblems) => {
+    const { problem } = sortedProblem;
+    const courseId = getProblemCourseId(problem.category);
+    const courseOrder =
+      sortedProblems
+        .slice(0, index)
+        .filter((candidate) => getProblemCourseId(candidate.problem.category) === courseId)
+        .length + 1;
+    const catalog: ProblemCatalogInfo = {
+      tier: getProblemTier(problem.difficulty),
+      courseId,
+      courseOrder,
+      tags: getProblemTags(problem.category),
+    };
+
+    return {
+      ...problem,
+      order: index + 1,
+      estimatedMinutes: problem.estimatedMinutes ?? DEFAULT_ESTIMATED_MINUTES[problem.difficulty],
+      learningGoals: problem.learningGoals ?? [problem.category],
+      learningPath: {
+        ...CORE_LEARNING_PATH,
+        step: index === 0 ? 1 : index + 1,
+        prerequisites: index === 0 ? [] : [sortedProblems[index - 1].problem.id],
+      },
+      catalog,
+    };
+  });
 
 export function getProblemsByLearningPath(): Problem[] {
   return problems
