@@ -343,6 +343,24 @@
   border-left: 3px solid #4caf50;
 }
 
+.problem-item.standard-preview {
+  background: rgba(201, 162, 39, 0.08);
+}
+
+.problem-item.standard-preview:hover {
+  background: rgba(201, 162, 39, 0.16);
+}
+
+.problem-item.standard-preview.selected,
+.problem-item.standard-preview.selected:hover {
+  background: #0f3460;
+}
+
+.problem-item.standard-preview.recommended,
+.problem-item.standard-preview.recommended:hover {
+  background: rgba(76, 175, 80, 0.12);
+}
+
 .problem-shortcuts {
   margin-bottom: 12px;
   padding-bottom: 12px;
@@ -1985,7 +2003,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
   margin-left: 8px;
+  justify-content: flex-end;
 }
 
 .problem-status-icon {
@@ -1996,6 +2016,10 @@
 
 .problem-status-icon.bookmarked {
   color: #f6c453;
+}
+
+.problem-status-icon.locked-preview {
+  color: #ffd479;
 }
 
 .problem-meta-row {
@@ -2020,6 +2044,55 @@
   background: rgba(76, 175, 80, 0.14);
   border: 1px solid rgba(76, 175, 80, 0.32);
   color: #89d99a;
+}
+
+.problem-meta-chip.tier.free {
+  background: rgba(76, 175, 80, 0.14);
+  border: 1px solid rgba(76, 175, 80, 0.28);
+  color: #c7f1cf;
+}
+
+.problem-meta-chip.tier.standard {
+  background: rgba(201, 162, 39, 0.14);
+  border: 1px solid rgba(201, 162, 39, 0.28);
+  color: #ffe2a6;
+}
+
+.problem-access-note {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.problem-access-note.standard-preview {
+  background: rgba(201, 162, 39, 0.12);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  color: #ffe2a6;
+}
+
+.problem-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.problem-tier-badge.free {
+  background: rgba(76, 175, 80, 0.18);
+  color: #d9f6df;
+}
+
+.problem-tier-badge.standard {
+  background: rgba(201, 162, 39, 0.2);
+  color: #ffe2a6;
 }
 
 .problem-goals {

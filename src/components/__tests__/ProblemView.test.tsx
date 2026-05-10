@@ -16,7 +16,16 @@ const mockProblem: Problem = {
   expectedOutput: '3\n',
   estimatedMinutes: 5,
   learningGoals: ['test-goal'],
+  catalog: { tier: 'free', courseId: 'intro-core', courseOrder: 1, tags: ['syntax'] },
   solution: '(print (+ 1 2))',
+};
+
+const mockStandardProblem: Problem = {
+  ...mockProblem,
+  id: 'test-07',
+  title: '有料候補問題',
+  difficulty: 'intermediate',
+  catalog: { tier: 'standard', courseId: 'functional-patterns', courseOrder: 2, tags: ['higher-order'] },
 };
 
 const mockProblemNoHint: Problem = {
@@ -71,6 +80,21 @@ describe('ProblemView', () => {
     render(<ProblemView problem={mockProblem} onShowSolution={() => {}} />);
     const boldEl = screen.getByText('テスト問題', { selector: 'strong' });
     expect(boldEl).toBeInTheDocument();
+  });
+
+  it('free 問題では Free 表示を出し preview note は出さない', () => {
+    render(<ProblemView problem={mockProblem} onShowSolution={() => {}} />);
+
+    expect(screen.getByText('Free')).toBeInTheDocument();
+    expect(screen.queryByText(/将来の Standard 向け候補/)).not.toBeInTheDocument();
+  });
+
+  it('standard 問題では lock 付き tier 表示と preview note を出す', () => {
+    render(<ProblemView problem={mockStandardProblem} onShowSolution={() => {}} />);
+
+    expect(screen.getByText('🔒 Standard候補')).toBeInTheDocument();
+    expect(screen.getByText(/有料候補コンテンツ:/)).toBeInTheDocument();
+    expect(screen.getByText(/現段階では preview 表示のみ/)).toBeInTheDocument();
   });
 
   it('ヒントボタンをクリックするとヒントが表示される', () => {

@@ -24,6 +24,8 @@ export function ProblemView({
 }: ProblemViewProps) {
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
+  const tier = problem.catalog?.tier ?? 'free';
+  const isStandardPreview = tier === 'standard';
 
   return (
     <div className="problem-view">
@@ -33,10 +35,18 @@ export function ProblemView({
           <span className="problem-meta-chip">{problem.category}</span>
           <span className="problem-meta-chip">{DIFFICULTY_LABEL[problem.difficulty]}</span>
           <span className="problem-meta-chip">{problem.estimatedMinutes}分</span>
+          <span className={`problem-meta-chip tier ${tier}`}>
+            {isStandardPreview ? '🔒 Standard候補' : 'Free'}
+          </span>
           {isSolved && <span className="problem-meta-chip solved">クリア済み</span>}
         </div>
         <h2>{problem.title}</h2>
       </div>
+      {isStandardPreview && (
+        <div className="problem-access-note standard-preview" role="note">
+          <strong>有料候補コンテンツ:</strong> この問題は将来の Standard 向け候補です。現段階では preview 表示のみで、学習や解答の操作は制限していません。
+        </div>
+      )}
       {problem.learningGoals.length > 0 && (
         <div className="problem-goals">
           {problem.learningGoals.map((goal) => (

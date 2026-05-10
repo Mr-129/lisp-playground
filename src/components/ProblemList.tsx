@@ -109,6 +109,8 @@ export function ProblemList({
     || recentlyViewedProblems.length > 0;
 
   const renderProblemButton = (problem: Problem, compact = false, view: 'default' | 'path' | 'course' = 'default') => {
+    const tier = problem.catalog?.tier ?? 'free';
+    const isStandardPreview = tier === 'standard';
     const pathStatus = view === 'path'
       ? solvedSet.has(problem.id)
         ? 'クリア済み'
@@ -131,7 +133,7 @@ export function ProblemList({
       <button
         key={`${compact ? 'shortcut' : 'category'}-${problem.id}`}
         type="button"
-        className={`problem-item ${selectedId === problem.id ? 'selected' : ''} ${solvedSet.has(problem.id) ? 'solved' : ''} ${compact ? 'compact' : ''} ${nextRecommendedProblem?.id === problem.id ? 'recommended' : ''}`}
+        className={`problem-item ${selectedId === problem.id ? 'selected' : ''} ${solvedSet.has(problem.id) ? 'solved' : ''} ${compact ? 'compact' : ''} ${nextRecommendedProblem?.id === problem.id ? 'recommended' : ''} ${isStandardPreview ? 'standard-preview' : 'free-preview'}`}
         onClick={() => onSelect(problem)}
       >
         <span className="problem-title-stack">
@@ -143,6 +145,9 @@ export function ProblemList({
           )}
         </span>
         <span className="problem-item-meta">
+          {isStandardPreview && (
+            <span className="problem-status-icon locked-preview" aria-label="有料候補コンテンツ">🔒</span>
+          )}
           {bookmarkedSet.has(problem.id) && (
             <span className="problem-status-icon bookmarked" aria-label="ブックマーク">★</span>
           )}
@@ -154,6 +159,9 @@ export function ProblemList({
             style={{ backgroundColor: DIFFICULTY_COLOR[problem.difficulty] }}
           >
             {DIFFICULTY_LABEL[problem.difficulty]}
+          </span>
+          <span className={`problem-tier-badge ${tier}`}>
+            {tier === 'standard' ? 'Standard' : 'Free'}
           </span>
         </span>
       </button>
