@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ProblemList } from '../components/ProblemList';
 import { ProblemView } from '../components/ProblemView';
 import { LispGuide, filterGuideSections } from '../components/LispGuide';
+import { getProblemsByCourse, PROBLEM_COURSES } from '../data/problems';
 import { Problem } from '../types';
 
 interface LearnPageProps {
@@ -41,9 +42,26 @@ export function LearnPage({
   const [showGuide, setShowGuide] = useState(initialView === 'guide');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const hasActiveSearch = searchQuery.trim().length > 0;
+  const solvedProblemSet = useMemo(() => new Set(solvedProblemIds), [solvedProblemIds]);
   const guideSearchResults = useMemo(
     () => (hasActiveSearch ? filterGuideSections(searchQuery) : []),
     [hasActiveSearch, searchQuery]
+  );
+  const selectedCourse = useMemo(
+    () => (selectedProblem?.catalog ? PROBLEM_COURSES[selectedProblem.catalog.courseId] : null),
+    [selectedProblem]
+  );
+  const selectedCourseProblems = useMemo(
+    () => (selectedProblem?.catalog ? getProblemsByCourse().get(selectedProblem.catalog.courseId) ?? [] : []),
+    [selectedProblem?.catalog?.courseId]
+  );
+  const solvedCourseCount = useMemo(
+    () => selectedCourseProblems.filter((problem) => solvedProblemSet.has(problem.id)).length,
+    [selectedCourseProblems, solvedProblemSet]
+  );
+  const nextCourseProblem = useMemo(
+    () => selectedCourseProblems.find((problem) => !solvedProblemSet.has(problem.id)) ?? null,
+    [selectedCourseProblems, solvedProblemSet]
   );
 
   useEffect(() => {
@@ -146,6 +164,32 @@ export function LearnPage({
           <LispGuide searchQuery={searchQuery} selectedSectionId={selectedGuideSectionId} />
         ) : selectedProblem ? (
           <div className="learn-problem-area">
+            {selectedProblem.catalog && selectedCourse && (
+              <section className="learn-course-card" aria-label="現在のコース情報">
+                <div className="learn-course-card-header">
+                  <div>
+                    <p className="learn-course-eyebrow">現在のコース</p>
+                    <h3>{selectedCourse.title}</h3>
+                  </div>
+                  <span className={`learn-course-tier ${selectedProblem.catalog.tier}`}>
+                    {selectedProblem.catalog.tier === 'free' ? 'Free' : 'Standard'}
+                  </span>
+                </div>
+                <p className="learn-course-description">{selectedCourse.description}</p>
+                <div className="learn-course-stats">
+                  <span className="learn-course-stat">第{selectedProblem.catalog.courseOrder}問</span>
+                  <span className="learn-course-stat">{solvedCourseCount}/{selectedCourseProblems.length} 完了</span>
+                  <span className="learn-course-stat">{selectedProblem.category}</span>
+                </div>
+                <p className="learn-course-next">
+                  {nextCourseProblem
+                    ? nextCourseProblem.id === selectedProblem.id
+                      ? 'この問題がコースの次の一問です。'
+                      : `次のコース問題: ${nextCourseProblem.title}`
+                    : 'このコースはすべて完了しています。'}
+                </p>
+              </section>
+            )}
             <ProblemView
               key={selectedProblem.id}
               problem={selectedProblem}

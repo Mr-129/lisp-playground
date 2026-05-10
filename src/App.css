@@ -249,7 +249,8 @@
 
 .learning-path-description,
 .learning-path-progress,
-.learning-path-next {
+.learning-path-next,
+.learning-path-course {
   margin: 6px 0 0;
   color: #a5b3d1;
   font-size: 12px;
@@ -259,6 +260,10 @@
 .learning-path-next {
   color: #c0c8d8;
   font-weight: 600;
+}
+
+.learning-path-course {
+  color: #8dc0ff;
 }
 
 .problem-list-mode-toggle {
@@ -290,6 +295,13 @@
 
 .problem-category {
   margin-bottom: 8px;
+}
+
+.course-category-description {
+  margin: 0 8px 8px;
+  color: #7f90b2;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .category-title {
@@ -1088,6 +1100,88 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+
+.learn-course-card {
+  margin: 20px 20px 0;
+  padding: 18px 20px;
+  border: 1px solid #244a7d;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(16, 29, 51, 0.96), rgba(22, 53, 95, 0.92));
+  box-shadow: 0 18px 36px rgba(4, 10, 22, 0.22);
+}
+
+.learn-course-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.learn-course-eyebrow {
+  margin: 0 0 6px;
+  color: #8dc0ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.learn-course-card h3 {
+  margin: 0;
+  color: #f4f7ff;
+  font-size: 22px;
+}
+
+.learn-course-tier {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.learn-course-tier.free {
+  background: rgba(102, 187, 106, 0.18);
+  color: #d8f6de;
+}
+
+.learn-course-tier.standard {
+  background: rgba(79, 142, 247, 0.2);
+  color: #d8e7ff;
+}
+
+.learn-course-description {
+  margin: 12px 0 0;
+  color: #cfdbef;
+  line-height: 1.6;
+}
+
+.learn-course-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.learn-course-stat {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8eef9;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.learn-course-next {
+  margin: 14px 0 0;
+  color: #9fd4ff;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .learn-problem-area .problem-view {

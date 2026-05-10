@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Problem } from '../types';
-import { getNextRecommendedProblem, getProblemsByCategory, getProblemsByLearningPath, problems } from '../data/problems';
+import { getNextRecommendedProblem, getProblemsByCategory, getProblemsByCourse, getProblemsByLearningPath, PROBLEM_COURSES, problems } from '../data/problems';
 
 interface ProblemListProps {
   selectedId: string | null;
@@ -14,7 +14,7 @@ interface ProblemListProps {
 const RECENT_PROBLEM_LIMIT = 5;
 const PROBLEM_BY_ID = new Map(problems.map((problem) => [problem.id, problem]));
 
-type ProblemListMode = 'category' | 'path';
+type ProblemListMode = 'category' | 'path' | 'course';
 
 const DIFFICULTY_LABEL: Record<string, string> = {
   beginner: '初級',
@@ -66,17 +66,23 @@ export function ProblemList({
 }: ProblemListProps) {
   const [listMode, setListMode] = useState<ProblemListMode>('category');
   const categories = getProblemsByCategory();
+  const courses = getProblemsByCourse();
   const pathProblems = getProblemsByLearningPath();
   const solvedSet = new Set(solvedProblemIds);
   const bookmarkedSet = new Set(bookmarkedProblemIds);
   const normalizedSearchQuery = normalizeSearchText(searchQuery);
   const filterProblem = (problem: Problem) => matchesProblemSearch(problem, normalizedSearchQuery);
   const nextRecommendedProblem = getNextRecommendedProblem(solvedProblemIds);
+  const selectedProblem = selectedId ? PROBLEM_BY_ID.get(selectedId) ?? null : null;
+  const selectedCourse = selectedProblem?.catalog ? PROBLEM_COURSES[selectedProblem.catalog.courseId] : null;
   const solvedPathCount = pathProblems.filter((problem) => solvedSet.has(problem.id)).length;
   const recentlyViewedProblems = resolveProblems(recentProblemIds)
     .filter(filterProblem)
     .slice(0, RECENT_PROBLEM_LIMIT);
   const bookmarkedProblems = resolveProblems(bookmarkedProblemIds).filter(filterProblem);
+  const visibleCourses = Array.from(courses.entries())
+    .map(([courseId, courseProblems]) => [courseId, courseProblems.filter(filterProblem)] as const)
+    .filter(([, courseProblems]) => courseProblems.length > 0);
   const visiblePathProblems = pathProblems.filter(filterProblem);
   const visibleCategories = Array.from(categories.entries())
     .map(([category, categoryProblems]) => [category, categoryProblems.filter(filterProblem)] as const)
@@ -86,13 +92,24 @@ export function ProblemList({
     : nextRecommendedProblem?.learningPath
       ? `次に学ぶ: ステップ ${nextRecommendedProblem.learningPath.step} ${nextRecommendedProblem.title}`
       : '全ステップ完了済みです。';
+  const courseMessage = normalizedSearchQuery
+    ? `検索中のコース候補: ${visibleCourses.length}件`
+    : selectedProblem?.catalog && selectedCourse
+      ? `現在のコース: ${selectedCourse.title} / 第${selectedProblem.catalog.courseOrder}問`
+      : nextRecommendedProblem?.catalog
+        ? `おすすめコース: ${PROBLEM_COURSES[nextRecommendedProblem.catalog.courseId].title}`
+        : `利用可能コース: ${Object.keys(PROBLEM_COURSES).length}件`;
   const hasVisibleProblems =
-    (listMode === 'path' ? visiblePathProblems.length > 0 : visibleCategories.length > 0)
+    (listMode === 'path'
+      ? visiblePathProblems.length > 0
+      : listMode === 'course'
+        ? visibleCourses.length > 0
+        : visibleCategories.length > 0)
     || bookmarkedProblems.length > 0
     || recentlyViewedProblems.length > 0;
 
-  const renderProblemButton = (problem: Problem, compact = false, pathView = false) => {
-    const pathStatus = pathView
+  const renderProblemButton = (problem: Problem, compact = false, view: 'default' | 'path' | 'course' = 'default') => {
+    const pathStatus = view === 'path'
       ? solvedSet.has(problem.id)
         ? 'クリア済み'
         : nextRecommendedProblem?.id === problem.id
@@ -104,15 +121,17 @@ export function ProblemList({
 
     const subtitle = compact
       ? `${problem.category} / ${DIFFICULTY_LABEL[problem.difficulty]}`
-      : pathView && problem.learningPath
+      : view === 'path' && problem.learningPath
         ? `ステップ ${problem.learningPath.step} / ${pathStatus}`
-        : null;
+        : view === 'course' && problem.catalog
+          ? `第${problem.catalog.courseOrder}問 / ${problem.category}`
+          : null;
 
     return (
       <button
         key={`${compact ? 'shortcut' : 'category'}-${problem.id}`}
         type="button"
-        className={`problem-item ${selectedId === problem.id ? 'selected' : ''} ${solvedSet.has(problem.id) ? 'solved' : ''} ${compact ? 'compact' : ''} ${pathView && nextRecommendedProblem?.id === problem.id ? 'recommended' : ''}`}
+        className={`problem-item ${selectedId === problem.id ? 'selected' : ''} ${solvedSet.has(problem.id) ? 'solved' : ''} ${compact ? 'compact' : ''} ${nextRecommendedProblem?.id === problem.id ? 'recommended' : ''}`}
         onClick={() => onSelect(problem)}
       >
         <span className="problem-title-stack">
@@ -149,10 +168,11 @@ export function ProblemList({
       <div className="problem-list-body">
         <div className="learning-path-panel">
           <div className="learning-path-copy">
-            <h3 className="learning-path-title">🧭 学習パス</h3>
-            <p className="learning-path-description">初学者向けの推奨順で、何から学ぶべきかを確認できます。</p>
+            <h3 className="learning-path-title">🧭 学習ナビ</h3>
+            <p className="learning-path-description">学習パス、コース、カテゴリの3軸で問題を見比べられます。</p>
             <p className="learning-path-progress">進捗 {solvedPathCount}/{pathProblems.length}</p>
             <p className="learning-path-next">{learningPathMessage}</p>
+            <p className="learning-path-course">{courseMessage}</p>
           </div>
           <div className="problem-list-mode-toggle" role="group" aria-label="問題一覧の表示順">
             <button
@@ -162,6 +182,14 @@ export function ProblemList({
               onClick={() => setListMode('path')}
             >
               学習パス順
+            </button>
+            <button
+              type="button"
+              className={`problem-list-mode-button ${listMode === 'course' ? 'active' : ''}`}
+              aria-pressed={listMode === 'course'}
+              onClick={() => setListMode('course')}
+            >
+              コース別
             </button>
             <button
               type="button"
@@ -198,8 +226,25 @@ export function ProblemList({
               <span>{pathProblems[0]?.learningPath?.title ?? '学習パス'}</span>
               <span className="category-progress">{solvedPathCount}/{pathProblems.length}</span>
             </h3>
-            {visiblePathProblems.map((problem) => renderProblemButton(problem, false, true))}
+            {visiblePathProblems.map((problem) => renderProblemButton(problem, false, 'path'))}
           </div>
+        ) : listMode === 'course' ? (
+          visibleCourses.map(([courseId, courseProblems]) => {
+            const course = PROBLEM_COURSES[courseId];
+
+            return (
+              <div key={courseId} className="problem-category course-category">
+                <h3 className="category-title">
+                  <span>{course.title}</span>
+                  <span className="category-progress">
+                    {courseProblems.filter((problem) => solvedSet.has(problem.id)).length}/{courseProblems.length}
+                  </span>
+                </h3>
+                <p className="course-category-description">{course.description}</p>
+                {courseProblems.map((problem) => renderProblemButton(problem, false, 'course'))}
+              </div>
+            );
+          })
         ) : visibleCategories.map(([category, probs]) => (
           <div key={category} className="problem-category">
             <h3 className="category-title">

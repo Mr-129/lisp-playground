@@ -228,14 +228,14 @@ Vitest によるテストスイートが用意されています。
 | `Header.test.tsx` | ナビゲーションヘッダー | 15 |
 | `Editor.test.tsx` | CodeMirror ラッパー・ショートカット | 7 |
 | `OutputPanel.test.tsx` | 実行結果パネル | 9 |
-| `ProblemList.test.tsx` | 問題一覧サイドバー | 11 |
+| `ProblemList.test.tsx` | 問題一覧サイドバー | 12 |
 | `ProblemView.test.tsx` | 問題表示・ヒント・解答・Markdown 分岐 | 16 |
 | `LispGuide.test.tsx` | Lisp 構文ガイド | 18 |
 | `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 12 |
 | `App.integration.test.tsx` | App ルーティング・ページ間状態連携 | 5 |
 | `HomePage.test.tsx` | Home 画面導線 | 3 |
 | `ProblemsPage.test.tsx` | 問題一覧ページ導線 | 6 |
-| `LearnPage.test.tsx` | 学習ページ統合 | 16 |
+| `LearnPage.test.tsx` | 学習ページ統合 | 17 |
 | `EditorPage.test.tsx` | エディタページ統合 | 17 |
 | `ReplPage.test.tsx` | REPLページ統合 | 20 |
 | `problems.test.ts` | 問題データ整合性 | 65 |
@@ -245,7 +245,7 @@ Vitest によるテストスイートが用意されています。
 | `worker.test.ts` | Worker 管理・フォールバック | 5 |
 | `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
 
-| **合計** | | **538** |
+| **合計** | | **540** |
 
 ---
 

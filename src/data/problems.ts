@@ -62,6 +62,21 @@ const CATEGORY_TO_TAGS: Record<string, ProblemTag[]> = {
   '総合問題': ['challenge'],
 };
 
+export const PROBLEM_COURSES: Record<ProblemCourseId, { title: string; description: string }> = {
+  'intro-core': {
+    title: '入門コース',
+    description: '基本構文、条件分岐、数値、文字列、スコープを順番に固めるコースです。',
+  },
+  'data-and-control': {
+    title: 'データと制御コース',
+    description: 'リスト処理とループを中心に、データの扱いと反復を身につけます。',
+  },
+  'functional-patterns': {
+    title: '関数型パターンコース',
+    description: '高階関数、再帰、クロージャ、総合問題で抽象化と応用を練習します。',
+  },
+};
+
 function getProblemTier(difficulty: Problem['difficulty']): ProblemTier {
   return difficulty === 'beginner' ? 'free' : 'standard';
 }
@@ -2627,6 +2642,20 @@ export function getProblemsByLearningPath(): Problem[] {
   return problems
     .filter((problem) => problem.learningPath !== undefined)
     .sort((left, right) => (left.learningPath?.step ?? left.order) - (right.learningPath?.step ?? right.order));
+}
+
+export function getProblemsByCourse(): Map<ProblemCourseId, Problem[]> {
+  const map = new Map<ProblemCourseId, Problem[]>();
+
+  for (const courseId of Object.keys(PROBLEM_COURSES) as ProblemCourseId[]) {
+    const courseProblems = problems
+      .filter((problem) => problem.catalog?.courseId === courseId)
+      .sort((left, right) => (left.catalog?.courseOrder ?? left.order) - (right.catalog?.courseOrder ?? right.order));
+
+    map.set(courseId, courseProblems);
+  }
+
+  return map;
 }
 
 export function getNextRecommendedProblem(solvedProblemIds: string[]): Problem | null {

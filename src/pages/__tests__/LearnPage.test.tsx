@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { useState } from 'react';
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { LearnPage } from '../LearnPage';
+import { problems } from '../../data/problems';
 import { Problem } from '../../types';
 
 const mockProblem: Problem = {
@@ -33,6 +34,8 @@ const anotherProblem: Problem = {
   learningGoals: ['another-goal'],
   solution: '(+ 3 4)',
 };
+
+const firstCourseProblem = problems.find((problem) => problem.catalog?.courseId === 'intro-core') as Problem;
 
 function LocationDisplay() {
   const location = useLocation();
@@ -153,6 +156,17 @@ describe('LearnPage', () => {
     renderLearnPage({ selectedProblem: mockProblem });
     expect(screen.getByText('テスト問題')).toBeInTheDocument();
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
+  });
+
+  it('コース情報を持つ問題では現在のコースカードを表示する', () => {
+    renderLearnPage({ selectedProblem: firstCourseProblem });
+
+    const courseCard = screen.getByLabelText('現在のコース情報');
+
+    expect(within(courseCard).getByRole('heading', { name: '入門コース' })).toBeInTheDocument();
+    expect(within(courseCard).getByText('Free')).toBeInTheDocument();
+    expect(within(courseCard).getByText(/第1問/)).toBeInTheDocument();
+    expect(within(courseCard).getByText('この問題がコースの次の一問です。')).toBeInTheDocument();
   });
 
   it('サイドバートグルボタンが動作する', () => {

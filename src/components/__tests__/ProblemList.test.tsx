@@ -18,6 +18,7 @@ vi.mock('../../data/problems', () => {
       estimatedMinutes: 5,
       learningGoals: ['goal-a'],
       learningPath: { id: 'starter', title: 'Lisp 基礎ステップ', step: 1, prerequisites: [] },
+      catalog: { tier: 'free', courseId: 'intro-core', courseOrder: 1, tags: ['syntax'] },
       solution: '(+ 1 2)',
     },
     {
@@ -31,6 +32,7 @@ vi.mock('../../data/problems', () => {
       estimatedMinutes: 8,
       learningGoals: ['goal-b'],
       learningPath: { id: 'starter', title: 'Lisp 基礎ステップ', step: 3, prerequisites: ['cat2-01'] },
+      catalog: { tier: 'standard', courseId: 'functional-patterns', courseOrder: 2, tags: ['higher-order'] },
       solution: '(+ 1 2)',
     },
     {
@@ -44,12 +46,18 @@ vi.mock('../../data/problems', () => {
       estimatedMinutes: 10,
       learningGoals: ['goal-c'],
       learningPath: { id: 'starter', title: 'Lisp 基礎ステップ', step: 2, prerequisites: ['cat1-01'] },
+      catalog: { tier: 'standard', courseId: 'functional-patterns', courseOrder: 1, tags: ['recursion'] },
       solution: '(+ 1 2)',
     },
   ];
 
   return {
     problems: mockProblems,
+    PROBLEM_COURSES: {
+      'intro-core': { title: '入門コース', description: '基本構文を固めるコースです。' },
+      'data-and-control': { title: 'データと制御コース', description: 'リストとループを学びます。' },
+      'functional-patterns': { title: '関数型パターンコース', description: '再帰と高階関数を学びます。' },
+    },
     getNextRecommendedProblem: (solvedProblemIds: string[]) => {
       const solvedSet = new Set(solvedProblemIds);
       return [...mockProblems]
@@ -63,6 +71,13 @@ vi.mock('../../data/problems', () => {
       return map;
     },
     getProblemsByLearningPath: () => [mockProblems[0], mockProblems[2], mockProblems[1]],
+    getProblemsByCourse: () => {
+      const map = new Map();
+      map.set('intro-core', [mockProblems[0]]);
+      map.set('data-and-control', []);
+      map.set('functional-patterns', [mockProblems[2], mockProblems[1]]);
+      return map;
+    },
   };
 });
 
@@ -167,6 +182,23 @@ describe('ProblemList', () => {
     expect(buttons[1]).toHaveTextContent('問題C');
     expect(buttons[1]).toHaveTextContent('ステップ 2');
     expect(buttons[2]).toHaveTextContent('問題B');
+  });
+
+  it('コース別に切り替えるとコース見出しごとに一覧表示する', () => {
+    render(<ProblemList selectedId={null} solvedProblemIds={[]} onSelect={() => {}} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'コース別' }));
+
+    expect(screen.getByText('関数型パターンコース')).toBeInTheDocument();
+    expect(screen.getByText('再帰と高階関数を学びます。')).toBeInTheDocument();
+
+    const courseSection = screen.getByText('関数型パターンコース').closest('.problem-category');
+    const buttons = within(courseSection as HTMLElement).getAllByRole('button');
+
+    expect(buttons[0]).toHaveTextContent('問題C');
+    expect(buttons[0]).toHaveTextContent('第1問');
+    expect(buttons[1]).toHaveTextContent('問題B');
+    expect(buttons[1]).toHaveTextContent('第2問');
   });
 
   it('searchQuery に一致しない場合は空メッセージを表示する', () => {

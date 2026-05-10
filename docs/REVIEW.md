@@ -2,7 +2,7 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年5月10日 — T-201（問題データの商品属性追加）実装、Vitest 538 件 / Playwright 3 件の再確認、関連ドキュメント同期を反映
+**最終更新**: 2026年5月10日 — T-202（コース単位の表示設計）実装、Vitest 540 件 / Playwright 3 件の再確認、関連ドキュメント同期を反映
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開後確認ログ**: [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) — GitHub Pages 公開後の確認結果
@@ -31,8 +31,8 @@
 
 | 観点 | 評価 | 備考 |
 |------|------|------|
-| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・商品属性データ基盤・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索実装済、問題 51 問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 538 件 + Playwright 3 件の回帰確認 |
+| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・コース別ナビゲーション・商品属性データ基盤・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索実装済、問題 51 問 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 540 件 + Playwright 3 件の回帰確認 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -210,7 +210,7 @@
 #### ✅ ~~🟡 CQ-003: テストコードが存在しない~~ **→ 修正済**
 - **ファイル**: `src/interpreter/__tests__/`, `src/components/__tests__/`, `src/pages/__tests__/`
 - **重要度**: Minor（学習プロジェクトとしては許容）
-- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UI/アプリ統合テストを追加（合計 538 テスト）
+- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UI/アプリ統合テストを追加（合計 540 テスト）
   - `src/interpreter/__tests__/` — 260 テスト（types, environment, parser, evaluator, integration, repl, security）
   - `src/components/__tests__/` — 76 テスト（Header, Editor, OutputPanel, ProblemList, ProblemView, LispGuide）
   - `src/pages/__tests__/` — 62 テスト（HomePage, ProblemsPage, LearnPage, EditorPage, ReplPage）
@@ -259,7 +259,7 @@
 | ~~同期実行~~ | ~~UI スレッドで直接評価~~ | ✅ Web Worker に分離済 | — |
 | 状態管理 | useState の組み合わせ | useReducer or Zustand | 中 |
 | ~~コードの永続化~~ | ~~なし（リロードで消失）~~ | ✅ localStorage 実装済 | — |
-| テスタビリティ | ~~テストなし~~ Vitest 538件 | ✅ 対応済 | — |
+| テスタビリティ | ~~テストなし~~ Vitest 540件 | ✅ 対応済 | — |
 | CSS 管理 | 単一ファイル | CSS Modules or Tailwind | 低 |
 
 ---
@@ -406,3 +406,4 @@
 *2026-05-10: REPL 履歴の永続化を反映し、Vitest 529 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
 *2026-05-10: 学習パスの導入を反映し、Vitest 535 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
 *2026-05-10: 問題データの商品属性追加を反映し、Vitest 538 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
+*2026-05-10: コース単位の表示設計を反映し、Vitest 540 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
