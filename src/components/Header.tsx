@@ -1,6 +1,10 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export function Header() {
+interface HeaderProps {
+  onOpenPricingGuide?: () => void;
+}
+
+export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const isLearningRoute =
@@ -38,6 +42,14 @@ export function Header() {
         </button>
       </nav>
       <div className="header-right">
+        <button
+          type="button"
+          className="header-pricing-cta"
+          onClick={onOpenPricingGuide}
+          aria-label="Standard プランの案内を見る"
+        >
+          ✨ Standard案内
+        </button>
         <a
           href="https://github.com/Mr-129/lisp-playground"
           target="_blank"

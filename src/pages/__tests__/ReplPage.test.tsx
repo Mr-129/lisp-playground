@@ -4,6 +4,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ReplPage } from '../ReplPage';
 
+const { trackEventMock } = vi.hoisted(() => ({
+  trackEventMock: vi.fn(),
+}));
+
+vi.mock('../../utils/analytics', () => ({
+  trackEvent: trackEventMock,
+}));
+
 function renderRepl() {
   return render(
     <MemoryRouter initialEntries={['/repl']}>
@@ -15,6 +23,7 @@ function renderRepl() {
 describe('ReplPage', () => {
   beforeEach(() => {
     localStorage.clear();
+    trackEventMock.mockReset();
   });
 
   it('ウェルカムメッセージを表示する', () => {
@@ -51,6 +60,12 @@ describe('ReplPage', () => {
 
     expect(screen.getByText('→ 3')).toBeInTheDocument();
     expect(screen.getByText('(+ 1 2)')).toBeInTheDocument();
+    expect(trackEventMock).toHaveBeenCalledWith('repl_command_executed', {
+      inputLength: '(+ 1 2)'.length,
+      historySize: 1,
+      hadError: false,
+      outputLength: 0,
+    });
   });
 
   it('空白だけの入力で Enter を押しても評価しない', () => {

@@ -2,7 +2,7 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年5月10日 — T-203（ロック済みコンテンツ UI の土台）実装、Vitest 543 件 / Playwright 3 件の再確認、関連ドキュメント同期を反映
+**最終更新**: 2026年5月10日 — T-302（CTA と価格導線の追加）実装、Vitest 553 件 / Playwright 3 件の再確認、Node 22 build 成功 / Node 24 build 異常終了メモを含む関連ドキュメント同期を反映
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開後確認ログ**: [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) — GitHub Pages 公開後の確認結果
@@ -31,8 +31,8 @@
 
 | 観点 | 評価 | 備考 |
 |------|------|------|
-| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・コース別ナビゲーション・ロック済みコンテンツ UI・商品属性データ基盤・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索実装済、問題 51 問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 543 件 + Playwright 3 件の回帰確認 |
+| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・コース別ナビゲーション・ロック済みコンテンツ UI・商品属性データ基盤・イベント計測抽象化・GA4 対応 CTA と価格導線 preview・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索実装済、問題 51 問 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 553 件 + Playwright 3 件の回帰確認 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -210,12 +210,12 @@
 #### ✅ ~~🟡 CQ-003: テストコードが存在しない~~ **→ 修正済**
 - **ファイル**: `src/interpreter/__tests__/`, `src/components/__tests__/`, `src/pages/__tests__/`
 - **重要度**: Minor（学習プロジェクトとしては許容）
-- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UI/アプリ統合テストを追加（合計 543 テスト）
+- **対応**: Vitest でインタプリタの単体テスト + 結合テスト + UI/アプリ統合テストを追加（合計 553 テスト）
   - `src/interpreter/__tests__/` — 260 テスト（types, environment, parser, evaluator, integration, repl, security）
-  - `src/components/__tests__/` — 79 テスト（Header, Editor, OutputPanel, ProblemList, ProblemView, LispGuide）
-  - `src/pages/__tests__/` — 62 テスト（HomePage, ProblemsPage, LearnPage, EditorPage, ReplPage）
-  - `src/__tests__/` — 17 テスト（App の状態復元・進捗保存・ルーティング）
-  - `src/data`, `src/utils`, `src/editor`, `src/worker`, `src/judge` — 125 テスト
+  - `src/components/__tests__/` — 80 テスト（Header, Editor, OutputPanel, ProblemList, ProblemView, LispGuide）
+  - `src/pages/__tests__/` — 64 テスト（HomePage, ProblemsPage, LearnPage, EditorPage, ReplPage）
+  - `src/__tests__/` — 19 テスト（App の状態復元・進捗保存・ルーティング）
+  - `src/data`, `src/utils`, `src/editor`, `src/worker`, `src/judge` — 130 テスト
 
 ---
 
@@ -250,7 +250,7 @@
 3. **コンポーネント分離** — Editor / Output / Problem / Guide が明確に分離
 4. **インタプリタの独立性** — React に依存せず、純粋な TypeScript
 5. **問題データの宣言的定義** — TypeScript の型安全性を活用
-6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 529件
+6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 553件
 
 ### 改善が望ましい点 ⚠️
 
@@ -259,7 +259,7 @@
 | ~~同期実行~~ | ~~UI スレッドで直接評価~~ | ✅ Web Worker に分離済 | — |
 | 状態管理 | useState の組み合わせ | useReducer or Zustand | 中 |
 | ~~コードの永続化~~ | ~~なし（リロードで消失）~~ | ✅ localStorage 実装済 | — |
-| テスタビリティ | ~~テストなし~~ Vitest 543件 | ✅ 対応済 | — |
+| テスタビリティ | ~~テストなし~~ Vitest 553件 | ✅ 対応済 | — |
 | CSS 管理 | 単一ファイル | CSS Modules or Tailwind | 低 |
 
 ---
@@ -378,7 +378,7 @@
 1. `React.StrictMode` が有効（開発時の二重レンダリングに注意）
 2. `.gitignore` で `node_modules/`, `dist/`, `coverage/`, `playwright-report/`, `test-results/`, `artifacts/` を除外済み
 3. `package-lock.json` をバージョン管理に含めること
-4. build の安定運用対象は Node 20 / 22 とする。2026-05-09 時点の再調査では、Node 24.13.0 で一度だけ `0xC0000409` 相当の異常終了が出たが、その後の Node 24 での `npm run build` 5回、`npx vite build` 5回はすべて成功し、恒常再現しなかった。現時点では unsupported runtime 上の間欠的事象として扱い、ローカル build 検証と配布用 build は引き続き Node 20 / 22 または GitHub Actions (`ubuntu-latest`) を正経路とする。Node 24 対応の追加調査は再発時にのみ再開する
+4. build の安定運用対象は Node 20 / 22 とする。2026-05-10 の再確認では、Windows 環境の Node 24.13.0 で `npm run build` が `EXIT=-1073740791` で再度異常終了し、`npx tsc -b` は成功、同じワークスペースを一時 Node 22.22.2 で実行した `vite build` は正常完了した。現時点では unsupported runtime 上の環境依存事象として扱い、ローカル build 検証と配布用 build は引き続き Node 20 / 22 または GitHub Actions の `deploy` ブランチ経由を正経路とする。`main` の push / PR は CI のみ、Pages 配信は `deploy` ブランチ push 時のみ実行する。Node 24 対応の恒久修正は再発条件を追加取得できた時点で再開する
 
 ### 2026年4月29日の公開後確認
 
@@ -408,3 +408,7 @@
 *2026-05-10: 問題データの商品属性追加を反映し、Vitest 538 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
 *2026-05-10: コース単位の表示設計を反映し、Vitest 540 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
 *2026-05-10: ロック済みコンテンツ UI の土台を反映し、Vitest 543 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
+*2026-05-10: イベント計測の抽象化を反映し、Vitest 546 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
+*2026-05-10: CTA と価格導線の追加、および GA4 送信対応を反映し、Vitest 553 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
+*2026-05-10: Windows 環境で Node 24.13.0 の `npm run build` 異常終了を再確認し、一時 Node 22.22.2 では同じ build が成功することを追記。*
+*2026-05-10: GitHub Pages の公開トリガーを `main` から `deploy` ブランチへ切替え、Actions の Node 版数を 22 に固定する運用へ更新。*

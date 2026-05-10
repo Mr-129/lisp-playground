@@ -1,11 +1,19 @@
 // @vitest-environment jsdom
 import { useState } from 'react';
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { LearnPage } from '../LearnPage';
 import { problems } from '../../data/problems';
 import { Problem } from '../../types';
+
+const { trackEventMock } = vi.hoisted(() => ({
+  trackEventMock: vi.fn(),
+}));
+
+vi.mock('../../utils/analytics', () => ({
+  trackEvent: trackEventMock,
+}));
 
 const mockProblem: Problem = {
   id: 'test-01',
@@ -55,6 +63,7 @@ function renderLearnPage(
     onSelectProblem: vi.fn(),
     onSearchQueryChange: vi.fn(),
     onSelectGuideSection: vi.fn(),
+    onOpenPricingGuide: vi.fn(),
     onShowSolution: vi.fn(),
     onNavigateToEditor: vi.fn(),
     ...props,
@@ -93,6 +102,7 @@ function renderStatefulLearnPage(initialPath = '/guide') {
         }}
         onSearchQueryChange={setSearchQuery}
         onSelectGuideSection={setSelectedGuideSectionId}
+        onOpenPricingGuide={vi.fn()}
         onShowSolution={vi.fn()}
         onNavigateToEditor={onNavigateToEditor}
         initialView={initialView}
@@ -116,6 +126,10 @@ function renderStatefulLearnPage(initialPath = '/guide') {
 }
 
 describe('LearnPage', () => {
+  beforeEach(() => {
+    trackEventMock.mockReset();
+  });
+
   it('問題未選択時に案内カードを表示する', () => {
     renderLearnPage();
     expect(screen.getByText('問題を選択してください')).toBeInTheDocument();
@@ -156,6 +170,16 @@ describe('LearnPage', () => {
     renderLearnPage({ selectedProblem: mockProblem });
     expect(screen.getByText('テスト問題')).toBeInTheDocument();
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
+  });
+
+  it('問題選択時に Standard 案内 CTA を表示してコールバックを呼ぶ', () => {
+    const onOpenPricingGuide = vi.fn();
+
+    renderLearnPage({ selectedProblem: mockProblem, onOpenPricingGuide });
+
+    fireEvent.click(screen.getByText('✨ Standard の案内を見る'));
+
+    expect(onOpenPricingGuide).toHaveBeenCalledWith('learn_problem');
   });
 
   it('コース情報を持つ問題では現在のコースカードを表示する', () => {
@@ -272,6 +296,16 @@ describe('LearnPage', () => {
     expect(screen.getByTestId('location-path')).toHaveTextContent('/editor');
   });
 
+  it('空状態で Standard 案内 CTA を表示してコールバックを呼ぶ', () => {
+    const onOpenPricingGuide = vi.fn();
+
+    renderLearnPage({ onOpenPricingGuide });
+
+    fireEvent.click(screen.getByText('✨ Standard の案内を見る'));
+
+    expect(onOpenPricingGuide).toHaveBeenCalledWith('learn_empty');
+  });
+
   it('検索入力で問題一覧を絞り込める', () => {
     const onSearchQueryChange = vi.fn();
 
@@ -282,6 +316,12 @@ describe('LearnPage', () => {
     });
 
     expect(onSearchQueryChange).toHaveBeenCalledWith('初めてのS式');
+    expect(trackEventMock).toHaveBeenCalledWith('learning_search_used', {
+      query: '初めてのS式',
+      mode: 'problem',
+      guideResultCount: 0,
+      selectedProblemId: null,
+    });
   });
 
   it('ガイド検索結果から guide へ遷移し、検索語を維持したまま対象セクションを表示する', () => {

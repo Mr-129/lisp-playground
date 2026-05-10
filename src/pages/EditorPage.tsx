@@ -5,6 +5,7 @@ import { OutputPanel } from '../components/OutputPanel';
 import { runProblemJudge } from '../judge';
 import type { JudgeRunResult } from '../judge';
 import { executeLispAsync } from '../worker';
+import { trackEvent } from '../utils/analytics';
 import { Problem } from '../types';
 
 interface EditorPageProps {
@@ -37,6 +38,9 @@ export function EditorPage({
 
   const handleRun = useCallback(async () => {
     if (isRunning) return;
+
+    const mode = selectedProblem ? 'guided' : 'free';
+
     setIsRunning(true);
     setOutput('');
     setReturnValue('');
@@ -46,6 +50,8 @@ export function EditorPage({
 
     try {
       const result = await executeLispAsync(code);
+      let passed: boolean | null = null;
+
       setOutput(result.output);
       setReturnValue(result.returnValue);
       setError(result.error);
@@ -56,6 +62,7 @@ export function EditorPage({
 
         if (nextJudgeResult) {
           const correct = nextJudgeResult.passed;
+          passed = correct;
           setIsCorrect(correct);
           if (correct) {
             onProblemSolved(selectedProblem.id);
@@ -67,9 +74,25 @@ export function EditorPage({
         setJudgeResult(null);
         setIsCorrect(null);
       }
+
+      trackEvent('editor_code_executed', {
+        mode,
+        problemId: selectedProblem?.id ?? null,
+        codeLength: code.length,
+        hadError: Boolean(result.error),
+        passed,
+      });
     } catch (e) {
       setJudgeResult(null);
       setError(e instanceof Error ? e.message : '実行中にエラーが発生しました');
+
+      trackEvent('editor_code_executed', {
+        mode,
+        problemId: selectedProblem?.id ?? null,
+        codeLength: code.length,
+        hadError: true,
+        passed: null,
+      });
     } finally {
       setIsRunning(false);
     }

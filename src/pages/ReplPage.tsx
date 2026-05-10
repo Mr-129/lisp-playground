@@ -7,6 +7,7 @@ import {
   type ReplHistoryEntry,
   type ReplSessionSnapshot,
 } from '../utils/storage';
+import { trackEvent } from '../utils/analytics';
 
 type ReplEntry = ReplHistoryEntry;
 
@@ -66,6 +67,13 @@ export function ReplPage() {
 
     const result = executeLispRepl(trimmed, env);
 
+    trackEvent('repl_command_executed', {
+      inputLength: trimmed.length,
+      historySize: history.length + 1,
+      hadError: Boolean(result.error),
+      outputLength: result.output.length,
+    });
+
     const entry: ReplEntry = {
       id: nextId.current++,
       input: trimmed,
@@ -79,7 +87,7 @@ export function ReplPage() {
     setInputHistory(prev => [...prev, trimmed]);
     setHistoryIndex(-1);
     setInput('');
-  }, [input, env]);
+  }, [input, env, history.length]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {

@@ -7,9 +7,16 @@ import { EditorPage } from '../EditorPage';
 import { Problem } from '../../types';
 
 const executeLispAsyncMock = vi.hoisted(() => vi.fn());
+const { trackEventMock } = vi.hoisted(() => ({
+  trackEventMock: vi.fn(),
+}));
 
 vi.mock('../../worker', () => ({
   executeLispAsync: executeLispAsyncMock,
+}));
+
+vi.mock('../../utils/analytics', () => ({
+  trackEvent: trackEventMock,
 }));
 
 // Mock CodeMirror since it doesn't work well in jsdom
@@ -83,6 +90,7 @@ const judgeProblem: Problem = {
 
 beforeEach(() => {
   executeLispAsyncMock.mockReset();
+  trackEventMock.mockReset();
   executeLispAsyncMock.mockImplementation(async (code: string) => {
     switch (code) {
       case '(+ 1 2)':
@@ -245,6 +253,13 @@ describe('EditorPage', () => {
       expect(setIsCorrect).toHaveBeenCalledWith(true);
     });
     expect(onProblemSolved).toHaveBeenCalledWith('test-01');
+    expect(trackEventMock).toHaveBeenCalledWith('editor_code_executed', {
+      mode: 'guided',
+      problemId: 'test-01',
+      codeLength: '(print (+ 1 2))'.length,
+      hadError: false,
+      passed: true,
+    });
   });
 
   it('expectedReturnValue が未定義でも expectedOutput のみで正解判定する', async () => {

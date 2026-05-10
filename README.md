@@ -26,6 +26,8 @@
 - **バックグラウンド実行** — Web Worker によるUIブロックなし実行 + 10秒タイムアウト
 - **コード永続化** — localStorage によるコード・選択中問題・解答済み問題の自動保存
 - **学習パス** — 初学者向けの推奨順、次に学ぶ問題、カテゴリ別表示の切り替えに対応
+- **イベント計測基盤** — 問題閲覧、検索、コード実行、REPL、CTA クリックを `trackEvent` 経由で一元計測し、内部 queue / `dataLayer` / GA4 に接続可能
+- **価格導線の先行案内** — Header / LearnPage に Standard 案内 CTA を配置し、Free と Standard の違いを先に伝えられる
 - **問題モード** — カテゴリ別の学習問題（全51問） + 進捗ダッシュボード + 自動正答判定
 - **REPL モード** — 1行ずつ式を評価、環境を引き継いだ対話的実行
 - **フリーモード** — 自由にコードを書いて実験
@@ -165,6 +167,17 @@ npm run dev
 ブラウザで `http://localhost:5173` にアクセスしてください。
 ポートが使用中の場合、Vite は `5174` など別ポートへ自動で切り替えます。
 
+### 任意: GA4 計測設定
+
+GA4 を有効にする場合は、`.env.local` に Measurement ID を設定します。
+
+```bash
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+この値がある場合、起動時に `gtag.js` を読み込み、`trackEvent` で発火したイベントを GA4 event 形式でも送信します。
+未設定でも内部 queue と `dataLayer` は維持されるため、ローカル開発や GTM 前提の検証は継続できます。
+
 ### プロダクションビルド
 
 ```bash
@@ -176,7 +189,7 @@ npm run build
 > **Windows ローカルビルド補足**: 現在の確認では、日本語パス配下そのものが主因ではなく、`Node.js 24` 環境で `vite build` が異常終了します。
 > 同一ワークスペース、同一パスで `Node.js 20` と `Node.js 22` では build 成功を確認しています。
 > `npx tsc -b` は `Node.js 24` でも通るため、問題は TypeScript ではなく Vite 本体の build 後段です。
-> ローカル build は `Node.js 20` または `22` を使用してください。配布用の正規 build は GitHub Actions (`ubuntu-latest`) を利用できます。
+> ローカル build は `Node.js 20` または `22` を使用してください。配布用の正規 build は GitHub Actions の `deploy` ブランチ経由、Node 22 実行を正経路とします。
 
 ### プレビュー
 
@@ -225,27 +238,28 @@ Vitest によるテストスイートが用意されています。
 
 | テストファイル | 対象 | テスト数 |
 |---|---|---|
-| `Header.test.tsx` | ナビゲーションヘッダー | 15 |
+| `Header.test.tsx` | ナビゲーションヘッダー | 16 |
 | `Editor.test.tsx` | CodeMirror ラッパー・ショートカット | 7 |
 | `OutputPanel.test.tsx` | 実行結果パネル | 9 |
 | `ProblemList.test.tsx` | 問題一覧サイドバー | 13 |
 | `ProblemView.test.tsx` | 問題表示・ヒント・解答・Markdown 分岐 | 18 |
 | `LispGuide.test.tsx` | Lisp 構文ガイド | 18 |
-| `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 12 |
+| `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 14 |
 | `App.integration.test.tsx` | App ルーティング・ページ間状態連携 | 5 |
 | `HomePage.test.tsx` | Home 画面導線 | 3 |
 | `ProblemsPage.test.tsx` | 問題一覧ページ導線 | 6 |
-| `LearnPage.test.tsx` | 学習ページ統合 | 17 |
+| `LearnPage.test.tsx` | 学習ページ統合 | 19 |
 | `EditorPage.test.tsx` | エディタページ統合 | 17 |
 | `ReplPage.test.tsx` | REPLページ統合 | 20 |
 | `problems.test.ts` | 問題データ整合性 | 65 |
+| `analytics.test.ts` | 計測イベント抽象化 | 5 |
 | `storage.test.ts` | localStorage 永続化 | 32 |
 | `runJudge.test.ts` | judge レイヤーの採点実行 | 6 |
 | `lisp-language.test.ts` | Lisp 構文ハイライト | 13 |
 | `worker.test.ts` | Worker 管理・フォールバック | 5 |
 | `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
 
-| **合計** | | **543** |
+| **合計** | | **553** |
 
 ---
 
@@ -297,6 +311,7 @@ LispEditerApp/
 │   │   ├── lisp-worker.ts      # Worker 本体
 │   │   └── __tests__/          # Worker 単体テスト
 │   ├── utils/                  # ユーティリティ
+│   │   ├── analytics.ts        # 計測イベント抽象化
 │   │   └── storage.ts          # localStorage 永続化
 │   ├── pages/                  # ページコンポーネント
 │   │   ├── HomePage.tsx        # Home 画面
@@ -492,7 +507,10 @@ GitHub Actions で自動デプロイする方式です。リポジトリに含�
 
 1. GitHub にリポジトリを push
 2. リポジトリの **Settings → Pages → Source** を **GitHub Actions** に変更
-3. `main` ブランチに push するたびに自動ビルド＆デプロイ
+3. 通常開発は `main` ブランチで進める（`main` への push / PR は CI のみ実行）
+4. 公開したい commit を `deploy` ブランチへ反映して push すると、自動ビルド＆デプロイされる
+
+> **運用メモ**: 価格や課金まわりの未完成機能を main に積み上げても、`deploy` ブランチへ反映しない限り GitHub Pages には公開されません。
 
 > **Note**: `vite.config.ts` の `base` は `'./'`（相対パス）のままで動作します。  
 > サブディレクトリ配信（`https://user.github.io/repo/`）でも相対パスなら問題ありません。

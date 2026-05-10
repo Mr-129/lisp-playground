@@ -4,7 +4,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from '../App';
 import { problems } from '../data/problems';
 
-const { selectableProblem } = vi.hoisted(() => ({
+const { selectableProblem, trackEventMock, initializeAnalyticsMock } = vi.hoisted(() => ({
   selectableProblem: {
     id: 'basic-02',
     order: 2,
@@ -17,10 +17,22 @@ const { selectableProblem } = vi.hoisted(() => ({
     learningGoals: ['mock-goal'],
     solution: '(print 2)',
   },
+  trackEventMock: vi.fn(),
+  initializeAnalyticsMock: vi.fn(),
+}));
+
+vi.mock('../utils/analytics', () => ({
+  initializeAnalytics: initializeAnalyticsMock,
+  trackEvent: trackEventMock,
 }));
 
 vi.mock('../components/Header', () => ({
-  Header: () => <div>header</div>,
+  Header: ({ onOpenPricingGuide }: { onOpenPricingGuide?: () => void }) => (
+    <div>
+      <div>header</div>
+      <button type="button" onClick={() => onOpenPricingGuide?.()}>open-pricing-from-header</button>
+    </div>
+  ),
 }));
 
 vi.mock('../pages/HomePage', () => ({
@@ -49,6 +61,7 @@ vi.mock('../pages/LearnPage', () => ({
     bookmarkedProblemIds = [],
     onSelectProblem,
     onToggleBookmark,
+    onOpenPricingGuide,
     onShowSolution,
     onNavigateToEditor,
   }: {
@@ -57,6 +70,7 @@ vi.mock('../pages/LearnPage', () => ({
     bookmarkedProblemIds?: string[];
     onSelectProblem?: (problem: typeof selectableProblem) => void;
     onToggleBookmark?: (problemId: string) => void;
+    onOpenPricingGuide?: (placement: 'learn_empty' | 'learn_problem') => void;
     onShowSolution: () => void;
     onNavigateToEditor: () => void;
   }) => (
@@ -68,6 +82,7 @@ vi.mock('../pages/LearnPage', () => ({
       <button type="button" onClick={onShowSolution}>show-solution</button>
       <button type="button" onClick={onNavigateToEditor}>navigate-to-editor</button>
       <button type="button" onClick={() => onSelectProblem?.(selectableProblem)}>select-problem-from-learn</button>
+      <button type="button" onClick={() => onOpenPricingGuide?.('learn_problem')}>open-pricing-from-learn</button>
       <button
         type="button"
         onClick={() => {
@@ -121,6 +136,8 @@ describe('App', () => {
   beforeEach(() => {
     localStorage.clear();
     window.location.hash = '#/editor';
+    trackEventMock.mockReset();
+    initializeAnalyticsMock.mockReset();
   });
 
   it('ルート「/」でホーム画面を表示する', () => {
@@ -129,6 +146,7 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByText('home-page')).toBeInTheDocument();
+    expect(initializeAnalyticsMock).toHaveBeenCalledTimes(1);
   });
 
   it('ルート「/problems」で問題一覧ページを表示する', () => {
@@ -151,6 +169,13 @@ describe('App', () => {
         JSON.stringify([SECOND_VALID_PROBLEM_ID])
       );
     });
+
+    expect(trackEventMock).toHaveBeenCalledWith('problem_viewed', {
+      problemId: SECOND_VALID_PROBLEM_ID,
+      category: selectableProblem.category,
+      difficulty: selectableProblem.difficulty,
+      tier: 'unknown',
+    });
   });
 
   it('正解済み問題IDを localStorage に保存する', async () => {
@@ -162,6 +187,13 @@ describe('App', () => {
 
     await waitFor(() => {
       expect(localStorage.getItem(STORAGE_KEY_SOLVED_PROBLEMS)).toBe(JSON.stringify([VALID_PROBLEM_ID]));
+    });
+
+    expect(trackEventMock).toHaveBeenCalledWith('problem_solved', {
+      problemId: VALID_PROBLEM_ID,
+      category: problems[0].category,
+      difficulty: problems[0].difficulty,
+      tier: problems[0].catalog?.tier ?? 'unknown',
     });
   });
 
@@ -287,5 +319,37 @@ describe('App', () => {
 
     expect(document.activeElement).toBe(screen.getByRole('main'));
     expect(window.location.hash).toBe('#/editor');
+  });
+
+  it('ヘッダー CTA から Standard 案内モーダルを開き計測する', () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByText('open-pricing-from-header'));
+
+    expect(trackEventMock).toHaveBeenCalledWith('pricing_cta_clicked', {
+      placement: 'header',
+      selectedProblemId: null,
+      selectedProblemTier: 'unknown',
+    });
+    expect(screen.getByRole('dialog', { name: 'Free / Standard の案内' })).toBeInTheDocument();
+  });
+
+  it('学習ページ CTA から選択中問題つきで Standard 案内モーダルを開き計測する', async () => {
+    window.location.hash = '#/learn';
+    localStorage.setItem(STORAGE_KEY_PROBLEM, VALID_PROBLEM_ID);
+
+    render(<App />);
+
+    fireEvent.click(screen.getByText('open-pricing-from-learn'));
+
+    expect(trackEventMock).toHaveBeenCalledWith('pricing_cta_clicked', {
+      placement: 'learn_problem',
+      selectedProblemId: VALID_PROBLEM_ID,
+      selectedProblemTier: problems[0].catalog?.tier ?? 'unknown',
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog', { name: 'Free / Standard の案内' })).toBeInTheDocument();
+    });
   });
 });

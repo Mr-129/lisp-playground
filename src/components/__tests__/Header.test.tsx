@@ -130,4 +130,20 @@ describe('Header', () => {
     expect(link).toHaveAttribute('href', 'https://github.com/Mr-129/lisp-playground');
     expect(link).toHaveAttribute('target', '_blank');
   });
+
+  it('Standard 案内ボタンを表示してコールバックを呼ぶ', () => {
+    const onOpenPricingGuide = vi.fn();
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="*" element={<Header onOpenPricingGuide={onOpenPricingGuide} />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByLabelText('Standard プランの案内を見る'));
+
+    expect(onOpenPricingGuide).toHaveBeenCalledTimes(1);
+  });
 });

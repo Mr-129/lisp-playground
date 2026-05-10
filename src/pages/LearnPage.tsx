@@ -1,9 +1,10 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, type ChangeEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ProblemList } from '../components/ProblemList';
 import { ProblemView } from '../components/ProblemView';
 import { LispGuide, filterGuideSections } from '../components/LispGuide';
 import { getProblemsByCourse, PROBLEM_COURSES } from '../data/problems';
+import { trackEvent } from '../utils/analytics';
 import { Problem } from '../types';
 
 interface LearnPageProps {
@@ -17,6 +18,7 @@ interface LearnPageProps {
   onSearchQueryChange?: (query: string) => void;
   onSelectGuideSection?: (sectionId: string | null) => void;
   onToggleBookmark?: (problemId: string) => void;
+  onOpenPricingGuide?: (placement: 'learn_empty' | 'learn_problem') => void;
   onShowSolution: () => void;
   onNavigateToEditor: () => void;
   initialView?: 'problem' | 'guide';
@@ -33,6 +35,7 @@ export function LearnPage({
   onSearchQueryChange = () => {},
   onSelectGuideSection = () => {},
   onToggleBookmark = () => {},
+  onOpenPricingGuide = () => {},
   onShowSolution,
   onNavigateToEditor,
   initialView = 'problem',
@@ -63,6 +66,7 @@ export function LearnPage({
     () => selectedCourseProblems.find((problem) => !solvedProblemSet.has(problem.id)) ?? null,
     [selectedCourseProblems, solvedProblemSet]
   );
+  const isStandardCandidate = selectedProblem?.catalog?.tier === 'standard';
 
   useEffect(() => {
     setShowGuide(initialView === 'guide');
@@ -94,6 +98,27 @@ export function LearnPage({
     navigate('/editor');
   }, [navigate, onNavigateToEditor]);
 
+  const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const nextQuery = event.target.value;
+    const normalizedQuery = nextQuery.trim();
+
+    onSearchQueryChange(nextQuery);
+
+    if (!normalizedQuery) {
+      onSelectGuideSection(null);
+      return;
+    }
+
+    if (normalizedQuery !== searchQuery.trim()) {
+      trackEvent('learning_search_used', {
+        query: normalizedQuery,
+        mode: showGuide ? 'guide' : 'problem',
+        guideResultCount: filterGuideSections(nextQuery).length,
+        selectedProblemId: selectedProblem?.id ?? null,
+      });
+    }
+  }, [onSearchQueryChange, onSelectGuideSection, searchQuery, selectedProblem?.id, showGuide]);
+
   return (
     <div className="learn-page">
       <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
@@ -112,13 +137,7 @@ export function LearnPage({
                 type="search"
                 value={searchQuery}
                 placeholder="例: mapcar / クロージャ / 条件分岐"
-                onChange={(event) => {
-                  const nextQuery = event.target.value;
-                  onSearchQueryChange(nextQuery);
-                  if (!nextQuery.trim()) {
-                    onSelectGuideSection(null);
-                  }
-                }}
+                onChange={handleSearchChange}
               />
               <p className="learn-search-meta">問題タイトル、カテゴリ、ガイド見出しで絞り込めます。</p>
             </div>
@@ -190,6 +209,26 @@ export function LearnPage({
                 </p>
               </section>
             )}
+            <section
+              className={`pricing-cta-banner ${isStandardCandidate ? 'standard' : 'free'}`}
+              aria-label="Standard プランの案内"
+            >
+              <div className="pricing-cta-copy">
+                <p className="pricing-cta-eyebrow">Free の次に進む学習導線</p>
+                <h3>{isStandardCandidate ? 'この問題は Standard 候補です' : 'Standard の学習拡張を準備中です'}</h3>
+                <p>
+                  Free は入門コースを継続無料、Standard は中級問題、コース横断演習、詳しい解説を追加する方針です。
+                  価格ページは次の段階で公開します。
+                </p>
+              </div>
+              <button
+                type="button"
+                className="pricing-cta-button"
+                onClick={() => onOpenPricingGuide('learn_problem')}
+              >
+                ✨ Standard の案内を見る
+              </button>
+            </section>
             <ProblemView
               key={selectedProblem.id}
               problem={selectedProblem}
@@ -215,6 +254,16 @@ export function LearnPage({
                 </button>
                 <button className="start-coding-button" type="button" onClick={handleStartCoding}>
                   🖊️ フリーモードで始める
+                </button>
+              </div>
+              <div className="pricing-inline-note">
+                <p>入門を進めた後の Standard 学習拡張も準備しています。</p>
+                <button
+                  className="pricing-inline-link"
+                  type="button"
+                  onClick={() => onOpenPricingGuide('learn_empty')}
+                >
+                  ✨ Standard の案内を見る
                 </button>
               </div>
             </div>
