@@ -300,13 +300,15 @@
 
 ### T-105 学習パスの導入
 
-- **ステータス**: `todo`
+- **ステータス**: `done`
 - **目的**: 初学者が何から学ぶべきかを迷わないようにする
 - **対象ファイル**:
   - [src/types/index.ts](../src/types/index.ts)
   - [src/data/problems.ts](../src/data/problems.ts)
   - [src/pages/LearnPage.tsx](../src/pages/LearnPage.tsx)
   - [src/components/ProblemList.tsx](../src/components/ProblemList.tsx)
+  - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
+  - [src/components/__tests__/ProblemList.test.tsx](../src/components/__tests__/ProblemList.test.tsx)
 - **依存関係**: T-101, T-102
 - **実装内容**:
   - 問題に path / order / prerequisites の概念を追加する
@@ -315,6 +317,14 @@
 - **完了条件**:
   - 初学者向けの推奨順が分かる
   - path に従った一覧表示ができる
+
+- **実施メモ**:
+  - `src/types/index.ts` に `learningPath` を追加し、`src/data/problems.ts` で全 51 問へ path / step / prerequisites を付与するよう対応済み
+  - `src/data/problems.ts` に `getProblemsByLearningPath` を追加し、`getNextRecommendedProblem` を学習パスと prerequisite ベースへ更新済み
+  - `src/components/ProblemList.tsx` で学習パス panel、次に学ぶ問題の表示、カテゴリ別 / 学習パス順の切り替えを追加済み
+  - 検索中は学習パス panel も検索件数ベースの表示に切り替え、結果一覧との文脈ずれを防ぐよう対応済み
+  - `src/data/__tests__/problems.test.ts` に path 整合性テスト、`src/components/__tests__/ProblemList.test.tsx` に学習パス UI の回帰テストを追加済み
+  - 2026-05-10: `npm test -- src/data/__tests__/problems.test.ts src/components/__tests__/ProblemList.test.tsx src/pages/__tests__/ProblemsPage.test.tsx` で 79 件通過を確認済み
 
 ### T-106 REPL 履歴の永続化
 
@@ -544,15 +554,15 @@
 
 ## 9. 次に実行するべきタスク
 
-次の実装対象は **T-105 学習パスの導入** とする。  
+次の実装対象は **T-201 問題データに商品属性を追加** とする。  
 前回更新: 2026-05-10
 
 理由は次の通り。
 
-1. Phase 1 の継続利用基盤が揃ったため、次は 51 問をどう辿るかを UI で示す価値が最も高い
-2. `src/data/problems.ts` と `src/components/ProblemList.tsx` を中心に、既存の solved / bookmark / search 導線と自然につながる
-3. 学習パスは初学者の迷いを減らし、その後の T-201 以降の商品設計メタデータにも直結する
-4. 既存問題資産を増やさずに体験価値を上げられるため、次の一手として費用対効果が高い
+1. 学習パスで problem metadata の土台ができたため、次は商品属性を足してコース設計と収益導線の前提を揃える価値が高い
+2. `src/types/index.ts` と `src/data/problems.ts` に metadata を追加する流れで、T-202 / T-203 の UI 設計へ自然につながる
+3. 既存の solved / bookmark / path 導線を壊さずに、有料化やコース表示に必要な情報を先に整備できる
+4. 問題本文や judge を増やさずにプロダクト設計の解像度を上げられるため、次の一手として費用対効果が高い
 
 ---
 
@@ -583,20 +593,20 @@
 | T-102A | 採点モデル設計 + 全 51 問 Explicit judge 移行 | 2026-05-09 |
 | T-103 | 最近見た問題とブックマーク | 2026-05-10 |
 | T-104 | 問題とガイドの検索 | 2026-05-10 |
+| T-105 | 学習パスの導入 | 2026-05-10 |
 | T-106 | REPL 履歴の永続化 | 2026-05-10 |
 
 ### 未着手タスク（実施推奨順）
 
 | 順番 | ID | タスク名 | 依存 |
 |---|---|---|---|
-| 1 | T-105 | 学習パスの導入 | T-101, T-102 |
-| 2 | T-201 | 問題データに商品属性を追加 | T-105 |
-| 3 | T-202 | コース単位の表示設計 | T-201 |
-| 4 | T-203 | ロック済みコンテンツ UI の土台 | T-201 |
-| 5 | T-301 | イベント計測の抽象化 | T-101, T-104 |
-| 6 | T-302 | CTA と価格導線の追加 | T-301 |
-| 7 | T-303 | 価格ページの静的実装 | T-302 |
-| 8 | T-304 | メール獲得導線 | T-303 |
+| 1 | T-201 | 問題データに商品属性を追加 | T-105 |
+| 2 | T-202 | コース単位の表示設計 | T-201 |
+| 3 | T-203 | ロック済みコンテンツ UI の土台 | T-201 |
+| 4 | T-301 | イベント計測の抽象化 | T-101, T-104 |
+| 5 | T-302 | CTA と価格導線の追加 | T-301 |
+| 6 | T-303 | 価格ページの静的実装 | T-302 |
+| 7 | T-304 | メール獲得導線 | T-303 |
 | — | T-401〜T-404 | 認証・課金・有料コンテンツ | T-303, T-304（blocked） |
 
 ### 採点モデル移行の完了状況（T-102A サブ項目）

@@ -1,5 +1,12 @@
 import type { JudgeSpec } from '../judge';
 
+export interface LearningPathStep {
+  id: string;
+  title: string;
+  step: number;
+  prerequisites: string[];
+}
+
 export interface Problem {
   id: string;
   title: string;
@@ -15,4 +22,5 @@ export interface Problem {
   order: number;
   estimatedMinutes: number;
   learningGoals: string[];
+  learningPath?: LearningPathStep;
 }

@@ -1,7 +1,12 @@
 import { Problem } from '../types';
 
-type ProblemSeed = Omit<Problem, 'order' | 'estimatedMinutes' | 'learningGoals'>
+type ProblemSeed = Omit<Problem, 'order' | 'estimatedMinutes' | 'learningGoals' | 'learningPath'>
   & Partial<Pick<Problem, 'estimatedMinutes' | 'learningGoals'>>;
+
+const CORE_LEARNING_PATH = {
+  id: 'lisp-core-path',
+  title: 'Lisp 基礎ステップ',
+};
 
 const DEFAULT_ESTIMATED_MINUTES: Record<Problem['difficulty'], number> = {
   beginner: 6,
@@ -2539,16 +2544,35 @@ export const problems: Problem[] = problemSeeds
 
     return left.originalIndex - right.originalIndex;
   })
-  .map(({ problem }, index) => ({
+  .map(({ problem }, index, sortedProblems) => ({
     ...problem,
     order: index + 1,
     estimatedMinutes: problem.estimatedMinutes ?? DEFAULT_ESTIMATED_MINUTES[problem.difficulty],
     learningGoals: problem.learningGoals ?? [problem.category],
+    learningPath: {
+      ...CORE_LEARNING_PATH,
+      step: index + 1,
+      prerequisites: index === 0 ? [] : [sortedProblems[index - 1].problem.id],
+    },
   }));
+
+export function getProblemsByLearningPath(): Problem[] {
+  return problems
+    .filter((problem) => problem.learningPath !== undefined)
+    .sort((left, right) => (left.learningPath?.step ?? left.order) - (right.learningPath?.step ?? right.order));
+}
 
 export function getNextRecommendedProblem(solvedProblemIds: string[]): Problem | null {
   const solvedSet = new Set(solvedProblemIds);
-  return problems.find((problem) => !solvedSet.has(problem.id)) ?? null;
+  const pathProblems = getProblemsByLearningPath();
+
+  return pathProblems.find((problem) => {
+    if (solvedSet.has(problem.id)) {
+      return false;
+    }
+
+    return (problem.learningPath?.prerequisites ?? []).every((problemId) => solvedSet.has(problemId));
+  }) ?? pathProblems.find((problem) => !solvedSet.has(problem.id)) ?? null;
 }
 
 export function getProblemsByCategory(): Map<string, Problem[]> {

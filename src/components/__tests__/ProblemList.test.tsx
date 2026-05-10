@@ -17,6 +17,7 @@ vi.mock('../../data/problems', () => {
       initialCode: '',
       estimatedMinutes: 5,
       learningGoals: ['goal-a'],
+      learningPath: { id: 'starter', title: 'Lisp 基礎ステップ', step: 1, prerequisites: [] },
       solution: '(+ 1 2)',
     },
     {
@@ -29,6 +30,7 @@ vi.mock('../../data/problems', () => {
       initialCode: '',
       estimatedMinutes: 8,
       learningGoals: ['goal-b'],
+      learningPath: { id: 'starter', title: 'Lisp 基礎ステップ', step: 3, prerequisites: ['cat2-01'] },
       solution: '(+ 1 2)',
     },
     {
@@ -41,18 +43,26 @@ vi.mock('../../data/problems', () => {
       initialCode: '',
       estimatedMinutes: 10,
       learningGoals: ['goal-c'],
+      learningPath: { id: 'starter', title: 'Lisp 基礎ステップ', step: 2, prerequisites: ['cat1-01'] },
       solution: '(+ 1 2)',
     },
   ];
 
   return {
     problems: mockProblems,
+    getNextRecommendedProblem: (solvedProblemIds: string[]) => {
+      const solvedSet = new Set(solvedProblemIds);
+      return [...mockProblems]
+        .sort((left, right) => (left.learningPath?.step ?? left.order) - (right.learningPath?.step ?? right.order))
+        .find((problem) => !solvedSet.has(problem.id) && (problem.learningPath?.prerequisites ?? []).every((problemId) => solvedSet.has(problemId))) ?? null;
+    },
     getProblemsByCategory: () => {
       const map = new Map<string, Problem[]>();
       map.set('カテゴリ1', [mockProblems[0], mockProblems[1]]);
       map.set('カテゴリ2', [mockProblems[2]]);
       return map;
     },
+    getProblemsByLearningPath: () => [mockProblems[0], mockProblems[2], mockProblems[1]],
   };
 });
 
@@ -65,9 +75,9 @@ describe('ProblemList', () => {
 
   it('問題タイトルを表示する', () => {
     render(<ProblemList selectedId={null} solvedProblemIds={[]} onSelect={() => {}} />);
-    expect(screen.getByText(/問題A/)).toBeInTheDocument();
-    expect(screen.getByText(/問題B/)).toBeInTheDocument();
-    expect(screen.getByText(/問題C/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /問題A/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /問題B/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /問題C/ })).toBeInTheDocument();
   });
 
   it('難易度バッジを表示する', () => {
@@ -79,7 +89,7 @@ describe('ProblemList', () => {
 
   it('選択された問題にselectedクラスが付く', () => {
     render(<ProblemList selectedId="cat1-01" solvedProblemIds={[]} onSelect={() => {}} />);
-    const button = screen.getByText(/問題A/).closest('button');
+    const button = screen.getByRole('button', { name: /問題A/ });
     expect(button).toHaveClass('selected');
   });
 
@@ -104,6 +114,12 @@ describe('ProblemList', () => {
 
     expect(screen.getByText('最近見た問題')).toBeInTheDocument();
     expect(screen.getByText('★ ブックマーク')).toBeInTheDocument();
+  });
+
+  it('次に学ぶべき学習パスの問題を表示する', () => {
+    render(<ProblemList selectedId={null} solvedProblemIds={['cat1-01']} onSelect={() => {}} />);
+
+    expect(screen.getByText('次に学ぶ: ステップ 2 問題C')).toBeInTheDocument();
   });
 
   it('ショートカットから問題を選択できる', () => {
@@ -137,6 +153,20 @@ describe('ProblemList', () => {
     expect(screen.getByText(/問題C/)).toBeInTheDocument();
     expect(screen.queryByText(/問題A/)).not.toBeInTheDocument();
     expect(screen.queryByText(/問題B/)).not.toBeInTheDocument();
+  });
+
+  it('学習パス順に切り替えるとステップ順に一覧表示する', () => {
+    render(<ProblemList selectedId={null} solvedProblemIds={[]} onSelect={() => {}} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '学習パス順' }));
+
+    const pathSection = screen.getByText('Lisp 基礎ステップ').closest('.problem-category');
+    const buttons = within(pathSection as HTMLElement).getAllByRole('button');
+
+    expect(buttons[0]).toHaveTextContent('問題A');
+    expect(buttons[1]).toHaveTextContent('問題C');
+    expect(buttons[1]).toHaveTextContent('ステップ 2');
+    expect(buttons[2]).toHaveTextContent('問題B');
   });
 
   it('searchQuery に一致しない場合は空メッセージを表示する', () => {

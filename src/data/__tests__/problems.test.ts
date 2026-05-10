@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { problems, getProblemsByCategory } from '../problems';
+import { problems, getNextRecommendedProblem, getProblemsByCategory, getProblemsByLearningPath } from '../problems';
 
 describe('problems データ', () => {
   describe('データ整合性', () => {
@@ -12,6 +12,7 @@ describe('problems データ', () => {
         expect(p.description).toBeTruthy();
         expect(p.initialCode).toBeDefined();
         expect(p.solution).toBeTruthy();
+        expect(p.learningPath).toBeDefined();
       }
     });
 
@@ -61,6 +62,49 @@ describe('problems データ', () => {
       expect(categories).toContain('基本構文');
       expect(categories).toContain('条件分岐');
       expect(categories).toContain('リスト操作');
+    });
+  });
+
+  describe('learning path', () => {
+    it('学習パス順の一覧を返す', () => {
+      const pathProblems = getProblemsByLearningPath();
+
+      expect(pathProblems).toHaveLength(problems.length);
+      expect(pathProblems[0].learningPath?.step).toBe(1);
+      expect(pathProblems[pathProblems.length - 1].learningPath?.step).toBe(pathProblems.length);
+    });
+
+    it('学習パスの前提は既存の問題IDだけを参照し、常に前のステップを指す', () => {
+      const problemIds = new Set(problems.map((problem) => problem.id));
+
+      for (const problem of problems) {
+        const path = problem.learningPath;
+        expect(path).toBeDefined();
+
+        for (const prerequisite of path?.prerequisites ?? []) {
+          expect(problemIds.has(prerequisite)).toBe(true);
+        }
+
+        if ((path?.step ?? 0) === 1) {
+          expect(path?.prerequisites).toEqual([]);
+        } else {
+          expect(path?.prerequisites).toHaveLength(1);
+        }
+      }
+    });
+
+    it('未解答がない最初のステップを次のおすすめとして返す', () => {
+      const firstProblem = getProblemsByLearningPath()[0];
+      const secondProblem = getProblemsByLearningPath()[1];
+
+      expect(getNextRecommendedProblem([])?.id).toBe(firstProblem.id);
+      expect(getNextRecommendedProblem([firstProblem.id])?.id).toBe(secondProblem.id);
+    });
+
+    it('後ろの問題だけ解いていても最初の未解答ステップを優先する', () => {
+      const [firstProblem, secondProblem] = getProblemsByLearningPath();
+
+      expect(getNextRecommendedProblem([secondProblem.id])?.id).toBe(firstProblem.id);
     });
   });
 });

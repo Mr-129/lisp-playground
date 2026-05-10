@@ -25,6 +25,7 @@
 - **Lisp 構文ハイライト** — キーワード・ビルトイン・文字列・コメントの色分け
 - **バックグラウンド実行** — Web Worker によるUIブロックなし実行 + 10秒タイムアウト
 - **コード永続化** — localStorage によるコード・選択中問題・解答済み問題の自動保存
+- **学習パス** — 初学者向けの推奨順、次に学ぶ問題、カテゴリ別表示の切り替えに対応
 - **問題モード** — カテゴリ別の学習問題（全51問） + 進捗ダッシュボード + 自動正答判定
 - **REPL モード** — 1行ずつ式を評価、環境を引き継いだ対話的実行
 - **フリーモード** — 自由にコードを書いて実験
@@ -227,7 +228,7 @@ Vitest によるテストスイートが用意されています。
 | `Header.test.tsx` | ナビゲーションヘッダー | 15 |
 | `Editor.test.tsx` | CodeMirror ラッパー・ショートカット | 7 |
 | `OutputPanel.test.tsx` | 実行結果パネル | 9 |
-| `ProblemList.test.tsx` | 問題一覧サイドバー | 9 |
+| `ProblemList.test.tsx` | 問題一覧サイドバー | 11 |
 | `ProblemView.test.tsx` | 問題表示・ヒント・解答・Markdown 分岐 | 16 |
 | `LispGuide.test.tsx` | Lisp 構文ガイド | 18 |
 | `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 12 |
@@ -237,14 +238,14 @@ Vitest によるテストスイートが用意されています。
 | `LearnPage.test.tsx` | 学習ページ統合 | 16 |
 | `EditorPage.test.tsx` | エディタページ統合 | 17 |
 | `ReplPage.test.tsx` | REPLページ統合 | 20 |
-| `problems.test.ts` | 問題データ整合性 | 58 |
+| `problems.test.ts` | 問題データ整合性 | 62 |
 | `storage.test.ts` | localStorage 永続化 | 32 |
 | `runJudge.test.ts` | judge レイヤーの採点実行 | 6 |
 | `lisp-language.test.ts` | Lisp 構文ハイライト | 13 |
 | `worker.test.ts` | Worker 管理・フォールバック | 5 |
 | `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
 
-| **合計** | | **529** |
+| **合計** | | **535** |
 
 ---
 

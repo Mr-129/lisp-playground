@@ -217,7 +217,7 @@ describe('LearnPage', () => {
   it('guide ルートで問題を選ぶと learn へ遷移し問題ビューを表示する', () => {
     const { onSelectProblem } = renderStatefulLearnPage('/guide');
 
-    fireEvent.click(screen.getAllByText(/初めてのS式/)[0]);
+    fireEvent.click(screen.getByRole('button', { name: /初めてのS式/ }));
 
     expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-01' }));
     expect(screen.getByTestId('location-path')).toHaveTextContent('/learn');
