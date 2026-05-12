@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { Header } from '../Header';
@@ -11,6 +11,16 @@ const { trackEventMock } = vi.hoisted(() => ({
 vi.mock('../../utils/analytics', () => ({
   trackEvent: trackEventMock,
 }));
+
+const WAITLIST_URL = 'https://github.com/Mr-129/lisp-playground/issues/new?title=%5BWaitlist%5D%20';
+
+function setWaitlistMeta(url = WAITLIST_URL) {
+  document.head.querySelector('meta[name="lisp-playground-waitlist-url"]')?.remove();
+  const meta = document.createElement('meta');
+  meta.name = 'lisp-playground-waitlist-url';
+  meta.content = url;
+  document.head.appendChild(meta);
+}
 
 function LocationDisplay() {
   const location = useLocation();
@@ -38,7 +48,13 @@ function renderWithRouter(initialPath = '/') {
 
 describe('Header', () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     trackEventMock.mockReset();
+    setWaitlistMeta();
+  });
+
+  afterEach(() => {
+    document.head.querySelector('meta[name="lisp-playground-waitlist-url"]')?.remove();
   });
 
   it('タイトルを表示する', () => {
@@ -147,6 +163,22 @@ describe('Header', () => {
       purpose: 'general',
     });
     expect(screen.getByTestId('location-path')).toHaveTextContent('/contact');
+  });
+
+  it('更新通知ボタンをクリックすると waitlist を開いて計測する', () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    renderWithRouter('/');
+
+    fireEvent.click(screen.getByLabelText('更新通知の仮登録を開く'));
+
+    expect(trackEventMock).toHaveBeenCalledWith('waitlist_cta_clicked', {
+      placement: 'header',
+      channel: 'github_issue',
+      selectedProblemId: null,
+      selectedProblemTier: 'unknown',
+    });
+    expect(openSpy).toHaveBeenCalledWith(WAITLIST_URL, '_blank', 'noopener,noreferrer');
   });
 
   it('GitHubリンクを表示する', () => {

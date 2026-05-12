@@ -29,6 +29,7 @@
 - **イベント計測基盤** — 問題閲覧、検索、コード実行、REPL、CTA クリックを `trackEvent` 経由で一元計測し、内部 queue / `dataLayer` / GA4 に接続可能
 - **価格ページ** — `/pricing` で Free / Standard / Supporter の差分を静的に比較できる
 - **問い合わせ導線** — Header から `/contact` へ遷移でき、不具合報告と購入前の質問を公開前の一次窓口へ誘導できる
+- **更新通知の仮登録** — Header / LearnPage から waitlist 導線へ進み、どこから登録意向が出たかを計測できる
 - **問題モード** — カテゴリ別の学習問題（全51問） + 進捗ダッシュボード + 自動正答判定
 - **REPL モード** — 1行ずつ式を評価、環境を引き継いだ対話的実行
 - **フリーモード** — 自由にコードを書いて実験
@@ -142,6 +143,12 @@
 - Free / Standard / Supporter の差分を静的に比較可能
 - 決済未接続の段階では案内のみを表示し、購入前確認は `/contact` へ誘導
 
+### 更新通知の仮登録
+
+- Header / LearnPage から `waitlist_cta_clicked` を計測しつつ、現在は GitHub issue ベースの暫定 waitlist へ誘導
+- GitHub issue を使う間は個人情報やメールアドレスを書かない前提で運用
+- private form に切り替える場合は [index.html](index.html) の `meta[name="lisp-playground-waitlist-url"]` を差し替える
+
 ---
 
 ## 技術スタック
@@ -253,7 +260,7 @@ Vitest によるテストスイートが用意されています。
 
 | テストファイル | 対象 | テスト数 |
 |---|---|---|
-| `Header.test.tsx` | ナビゲーションヘッダー | 17 |
+| `Header.test.tsx` | ナビゲーションヘッダー | 18 |
 | `Editor.test.tsx` | CodeMirror ラッパー・ショートカット | 7 |
 | `OutputPanel.test.tsx` | 実行結果パネル | 9 |
 | `ProblemList.test.tsx` | 問題一覧サイドバー | 13 |
@@ -265,7 +272,7 @@ Vitest によるテストスイートが用意されています。
 | `PricingPage.test.tsx` | 価格ページ統合 | 3 |
 | `HomePage.test.tsx` | Home 画面導線 | 3 |
 | `ProblemsPage.test.tsx` | 問題一覧ページ導線 | 6 |
-| `LearnPage.test.tsx` | 学習ページ統合 | 19 |
+| `LearnPage.test.tsx` | 学習ページ統合 | 21 |
 | `EditorPage.test.tsx` | エディタページ統合 | 17 |
 | `ReplPage.test.tsx` | REPLページ統合 | 20 |
 | `problems.test.ts` | 問題データ整合性 | 65 |
@@ -276,7 +283,7 @@ Vitest によるテストスイートが用意されています。
 | `worker.test.ts` | Worker 管理・フォールバック | 5 |
 | `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
 
-| **合計** | | **561** |
+| **合計** | | **564** |
 
 ---
 
@@ -355,6 +362,8 @@ LispEditerApp/
 │   ├── PRE_DEPLOY_CHECKLIST.md # 価格公開前の deploy 判定基準
 │   ├── POST_DEPLOY_VERIFICATION.md # 公開後の確認ログ
 │   ├── PLATFORM_STRATEGY.md    # プラットフォーム戦略
+│   ├── AUTH_PROVIDER_COMPARISON.md # T-401 向けの認証方式比較
+│   ├── STORAGE_BOUNDARY.md     # localStorage と将来の外部正本の境界
 │   └── IMPLEMENTATION_TASKS.md # 実装バックログ
 └── dist/                       # ビルド出力 (git管理外)
 ```

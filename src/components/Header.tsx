@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
+import { getWaitlistConfig, openWaitlistTarget } from '../utils/waitlist';
 
 interface HeaderProps {
   onOpenPricingGuide?: () => void;
@@ -8,6 +9,7 @@ interface HeaderProps {
 export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const waitlistConfig = getWaitlistConfig();
   const isLearningRoute =
     location.pathname === '/problems' ||
     location.pathname === '/learn' ||
@@ -21,6 +23,20 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
       purpose: 'general',
     });
     navigate('/contact');
+  };
+
+  const handleOpenWaitlist = () => {
+    if (!waitlistConfig.url) {
+      return;
+    }
+
+    trackEvent('waitlist_cta_clicked', {
+      placement: 'header',
+      channel: waitlistConfig.channel,
+      selectedProblemId: null,
+      selectedProblemTier: 'unknown',
+    });
+    openWaitlistTarget(waitlistConfig.url);
   };
 
   return (
@@ -53,6 +69,16 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
         </button>
       </nav>
       <div className="header-right">
+        {waitlistConfig.url && (
+          <button
+            type="button"
+            className="header-waitlist-button"
+            onClick={handleOpenWaitlist}
+            aria-label="更新通知の仮登録を開く"
+          >
+            📮 更新通知
+          </button>
+        )}
         <button
           type="button"
           className={`header-contact-button ${isContactRoute ? 'active' : ''}`}

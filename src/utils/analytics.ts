@@ -51,6 +51,12 @@ export interface AnalyticsEventPayloadMap {
     channel: 'route' | 'github_issue';
     purpose: 'general' | 'bug_report' | 'pre_purchase';
   };
+  waitlist_cta_clicked: {
+    placement: 'header' | 'learn_empty' | 'learn_problem';
+    channel: 'github_issue' | 'external_form';
+    selectedProblemId: string | null;
+    selectedProblemTier: 'free' | 'standard' | 'unknown';
+  };
 }
 
 export type AnalyticsEventName = keyof AnalyticsEventPayloadMap;

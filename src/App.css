@@ -107,6 +107,25 @@
   gap: 12px;
 }
 
+.header-waitlist-button {
+  padding: 7px 12px;
+  background: rgba(28, 48, 86, 0.92);
+  color: #d8e2f5;
+  border: 1px solid rgba(141, 192, 255, 0.38);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.header-waitlist-button:hover {
+  background: rgba(18, 38, 74, 0.96);
+  color: #ffffff;
+  border-color: rgba(180, 214, 255, 0.56);
+}
+
 .header-pricing-cta {
   padding: 7px 12px;
   background: linear-gradient(135deg, #f0b35b, #d88a2f);
@@ -1008,6 +1027,11 @@
     font-size: 11px;
   }
 
+  .header-waitlist-button {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
   .header-contact-button {
     padding: 6px 10px;
     font-size: 11px;
@@ -1040,6 +1064,19 @@
 
   .pricing-cta-button {
     width: 100%;
+  }
+
+  .pricing-cta-actions {
+    width: 100%;
+  }
+
+  .pricing-cta-actions > button,
+  .pricing-inline-actions > button {
+    width: 100%;
+  }
+
+  .pricing-inline-actions {
+    flex-direction: column;
   }
 
   .pricing-guide-grid {
@@ -1339,6 +1376,14 @@
   line-height: 1.7;
 }
 
+.pricing-cta-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  align-items: stretch;
+}
+
 .pricing-cta-button,
 .pricing-inline-link,
 .pricing-guide-primary {
@@ -1366,6 +1411,12 @@
   border-top: 1px solid rgba(165, 179, 209, 0.18);
 }
 
+.pricing-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .pricing-inline-note p {
   margin: 0 0 12px;
   color: #a5b3d1;
@@ -1373,10 +1424,28 @@
   line-height: 1.6;
 }
 
+.waitlist-cta-note {
+  margin: 10px 0 0;
+  color: #c8d4ea;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
 .pricing-inline-link {
   background: transparent;
   color: #ffd18c;
   border: 1px solid rgba(240, 179, 91, 0.38);
+}
+
+.waitlist-cta-button {
+  color: #d8e2f5;
+  background: rgba(12, 23, 46, 0.45);
+  border-color: rgba(141, 192, 255, 0.38);
+}
+
+.waitlist-cta-button:hover {
+  background: rgba(18, 38, 74, 0.86);
+  color: #ffffff;
 }
 
 .pricing-guide-backdrop {

@@ -4,7 +4,9 @@
 **位置づけ**: 内部向け戦略文書  
 **対象**: Lisp Playground
 
-**関連ドキュメント**: [IMPLEMENTATION_TASKS.md](./IMPLEMENTATION_TASKS.md) — 実行順付きの実装バックログ
+**関連ドキュメント**: [IMPLEMENTATION_TASKS.md](./IMPLEMENTATION_TASKS.md) — 実行順付きの実装バックログ  
+**関連ドキュメント**: [STORAGE_BOUNDARY.md](./STORAGE_BOUNDARY.md) — localStorage と将来の外部正本の境界  
+**関連ドキュメント**: [AUTH_PROVIDER_COMPARISON.md](./AUTH_PROVIDER_COMPARISON.md) — Firebase / Supabase の比較表
 
 ---
 

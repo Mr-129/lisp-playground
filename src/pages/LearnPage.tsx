@@ -5,6 +5,7 @@ import { ProblemView } from '../components/ProblemView';
 import { LispGuide, filterGuideSections } from '../components/LispGuide';
 import { getProblemsByCourse, PROBLEM_COURSES } from '../data/problems';
 import { trackEvent } from '../utils/analytics';
+import { getWaitlistConfig, openWaitlistTarget } from '../utils/waitlist';
 import { Problem } from '../types';
 
 interface LearnPageProps {
@@ -44,6 +45,7 @@ export function LearnPage({
   const location = useLocation();
   const [showGuide, setShowGuide] = useState(initialView === 'guide');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const waitlistConfig = useMemo(() => getWaitlistConfig(), []);
   const hasActiveSearch = searchQuery.trim().length > 0;
   const solvedProblemSet = useMemo(() => new Set(solvedProblemIds), [solvedProblemIds]);
   const guideSearchResults = useMemo(
@@ -97,6 +99,20 @@ export function LearnPage({
     onNavigateToEditor();
     navigate('/editor');
   }, [navigate, onNavigateToEditor]);
+
+  const handleOpenWaitlist = useCallback((placement: 'learn_empty' | 'learn_problem') => {
+    if (!waitlistConfig.url) {
+      return;
+    }
+
+    trackEvent('waitlist_cta_clicked', {
+      placement,
+      channel: waitlistConfig.channel,
+      selectedProblemId: selectedProblem?.id ?? null,
+      selectedProblemTier: selectedProblem?.catalog?.tier ?? 'unknown',
+    });
+    openWaitlistTarget(waitlistConfig.url);
+  }, [selectedProblem?.catalog?.tier, selectedProblem?.id, waitlistConfig.channel, waitlistConfig.url]);
 
   const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     const nextQuery = event.target.value;
@@ -220,14 +236,30 @@ export function LearnPage({
                   Free は入門コースを継続無料、Standard は中級問題、コース横断演習、詳しい解説を追加する方針です。
                   価格ページでは Free / Standard / Supporter の差分を比較できます。
                 </p>
+                {waitlistConfig.channel === 'github_issue' && waitlistConfig.url && (
+                  <p className="waitlist-cta-note">
+                    更新通知の仮登録は暫定的に GitHub issue で受け付けます。個人情報やメールアドレスは書かないでください。
+                  </p>
+                )}
               </div>
-              <button
-                type="button"
-                className="pricing-cta-button"
-                onClick={() => onOpenPricingGuide('learn_problem')}
-              >
-                ✨ Standard の案内を見る
-              </button>
+              <div className="pricing-cta-actions">
+                <button
+                  type="button"
+                  className="pricing-cta-button"
+                  onClick={() => onOpenPricingGuide('learn_problem')}
+                >
+                  ✨ Standard の案内を見る
+                </button>
+                {waitlistConfig.url && (
+                  <button
+                    type="button"
+                    className="pricing-inline-link waitlist-cta-button"
+                    onClick={() => handleOpenWaitlist('learn_problem')}
+                  >
+                    📮 更新通知を受け取る
+                  </button>
+                )}
+              </div>
             </section>
             <ProblemView
               key={selectedProblem.id}
@@ -258,13 +290,29 @@ export function LearnPage({
               </div>
               <div className="pricing-inline-note">
                 <p>入門を進めた後の Standard 学習拡張や Supporter 案内は、価格ページにまとめています。</p>
-                <button
-                  className="pricing-inline-link"
-                  type="button"
-                  onClick={() => onOpenPricingGuide('learn_empty')}
-                >
-                  ✨ Standard の案内を見る
-                </button>
+                {waitlistConfig.channel === 'github_issue' && waitlistConfig.url && (
+                  <p className="waitlist-cta-note">
+                    更新通知の仮登録は GitHub issue ベースの暫定導線です。個人情報やメールアドレスは書かないでください。
+                  </p>
+                )}
+                <div className="pricing-inline-actions">
+                  <button
+                    className="pricing-inline-link"
+                    type="button"
+                    onClick={() => onOpenPricingGuide('learn_empty')}
+                  >
+                    ✨ Standard の案内を見る
+                  </button>
+                  {waitlistConfig.url && (
+                    <button
+                      className="pricing-inline-link waitlist-cta-button"
+                      type="button"
+                      onClick={() => handleOpenWaitlist('learn_empty')}
+                    >
+                      📮 更新通知を受け取る
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

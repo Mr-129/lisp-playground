@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { useState } from 'react';
-import { beforeEach, describe, it, expect } from 'vitest';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { LearnPage } from '../LearnPage';
@@ -14,6 +14,16 @@ const { trackEventMock } = vi.hoisted(() => ({
 vi.mock('../../utils/analytics', () => ({
   trackEvent: trackEventMock,
 }));
+
+const WAITLIST_URL = 'https://github.com/Mr-129/lisp-playground/issues/new?title=%5BWaitlist%5D%20';
+
+function setWaitlistMeta(url = WAITLIST_URL) {
+  document.head.querySelector('meta[name="lisp-playground-waitlist-url"]')?.remove();
+  const meta = document.createElement('meta');
+  meta.name = 'lisp-playground-waitlist-url';
+  meta.content = url;
+  document.head.appendChild(meta);
+}
 
 const mockProblem: Problem = {
   id: 'test-01',
@@ -127,7 +137,13 @@ function renderStatefulLearnPage(initialPath = '/guide') {
 
 describe('LearnPage', () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     trackEventMock.mockReset();
+    setWaitlistMeta();
+  });
+
+  afterEach(() => {
+    document.head.querySelector('meta[name="lisp-playground-waitlist-url"]')?.remove();
   });
 
   it('問題未選択時に案内カードを表示する', () => {
@@ -180,6 +196,22 @@ describe('LearnPage', () => {
     fireEvent.click(screen.getByText('✨ Standard の案内を見る'));
 
     expect(onOpenPricingGuide).toHaveBeenCalledWith('learn_problem');
+  });
+
+  it('問題選択時に更新通知 CTA を開いて計測する', () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    renderLearnPage({ selectedProblem: mockProblem });
+
+    fireEvent.click(screen.getByText('📮 更新通知を受け取る'));
+
+    expect(trackEventMock).toHaveBeenCalledWith('waitlist_cta_clicked', {
+      placement: 'learn_problem',
+      channel: 'github_issue',
+      selectedProblemId: 'test-01',
+      selectedProblemTier: 'unknown',
+    });
+    expect(openSpy).toHaveBeenCalledWith(WAITLIST_URL, '_blank', 'noopener,noreferrer');
   });
 
   it('コース情報を持つ問題では現在のコースカードを表示する', () => {
@@ -304,6 +336,22 @@ describe('LearnPage', () => {
     fireEvent.click(screen.getByText('✨ Standard の案内を見る'));
 
     expect(onOpenPricingGuide).toHaveBeenCalledWith('learn_empty');
+  });
+
+  it('空状態で更新通知 CTA を開いて計測する', () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    renderLearnPage();
+
+    fireEvent.click(screen.getByText('📮 更新通知を受け取る'));
+
+    expect(trackEventMock).toHaveBeenCalledWith('waitlist_cta_clicked', {
+      placement: 'learn_empty',
+      channel: 'github_issue',
+      selectedProblemId: null,
+      selectedProblemTier: 'unknown',
+    });
+    expect(openSpy).toHaveBeenCalledWith(WAITLIST_URL, '_blank', 'noopener,noreferrer');
   });
 
   it('検索入力で問題一覧を絞り込める', () => {
