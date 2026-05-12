@@ -126,6 +126,26 @@
   box-shadow: 0 14px 24px rgba(216, 138, 47, 0.28);
 }
 
+.header-contact-button {
+  padding: 7px 12px;
+  background: rgba(12, 23, 46, 0.85);
+  color: #d6e4ff;
+  border: 1px solid rgba(120, 146, 194, 0.34);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.header-contact-button:hover,
+.header-contact-button.active {
+  background: rgba(19, 42, 82, 0.92);
+  color: #ffffff;
+  border-color: rgba(141, 192, 255, 0.5);
+}
+
 .header-link {
   color: #8892b0;
   text-decoration: none;
@@ -988,6 +1008,11 @@
     font-size: 11px;
   }
 
+  .header-contact-button {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
   .learn-page {
     flex-direction: column;
   }
@@ -1023,6 +1048,28 @@
 
   .pricing-guide-modal {
     padding: 20px;
+  }
+
+  .pricing-page-container {
+    padding: 24px 16px 32px;
+  }
+
+  .pricing-page-actions {
+    justify-content: stretch;
+  }
+
+  .pricing-page-actions > button {
+    width: 100%;
+  }
+
+  .contact-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-page-header,
+  .contact-page-note {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .sidebar-toggle {
@@ -1419,6 +1466,10 @@
   border-color: rgba(240, 179, 91, 0.34);
 }
 
+.pricing-guide-plan.supporter {
+  border-color: rgba(126, 180, 255, 0.34);
+}
+
 .pricing-guide-plan-label {
   margin: 0;
   color: #8dc0ff;
@@ -1449,6 +1500,106 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 18px;
+}
+
+.pricing-page {
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
+  background:
+    radial-gradient(circle at top right, rgba(240, 179, 91, 0.12), transparent 24%),
+    linear-gradient(180deg, #0b1222, #0a0f1e 45%, #08101f 100%);
+}
+
+.pricing-page-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 32px 40px;
+}
+
+.pricing-page-hero,
+.pricing-page-note-panel {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pricing-page-context {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(7, 11, 24, 0.3);
+  border: 1px solid rgba(95, 134, 195, 0.2);
+}
+
+.pricing-page-context p {
+  margin: 0;
+  color: #d8e2f5;
+  line-height: 1.8;
+}
+
+.pricing-page-context p + p {
+  margin-top: 8px;
+}
+
+.pricing-page-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.pricing-page-status {
+  display: inline-flex;
+  align-items: center;
+  margin: 10px 0 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pricing-page-status.available {
+  background: rgba(112, 203, 128, 0.16);
+  color: #9fe0a7;
+}
+
+.pricing-page-status.planned {
+  background: rgba(240, 179, 91, 0.16);
+  color: #ffd594;
+}
+
+.pricing-page-status.draft {
+  background: rgba(126, 180, 255, 0.16);
+  color: #9fceff;
+}
+
+.pricing-page-note-panel {
+  margin-top: 20px;
+}
+
+.pricing-page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.pricing-page-secondary {
+  padding: 10px 18px;
+  background: transparent;
+  color: #d8e2f5;
+  border: 1px solid rgba(141, 192, 255, 0.38);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.pricing-page-secondary:hover {
+  background: rgba(18, 38, 74, 0.86);
+  color: #ffffff;
+  border-color: rgba(180, 214, 255, 0.56);
 }
 
 .learn-problem-area .problem-view {
@@ -2497,6 +2648,137 @@
   padding: 4px 8px;
   border-radius: 999px;
   background: rgba(15, 52, 96, 0.65);
+}
+
+/* Contact Page */
+.contact-page {
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
+  background:
+    radial-gradient(circle at top right, rgba(126, 180, 255, 0.12), transparent 30%),
+    linear-gradient(180deg, #0b1222, #0a0f1e 45%, #08101f 100%);
+}
+
+.contact-page-header {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 32px 12px;
+}
+
+.contact-page-eyebrow {
+  margin: 0 0 10px;
+  color: #8dc0ff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contact-page-header h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 30px;
+}
+
+.contact-page-header p {
+  max-width: 760px;
+  margin: 12px 0 0;
+  color: #c8d4ea;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.contact-page-grid {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 32px 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.contact-page-card,
+.contact-page-note {
+  border-radius: 22px;
+  border: 1px solid rgba(95, 134, 195, 0.24);
+  background: rgba(11, 20, 39, 0.84);
+  box-shadow: 0 24px 40px rgba(4, 10, 22, 0.18);
+}
+
+.contact-page-card {
+  padding: 22px;
+}
+
+.contact-page-card h3 {
+  margin: 0;
+  color: #fff5e5;
+  font-size: 20px;
+}
+
+.contact-page-card p {
+  margin: 12px 0 0;
+  color: #c8d4ea;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.contact-page-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(24, 43, 82, 0.86);
+  color: #8dc0ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.contact-page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  padding: 11px 16px;
+  background: #8dc0ff;
+  color: #091224;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 800;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.contact-page-link:hover {
+  background: #b6d8ff;
+  transform: translateY(-1px);
+}
+
+.contact-page-note {
+  max-width: 960px;
+  margin: 18px auto 32px;
+  padding: 22px 32px 28px;
+}
+
+.contact-page-note h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.contact-page-note ul {
+  margin: 14px 0 0;
+  padding-left: 20px;
+  color: #dce5f6;
+  line-height: 1.8;
+}
+
+.contact-page-note li + li {
+  margin-top: 6px;
 }
 
 @media (max-width: 640px) {

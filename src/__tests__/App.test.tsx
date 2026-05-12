@@ -101,6 +101,14 @@ vi.mock('../pages/ReplPage', () => ({
   ReplPage: () => <div>repl-page</div>,
 }));
 
+vi.mock('../pages/ContactPage', () => ({
+  ContactPage: () => <div>contact-page</div>,
+}));
+
+vi.mock('../pages/PricingPage', () => ({
+  PricingPage: () => <div>pricing-page</div>,
+}));
+
 vi.mock('../pages/EditorPage', () => ({
   EditorPage: ({
     selectedProblem,
@@ -155,6 +163,14 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByText('problems-page')).toBeInTheDocument();
+  });
+
+  it('ルート「/contact」で問い合わせページを表示する', () => {
+    window.location.hash = '#/contact';
+
+    render(<App />);
+
+    expect(screen.getByText('contact-page')).toBeInTheDocument();
   });
 
   it('選択した問題を最近見た問題として localStorage に保存する', async () => {
@@ -321,7 +337,7 @@ describe('App', () => {
     expect(window.location.hash).toBe('#/editor');
   });
 
-  it('ヘッダー CTA から Standard 案内モーダルを開き計測する', () => {
+  it('ヘッダー CTA から価格ページへ遷移して計測する', async () => {
     render(<App />);
 
     fireEvent.click(screen.getByText('open-pricing-from-header'));
@@ -331,10 +347,13 @@ describe('App', () => {
       selectedProblemId: null,
       selectedProblemTier: 'unknown',
     });
-    expect(screen.getByRole('dialog', { name: 'Free / Standard の案内' })).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText('pricing-page')).toBeInTheDocument();
+    });
   });
 
-  it('学習ページ CTA から選択中問題つきで Standard 案内モーダルを開き計測する', async () => {
+  it('学習ページ CTA から選択中問題つきで価格ページへ遷移して計測する', async () => {
     window.location.hash = '#/learn';
     localStorage.setItem(STORAGE_KEY_PROBLEM, VALID_PROBLEM_ID);
 
@@ -349,7 +368,7 @@ describe('App', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('dialog', { name: 'Free / Standard の案内' })).toBeInTheDocument();
+      expect(screen.getByText('pricing-page')).toBeInTheDocument();
     });
   });
 });

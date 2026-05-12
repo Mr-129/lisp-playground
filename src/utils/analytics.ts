@@ -41,6 +41,16 @@ export interface AnalyticsEventPayloadMap {
     selectedProblemId: string | null;
     selectedProblemTier: 'free' | 'standard' | 'unknown';
   };
+  pricing_page_viewed: {
+    source: 'direct' | 'header' | 'learn_empty' | 'learn_problem';
+    selectedProblemId: string | null;
+    selectedProblemTier: 'free' | 'standard' | 'unknown';
+  };
+  contact_cta_clicked: {
+    placement: 'header' | 'pricing_page' | 'contact_page_bug_report' | 'contact_page_pre_purchase';
+    channel: 'route' | 'github_issue';
+    purpose: 'general' | 'bug_report' | 'pre_purchase';
+  };
 }
 
 export type AnalyticsEventName = keyof AnalyticsEventPayloadMap;

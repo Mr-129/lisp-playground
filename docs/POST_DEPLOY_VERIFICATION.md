@@ -5,6 +5,8 @@
 **公開 URL**: https://mr-129.github.io/lisp-playground/  
 **対象コミット**: `cce86dd` (`fix: restore problems page styles`)
 
+> この文書は公開後の確認ログです。`deploy` ブランチへ反映してよいかの事前判断には [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) を使います。
+
 ---
 
 ## 1. 結論

@@ -1,8 +1,16 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { Header } from '../Header';
+
+const { trackEventMock } = vi.hoisted(() => ({
+  trackEventMock: vi.fn(),
+}));
+
+vi.mock('../../utils/analytics', () => ({
+  trackEvent: trackEventMock,
+}));
 
 function LocationDisplay() {
   const location = useLocation();
@@ -29,6 +37,10 @@ function renderWithRouter(initialPath = '/') {
 }
 
 describe('Header', () => {
+  beforeEach(() => {
+    trackEventMock.mockReset();
+  });
+
   it('タイトルを表示する', () => {
     renderWithRouter();
     expect(screen.getByText('Lisp Playground')).toBeInTheDocument();
@@ -122,6 +134,19 @@ describe('Header', () => {
     fireEvent.click(screen.getByText('🖥️ REPL'));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/repl');
+  });
+
+  it('お問い合わせボタンをクリックすると問い合わせページへ移動して計測する', () => {
+    renderWithRouter('/');
+
+    fireEvent.click(screen.getByLabelText('お問い合わせページへ移動する'));
+
+    expect(trackEventMock).toHaveBeenCalledWith('contact_cta_clicked', {
+      placement: 'header',
+      channel: 'route',
+      purpose: 'general',
+    });
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/contact');
   });
 
   it('GitHubリンクを表示する', () => {

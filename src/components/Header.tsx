@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { trackEvent } from '../utils/analytics';
 
 interface HeaderProps {
   onOpenPricingGuide?: () => void;
@@ -11,6 +12,16 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
     location.pathname === '/problems' ||
     location.pathname === '/learn' ||
     location.pathname === '/guide';
+  const isContactRoute = location.pathname === '/contact';
+
+  const handleNavigateToContact = () => {
+    trackEvent('contact_cta_clicked', {
+      placement: 'header',
+      channel: 'route',
+      purpose: 'general',
+    });
+    navigate('/contact');
+  };
 
   return (
     <header className="app-header">
@@ -42,6 +53,14 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
         </button>
       </nav>
       <div className="header-right">
+        <button
+          type="button"
+          className={`header-contact-button ${isContactRoute ? 'active' : ''}`}
+          onClick={handleNavigateToContact}
+          aria-label="お問い合わせページへ移動する"
+        >
+          ✉ お問い合わせ
+        </button>
         <button
           type="button"
           className="header-pricing-cta"

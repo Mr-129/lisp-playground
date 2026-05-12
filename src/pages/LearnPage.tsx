@@ -218,7 +218,7 @@ export function LearnPage({
                 <h3>{isStandardCandidate ? 'この問題は Standard 候補です' : 'Standard の学習拡張を準備中です'}</h3>
                 <p>
                   Free は入門コースを継続無料、Standard は中級問題、コース横断演習、詳しい解説を追加する方針です。
-                  価格ページは次の段階で公開します。
+                  価格ページでは Free / Standard / Supporter の差分を比較できます。
                 </p>
               </div>
               <button
@@ -257,7 +257,7 @@ export function LearnPage({
                 </button>
               </div>
               <div className="pricing-inline-note">
-                <p>入門を進めた後の Standard 学習拡張も準備しています。</p>
+                <p>入門を進めた後の Standard 学習拡張や Supporter 案内は、価格ページにまとめています。</p>
                 <button
                   className="pricing-inline-link"
                   type="button"

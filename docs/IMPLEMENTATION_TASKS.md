@@ -110,7 +110,6 @@
   - 2026-05-09: Node 24.13.0 で一度だけ `npm run build` が Windows 異常終了コード `0xC0000409` 相当で終了したが、その後の再検証では `npm run build` 5回、`npx vite build` 5回とも成功した
   - 2026-05-10: 追加検証で、Windows 環境の Node 24.13.0 では `npm run build` が `EXIT=-1073740791` で再度異常終了し、`npx tsc -b` は成功、同じワークスペースを一時 Node 22.22.2 で実行した `vite build` は成功した。現時点では unsupported runtime 上の環境依存事象として扱う
   - 2026-05-10: GitHub Pages workflow は `deploy` ブランチ push 時のみ公開を実行し、`main` の push / PR は CI のみとする運用へ変更。Actions の Node 版数も 22 に固定
-  
   - README / REVIEW に「ローカル Windows 日本語パスでは build が不安定であり、配布用 build は GitHub Actions の `deploy` ブランチ経由を正経路とする」旨を記載済み
   - Node 24 対応の恒久修正は現時点では着手しない。再発時に dump / event log を追加取得して調査を再開する
   - 2026-04-29: `main` への push 後に GitHub Actions `Build & Deploy` の success を確認し、`https://mr-129.github.io/lisp-playground/` で公開を確認済み
@@ -442,6 +441,11 @@
   - 計測の呼び出し点がコード上で一貫している
   - ブラウザ標準イベント / `dataLayer` / 内部 queue のいずれにも接続できる状態になっている
 
+- **実施メモ**:
+  - [src/utils/analytics.ts](../src/utils/analytics.ts) を追加し、trackEvent から internal queue / CustomEvent / dataLayer / gtag へ配信できるよう対応済み
+  - [src/App.tsx](../src/App.tsx)、[src/pages/LearnPage.tsx](../src/pages/LearnPage.tsx)、[src/pages/EditorPage.tsx](../src/pages/EditorPage.tsx)、[src/pages/ReplPage.tsx](../src/pages/ReplPage.tsx) の主要行動を計測対象に追加済み
+  - 2026-05-10: `npm test` 546 件通過、`npm run test:e2e` 3 件通過を確認済み
+
 ### T-302 CTA と価格導線の追加
 
 - **ステータス**: `done`
@@ -459,16 +463,73 @@
   - 少なくとも 1 つの価格導線が存在する
   - GA4 Measurement ID を設定した場合に `gtag` でも CTA click を送信できる
 
+- **実施メモ**:
+  - [src/components/Header.tsx](../src/components/Header.tsx) に Standard 案内 CTA、[src/pages/LearnPage.tsx](../src/pages/LearnPage.tsx) に CTA banner / empty state CTA、[src/App.tsx](../src/App.tsx) に pricing guide modal を追加済み
+  - CTA click は pricing_cta_clicked として placement / selected problem context 付きで計測し、GA4 Measurement ID 設定時は gtag にも送信済み
+  - 2026-05-10: `npm test` 553 件通過、`npm run test:e2e` 3 件通過を確認済み。公開は `deploy` ブランチへ反映するまで保留される
+
+### T-302A 問い合わせ導線の整備
+
+- **ステータス**: `done`
+- **目的**: 不具合報告や購入前の確認先を公開前に明示し、価格導線より先にサポートの受け皿を作る
+- **対象ファイル**:
+  - [src/components/Header.tsx](../src/components/Header.tsx)
+  - [src/pages/ContactPage.tsx](../src/pages/ContactPage.tsx)
+  - [src/App.tsx](../src/App.tsx)
+  - [src/utils/analytics.ts](../src/utils/analytics.ts)
+  - [src/App.css](../src/App.css)
+  - [README.md](../README.md)
+- **依存関係**: T-302
+- **実装内容**:
+  - 公開サイトから辿れる問い合わせ導線を 1 つ以上追加する
+  - 不具合報告と購入前問い合わせの用途が分かる案内文を用意する
+  - どの導線から問い合わせへ進んだかを計測できるようにする
+- **完了条件**:
+  - 少なくとも 1 つの公開ルートから問い合わせ先に到達できる
+  - 問い合わせの用途と返信期待値が文言で明示される
+  - 問い合わせ導線 click が計測できる
+
+- **実施メモ**:
+  - [src/components/Header.tsx](../src/components/Header.tsx) に `/contact` 遷移ボタンを追加し、header からの導線を `contact_cta_clicked` として計測するよう更新済み
+  - [src/pages/ContactPage.tsx](../src/pages/ContactPage.tsx) を追加し、不具合報告と購入前問い合わせを GitHub issue の暫定窓口へ分岐して案内、返信期待値と公開前の注意書きを明示済み
+  - 2026-05-10: `npm test` 558 件通過を確認済み。次は T-302B で deploy 前 checklist を整備する
+
+### T-302B 価格公開前チェックリスト整備
+
+- **ステータス**: `done`
+- **目的**: 価格や金銭関連の導線を `deploy` ブランチへ反映してよい条件を明文化し、公開判断を属人化させない
+- **対象ファイル**:
+  - [docs/POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md)
+  - [docs/PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md)
+  - [docs/REVIEW.md](./REVIEW.md)
+  - [README.md](../README.md)
+- **依存関係**: T-302A
+- **実装内容**:
+  - 価格公開前に確認すべき項目を checklist 化する
+  - `deploy` ブランチへ反映してよい条件を明文化する
+  - 問い合わせ導線、価格文言、決済未接続時の扱い、公開対象範囲を確認項目に含める
+- **完了条件**:
+  - deploy 前に確認すべき項目が文書化されている
+  - 問い合わせ導線の存在確認が checklist に含まれる
+  - 金銭関連を公開してよい判断基準が明確になっている
+
+- **実施メモ**:
+  - [docs/PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) を追加し、問い合わせ導線、価格文言、決済未接続時の扱い、計測、テスト、docs 同期を `deploy` 前の必須項目として明文化済み
+  - [README.md](../README.md) の GitHub Pages 手順に checklist 確認と公開後ログ更新を追加し、[docs/POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) は公開後ログであることを明記済み
+  - 2026-05-10: docs-only 変更のため追加テストは不要。次は T-303 で価格ページ本体の静的実装へ進む
+
 ### T-303 価格ページの静的実装
 
-- **ステータス**: `todo`
+- **ステータス**: `done`
 - **目的**: 価格仮説を実際の導線として見えるようにする
 - **対象ファイル**:
   - [src/App.tsx](../src/App.tsx)
-  - [src/pages](../src/pages)
+  - [src/pages/PricingPage.tsx](../src/pages/PricingPage.tsx)
   - [src/components/Header.tsx](../src/components/Header.tsx)
+  - [src/pages/LearnPage.tsx](../src/pages/LearnPage.tsx)
+  - [src/utils/analytics.ts](../src/utils/analytics.ts)
   - [src/App.css](../src/App.css)
-- **依存関係**: T-302
+- **依存関係**: T-302A, T-302B
 - **実装内容**:
   - `/pricing` 相当のページを追加する
   - Free / Standard / Supporter の差分を可視化する
@@ -476,6 +537,13 @@
 - **完了条件**:
   - 価格ページが公開できる
   - 価格ページ遷移率が測定可能になる
+
+- **実施メモ**:
+  - [src/pages/PricingPage.tsx](../src/pages/PricingPage.tsx) を追加し、Free / Standard / Supporter の差分を静的表示
+  - [src/App.tsx](../src/App.tsx) は modal 方式を廃止し、Header / LearnPage CTA から `/pricing` route へ遷移する構成へ変更
+  - `pricing_page_viewed` を追加し、`from` パラメータ（header / learn_empty / learn_problem / direct）付きで到達計測を実装
+  - 2026-05-10: `npm test` 561 件、`npm run test:e2e` 3 件通過を確認。次は T-304 メール獲得導線へ進む
+  - 2026-05-12: 実装レビューで LearnPage の価格案内文言を `/pricing` 公開済みの表現へ同期し、`main` push は CI のみ / Pages 配信は `deploy` push のみである運用を再確認
 
 ### T-304 メール獲得導線
 
@@ -565,6 +633,7 @@
 - ダーク / ライトテーマ
 - PWA 対応
 - ステップ実行デバッガ
+- エディタから現在の問題文へ戻る導線（問題一覧を経由せず、選択中問題の Learn / 問題文へ戻るボタンを追加）
 - コード共有 URL
 - バックエンドベースの実 Lisp 実行環境導入（現行の学習モードと分離し、バックエンド確保と学習プラットフォーム成立後に検討）
 - 教育機関向けクラス管理
@@ -574,30 +643,30 @@
 
 ## 9. 次に実行するべきタスク
 
-次の実装対象は **T-303 価格ページの静的実装** とする。  
-前回更新: 2026-05-10
+次の実装対象は **T-304 メール獲得導線** とする。  
+前回更新: 2026-05-12
 
 理由は次の通り。
 
-1. T-302 で Header / LearnPage からの CTA と GA4 計測は揃ったため、次は着地点となる価格ページ本体を静的に見せる段階に進めるのが自然である
-2. 現状の案内は modal ベースの preview に留まるため、Free / Standard / Supporter の差分を 1 ページで比較できる状態がまだ不足している
-3. T-303 を実装すると、T-302 で入れた CTA の遷移先が固定され、導線評価が「クリック」から「価格ページ到達・閲覧」へ進む
-4. メール獲得導線や将来の認証・課金は、価格ページの情報設計が先に固まっている方が後戻りが少ない
+1. T-303 で価格ページ本体が揃い、公開前判定とページ到達計測の基盤ができたため、次は見込みユーザーを蓄積する導線を用意する段階に入る
+2. T-304 を実装すると、価格ページ閲覧後の受け皿が問い合わせだけでなく通知登録や連絡先収集へ広がる
+3. 認証・課金（T-401 以降）に進む前に、どの導線で継続関心が得られるかを測る方が優先度が高い
+4. メール導線があると、価格改定や公開タイミングを限定 deploy しながら通知実験できる
 
 ---
 
 ## 10. 全体進捗サマリー
 
-最終更新: 2026-05-10
+最終更新: 2026-05-12
 
 | Phase | タスク数 | 完了 | 進捗 |
 |---|---|---|---|
 | Phase 0: 信頼性・立ち位置 | 5 (T-001〜T-005) | 5 | 100% |
 | Phase 1: 継続利用基盤 | 7 (T-101〜T-106, T-102A) | 7 | 100% |
 | Phase 1.5: 商品設計前提 | 3 (T-201〜T-203) | 3 | 100% |
-| Phase 2: 計測・導線整備 | 4 (T-301〜T-304) | 2 | 50% |
+| Phase 2: 計測・導線整備 | 6 (T-301, T-302, T-302A, T-302B, T-303, T-304) | 5 | 83% |
 | Phase 3: 初回サブスク実験 | 4 (T-401〜T-404) | 0 (blocked) | 0% |
-| **合計** | **23** | **17** | **74%** |
+| **合計** | **25** | **20** | **80%** |
 
 ### 完了済みタスク一覧
 
@@ -620,13 +689,15 @@
 | T-203 | ロック済みコンテンツ UI の土台 | 2026-05-10 |
 | T-301 | イベント計測の抽象化 | 2026-05-10 |
 | T-302 | CTA と価格導線の追加 | 2026-05-10 |
+| T-302A | 問い合わせ導線の整備 | 2026-05-10 |
+| T-302B | 価格公開前チェックリスト整備 | 2026-05-10 |
+| T-303 | 価格ページの静的実装 | 2026-05-10 |
 
 ### 未着手タスク（実施推奨順）
 
 | 順番 | ID | タスク名 | 依存 |
 |---|---|---|---|
-| 1 | T-303 | 価格ページの静的実装 | T-302 |
-| 2 | T-304 | メール獲得導線 | T-303 |
+| 1 | T-304 | メール獲得導線 | T-303 |
 | — | T-401〜T-404 | 認証・課金・有料コンテンツ | T-303, T-304（blocked） |
 
 ### 採点モデル移行の完了状況（T-102A サブ項目）

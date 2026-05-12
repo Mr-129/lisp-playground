@@ -27,7 +27,8 @@
 - **コード永続化** — localStorage によるコード・選択中問題・解答済み問題の自動保存
 - **学習パス** — 初学者向けの推奨順、次に学ぶ問題、カテゴリ別表示の切り替えに対応
 - **イベント計測基盤** — 問題閲覧、検索、コード実行、REPL、CTA クリックを `trackEvent` 経由で一元計測し、内部 queue / `dataLayer` / GA4 に接続可能
-- **価格導線の先行案内** — Header / LearnPage に Standard 案内 CTA を配置し、Free と Standard の違いを先に伝えられる
+- **価格ページ** — `/pricing` で Free / Standard / Supporter の差分を静的に比較できる
+- **問い合わせ導線** — Header から `/contact` へ遷移でき、不具合報告と購入前の質問を公開前の一次窓口へ誘導できる
 - **問題モード** — カテゴリ別の学習問題（全51問） + 進捗ダッシュボード + 自動正答判定
 - **REPL モード** — 1行ずつ式を評価、環境を引き継いだ対話的実行
 - **フリーモード** — 自由にコードを書いて実験
@@ -45,6 +46,8 @@
 | `/guide` | 構文ガイドページ | Lisp 基本構文ガイドの通読導線 |
 | `/editor` | エディタページ | コード実行、正答判定、結果表示 |
 | `/repl` | REPL ページ | 1行ずつ評価する対話実行環境 |
+| `/contact` | 問い合わせページ | 不具合報告と購入前質問の一次窓口 |
+| `/pricing` | 価格ページ | Free / Standard / Supporter の差分案内 |
 
 ### Home 画面 (`/`)
 ```
@@ -126,6 +129,18 @@
 │  履歴を保持したまま 1 行ずつ式を評価                    │
 └─────────────────────────────────────────────────────────┘
 ```
+
+### 問い合わせページ (`/contact`)
+
+- 現時点の一次窓口として GitHub issue を案内
+- 不具合報告と購入前の質問で CTA を分離し、それぞれ `contact_cta_clicked` として計測
+- 個人情報や決済情報を載せないこと、即時返信や個別サポートは未対応であることを明示
+
+### 価格ページ (`/pricing`)
+
+- Header / LearnPage の CTA から遷移し、`pricing_page_viewed` を計測
+- Free / Standard / Supporter の差分を静的に比較可能
+- 決済未接続の段階では案内のみを表示し、購入前確認は `/contact` へ誘導
 
 ---
 
@@ -238,14 +253,16 @@ Vitest によるテストスイートが用意されています。
 
 | テストファイル | 対象 | テスト数 |
 |---|---|---|
-| `Header.test.tsx` | ナビゲーションヘッダー | 16 |
+| `Header.test.tsx` | ナビゲーションヘッダー | 17 |
 | `Editor.test.tsx` | CodeMirror ラッパー・ショートカット | 7 |
 | `OutputPanel.test.tsx` | 実行結果パネル | 9 |
 | `ProblemList.test.tsx` | 問題一覧サイドバー | 13 |
 | `ProblemView.test.tsx` | 問題表示・ヒント・解答・Markdown 分岐 | 18 |
 | `LispGuide.test.tsx` | Lisp 構文ガイド | 18 |
-| `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 14 |
+| `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 15 |
 | `App.integration.test.tsx` | App ルーティング・ページ間状態連携 | 5 |
+| `ContactPage.test.tsx` | 問い合わせページ統合 | 3 |
+| `PricingPage.test.tsx` | 価格ページ統合 | 3 |
 | `HomePage.test.tsx` | Home 画面導線 | 3 |
 | `ProblemsPage.test.tsx` | 問題一覧ページ導線 | 6 |
 | `LearnPage.test.tsx` | 学習ページ統合 | 19 |
@@ -259,7 +276,7 @@ Vitest によるテストスイートが用意されています。
 | `worker.test.ts` | Worker 管理・フォールバック | 5 |
 | `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
 
-| **合計** | | **553** |
+| **合計** | | **561** |
 
 ---
 
@@ -319,6 +336,8 @@ LispEditerApp/
 │   │   ├── LearnPage.tsx       # 学習詳細ページ（問題 / ガイド）
 │   │   ├── EditorPage.tsx      # エディタページ（実行環境）
 │   │   ├── ReplPage.tsx        # REPLページ（対話式実行）
+│   │   ├── ContactPage.tsx     # 問い合わせページ
+│   │   ├── PricingPage.tsx     # 価格ページ
 │   │   └── __tests__/          # ページ統合テスト
 │   ├── components/             # React コンポーネント
 │   │   ├── Header.tsx          # ナビゲーションヘッダー
@@ -333,6 +352,8 @@ LispEditerApp/
 │       └── __tests__/          # データ整合性テスト
 ├── docs/
 │   ├── REVIEW.md               # コードレビュー・課題管理
+│   ├── PRE_DEPLOY_CHECKLIST.md # 価格公開前の deploy 判定基準
+│   ├── POST_DEPLOY_VERIFICATION.md # 公開後の確認ログ
 │   ├── PLATFORM_STRATEGY.md    # プラットフォーム戦略
 │   └── IMPLEMENTATION_TASKS.md # 実装バックログ
 └── dist/                       # ビルド出力 (git管理外)
@@ -508,9 +529,13 @@ GitHub Actions で自動デプロイする方式です。リポジトリに含�
 1. GitHub にリポジトリを push
 2. リポジトリの **Settings → Pages → Source** を **GitHub Actions** に変更
 3. 通常開発は `main` ブランチで進める（`main` への push / PR は CI のみ実行）
-4. 公開したい commit を `deploy` ブランチへ反映して push すると、自動ビルド＆デプロイされる
+4. 価格や金銭関連を含む変更では、`deploy` へ反映する前に [docs/PRE_DEPLOY_CHECKLIST.md](docs/PRE_DEPLOY_CHECKLIST.md) の必須項目を確認する
+5. 公開したい commit を `deploy` ブランチへ反映して push すると、自動ビルド＆デプロイされる
+6. 公開後の確認結果を [docs/POST_DEPLOY_VERIFICATION.md](docs/POST_DEPLOY_VERIFICATION.md) に残す
 
 > **運用メモ**: 価格や課金まわりの未完成機能を main に積み上げても、`deploy` ブランチへ反映しない限り GitHub Pages には公開されません。
+
+> **価格公開前メモ**: `/contact` の問い合わせ導線、価格文言、未接続の決済表現、計測導線を確認しないまま `deploy` へ push しないでください。判定基準は [docs/PRE_DEPLOY_CHECKLIST.md](docs/PRE_DEPLOY_CHECKLIST.md) にまとめています。
 
 > **Note**: `vite.config.ts` の `base` は `'./'`（相対パス）のままで動作します。  
 > サブディレクトリ配信（`https://user.github.io/repo/`）でも相対パスなら問題ありません。

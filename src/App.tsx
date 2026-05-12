@@ -6,7 +6,9 @@ import { ProblemsPage } from './pages/ProblemsPage';
 import { LearnPage } from './pages/LearnPage';
 import { EditorPage } from './pages/EditorPage';
 import { ReplPage } from './pages/ReplPage';
+import { ContactPage } from './pages/ContactPage';
 import { Problem } from './types';
+import { PricingPage } from './pages/PricingPage';
 import {
   saveCode,
   loadCode,
@@ -102,7 +104,6 @@ function App() {
   );
   const [learningSearchQuery, setLearningSearchQuery] = useState('');
   const [selectedGuideSectionId, setSelectedGuideSectionId] = useState<string | null>(null);
-  const [pricingGuidePlacement, setPricingGuidePlacement] = useState<PricingGuidePlacement | null>(null);
 
   // Persist code to localStorage on change
   useEffect(() => {
@@ -218,30 +219,17 @@ function App() {
       selectedProblemId: selectedProblem?.id ?? null,
       selectedProblemTier: selectedProblem ? getProblemTier(selectedProblem) : 'unknown',
     });
-    setPricingGuidePlacement(placement);
-  }, [selectedProblem]);
-
-  const handleClosePricingGuide = useCallback(() => {
-    setPricingGuidePlacement(null);
-  }, []);
-
-  useEffect(() => {
-    if (!pricingGuidePlacement) {
+    if (typeof window === 'undefined') {
       return;
     }
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setPricingGuidePlacement(null);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [pricingGuidePlacement]);
+    const currentPath = window.location.hash.replace(/^#/, '').split('?')[0] || '/';
+    const params = new URLSearchParams({
+      from: placement,
+      back: currentPath,
+    });
+    window.location.hash = `/pricing?${params.toString()}`;
+  }, [selectedProblem]);
 
   return (
     <HashRouter>
@@ -327,69 +315,10 @@ function App() {
               path="/repl"
               element={<ReplPage />}
             />
+            <Route path="/contact" element={<ContactPage />} />
+                      <Route path="/pricing" element={<PricingPage selectedProblem={selectedProblem} />} />
           </Routes>
         </main>
-        {pricingGuidePlacement && (
-          <div className="pricing-guide-backdrop" onClick={handleClosePricingGuide}>
-            <section
-              className="pricing-guide-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="pricing-guide-title"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="pricing-guide-header">
-                <div>
-                  <p className="pricing-guide-eyebrow">Pricing Guide Preview</p>
-                  <h2 id="pricing-guide-title">Free / Standard の案内</h2>
-                </div>
-                <button
-                  type="button"
-                  className="pricing-guide-close"
-                  onClick={handleClosePricingGuide}
-                  aria-label="Standard プラン案内を閉じる"
-                >
-                  ×
-                </button>
-              </div>
-              <p className="pricing-guide-summary">
-                {pricingGuidePlacement === 'header'
-                  ? 'サイト全体の拡張方針として、入門は Free に残しつつ、より深い演習を Standard にまとめる予定です。'
-                  : pricingGuidePlacement === 'learn_empty'
-                    ? '学習開始前でも、Free の先にどんな拡張を置くかが分かるように先行案内を表示しています。'
-                    : '今見ている学習導線の先に、より深い問題と詳しい解説を Standard として追加する予定です。'}
-              </p>
-              <div className="pricing-guide-grid">
-                <section className="pricing-guide-plan free">
-                  <p className="pricing-guide-plan-label">Free</p>
-                  <h3>入門の継続無料</h3>
-                  <ul>
-                    <li>基本構文と入門コース</li>
-                    <li>ガイド、エディタ、REPL</li>
-                    <li>学習の最初の 1 周目</li>
-                  </ul>
-                </section>
-                <section className="pricing-guide-plan standard">
-                  <p className="pricing-guide-plan-label">Standard</p>
-                  <h3>中級入口を深くする層</h3>
-                  <ul>
-                    <li>Standard 候補問題の解放</li>
-                    <li>コース横断の演習と詳しい解説</li>
-                    <li>価格ページで差分を明示予定</li>
-                  </ul>
-                </section>
-              </div>
-              <p className="pricing-guide-note">
-                価格そのものは T-303 で静的ページとして公開予定です。現段階では、どの導線から関心が集まるかを GA4 で計測します。
-              </p>
-              <div className="pricing-guide-actions">
-                <button type="button" className="pricing-guide-primary" onClick={handleClosePricingGuide}>
-                  学習に戻る
-                </button>
-              </div>
-            </section>
-          </div>
-        )}
       </div>
     </HashRouter>
   );
