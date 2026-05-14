@@ -51,6 +51,18 @@ describe('LispGuide', () => {
     expect(screen.getByText('無名関数（lambda）')).toBeInTheDocument();
   });
 
+  it('評価セクションにコードとデータの補足を表示する', () => {
+    renderWithRouter();
+    expect(screen.getByText('シンボルは通常は変数として評価される')).toBeInTheDocument();
+    expect(screen.getByText('コードとデータは同じ形で書ける')).toBeInTheDocument();
+  });
+
+  it('lambda セクションに function object の補足を表示する', () => {
+    renderWithRouter();
+    expect(screen.getByText("function と #'")).toBeInTheDocument();
+    expect(screen.getByText('関数オブジェクトを変数に入れる')).toBeInTheDocument();
+  });
+
   it('条件分岐セクションを表示する', () => {
     renderWithRouter();
     expect(screen.getByText('条件分岐')).toBeInTheDocument();
@@ -104,6 +116,20 @@ describe('LispGuide', () => {
 
     expect(screen.getByRole('heading', { name: '高階関数' })).toBeInTheDocument();
     expect(screen.queryByText('Lispとは')).not.toBeInTheDocument();
+  });
+
+  it('新しい検索語で評価セクションを絞り込める', () => {
+    renderWithRouter({ searchQuery: 'code as data' });
+
+    expect(screen.getByRole('heading', { name: '評価（Evaluation）とクォート' })).toBeInTheDocument();
+    expect(screen.queryByText('Lispとは')).not.toBeInTheDocument();
+  });
+
+  it('新しい検索語で lambda セクションを絞り込める', () => {
+    renderWithRouter({ searchQuery: 'function object' });
+
+    expect(screen.getByRole('heading', { name: '無名関数（lambda）' })).toBeInTheDocument();
+    expect(screen.queryByText('条件分岐')).not.toBeInTheDocument();
   });
 
   it('一致しない検索語では空メッセージを表示する', () => {

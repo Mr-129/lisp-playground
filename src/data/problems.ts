@@ -2002,6 +2002,203 @@ Common Lisp では、式を評価せずそのまま扱いたいときに \`quote
     },
   },
   {
+    id: 'basic-quote-02',
+    title: '変数とシンボルを見分ける',
+    category: '基本構文',
+    difficulty: 'beginner',
+    estimatedMinutes: 6,
+    learningGoals: ['quote', 'symbol evaluation'],
+    description: `## 変数とシンボルを見分ける
+
+シンボルは、そのまま書くと通常は「変数参照」として評価されます。
+一方で、\`quote\` を付けるとシンボルそのものをデータとして扱えます。
+
+\`\`\`lisp
+(defvar x 10)
+
+x    ; => 10
+'x   ; => X
+\`\`\`
+
+### 問題
+変数 \`x\` に \`10\` を束縛し、次の 2 つを順に出力してください。
+- \`x\` の値
+- シンボル \`'x\``,
+    hint: '値としての x と、シンボルそのものの \'x をそれぞれ print します',
+    initialCode: '; x を定義して、x と \'x を順に出力してください\n',
+    solution: `(defvar x 10)
+(print x)
+(print 'x)`,
+    judge: {
+      kind: 'program',
+      cases: [
+        {
+          id: 'basic-quote-02-visible-1',
+          label: '変数参照とシンボルを順に出力',
+          visibility: 'visible',
+          run: { code: '' },
+          expect: {
+            output: { value: '10\nX\n', comparison: 'exact' },
+          },
+        },
+        {
+          id: 'basic-quote-02-hidden-1',
+          label: 'quote と変数評価の非公開チェック',
+          visibility: 'hidden',
+          run: { code: '' },
+          expect: {
+            output: { value: '10\nX\n', comparison: 'exact' },
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'basic-quote-03',
+    title: '式をデータとして出力する',
+    category: '基本構文',
+    difficulty: 'beginner',
+    estimatedMinutes: 6,
+    learningGoals: ['quote', 'code as data'],
+    description: `## 式をデータとして出力する
+
+Lisp では、同じ見た目のリストでも「評価する式」と「そのまま扱うデータ」を書き分けられます。
+
+\`\`\`lisp
+(+ 1 2)    ; => 3
+'(+ 1 2)   ; => (+ 1 2)
+\`\`\`
+
+### 問題
+次の 2 つを順に出力してください。
+- \`(+ 1 2)\` の計算結果
+- \`'(+ 1 2)\` をそのまま表した式データ`,
+    hint: '1つ目は通常評価、2つ目は quote して print します',
+    initialCode: '; 評価される式と、評価しない式を順に出力してください\n',
+    solution: `(print (+ 1 2))
+(print '(+ 1 2))`,
+    judge: {
+      kind: 'program',
+      cases: [
+        {
+          id: 'basic-quote-03-visible-1',
+          label: '評価結果と式データを出力',
+          visibility: 'visible',
+          run: { code: '' },
+          expect: {
+            output: { value: '3\n(+ 1 2)\n', comparison: 'exact' },
+          },
+        },
+        {
+          id: 'basic-quote-03-hidden-1',
+          label: 'コードとデータの非公開チェック',
+          visibility: 'hidden',
+          run: { code: '' },
+          expect: {
+            output: { value: '3\n(+ 1 2)\n', comparison: 'exact' },
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'basic-quote-04',
+    title: 'quote と list で同じ式を作る',
+    category: '基本構文',
+    difficulty: 'intermediate',
+    estimatedMinutes: 8,
+    learningGoals: ['quote', 'list', 'symbol'],
+    description: `## quote と list で同じ式を作る
+
+式データは、\`quote\` でそのまま書くことも、\`list\` で組み立てることもできます。
+
+\`\`\`lisp
+'(+ 1 2)          ; => (+ 1 2)
+(list '+ 1 2)     ; => (+ 1 2)
+\`\`\`
+
+### 問題
+次の 2 つを順に出力してください。
+- \`'(+ 1 2)\`
+- \`(list '+ 1 2)\``,
+    hint: '1つ目は quote、2つ目は list とシンボル \'+ を使います',
+    initialCode: '; quote と list の両方で (+ 1 2) という式データを作ってください\n',
+    solution: `(print '(+ 1 2))
+(print (list '+ 1 2))`,
+    judge: {
+      kind: 'program',
+      cases: [
+        {
+          id: 'basic-quote-04-visible-1',
+          label: 'quote と list で同じ式を出力',
+          visibility: 'visible',
+          run: { code: '' },
+          expect: {
+            output: { value: '(+ 1 2)\n(+ 1 2)\n', comparison: 'exact' },
+          },
+        },
+        {
+          id: 'basic-quote-04-hidden-1',
+          label: '式データ組み立ての非公開チェック',
+          visibility: 'hidden',
+          run: { code: '' },
+          expect: {
+            output: { value: '(+ 1 2)\n(+ 1 2)\n', comparison: 'exact' },
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'basic-quote-05',
+    title: '\'+ と #\'+ を見分ける',
+    category: '基本構文',
+    difficulty: 'intermediate',
+    estimatedMinutes: 8,
+    learningGoals: ['quote', 'function', 'symbolp', 'functionp'],
+    description: `## '\'+ と #\'+ を見分ける
+
+\`'+\` はシンボル、\`#'+\` は関数オブジェクトです。
+この違いが分かると、\`funcall\` や \`apply\` の読み方がかなり楽になります。
+
+\`\`\`lisp
+(symbolp '+)    ; => T
+(functionp #'+) ; => T
+\`\`\`
+
+### 問題
+次の 2 つを順に出力してください。
+- \`(symbolp '+)\` の結果
+- \`(functionp #'+)\` の結果`,
+    hint: 'quote した + と、関数オブジェクトの + を別々に判定します',
+    initialCode: '; symbolp と functionp で違いを確認してください\n',
+    solution: `(print (symbolp '+))
+(print (functionp #'+))`,
+    judge: {
+      kind: 'program',
+      cases: [
+        {
+          id: 'basic-quote-05-visible-1',
+          label: 'symbol と function object の判定結果を出力',
+          visibility: 'visible',
+          run: { code: '' },
+          expect: {
+            output: { value: 'T\nT\n', comparison: 'exact' },
+          },
+        },
+        {
+          id: 'basic-quote-05-hidden-1',
+          label: 'quote と function の非公開チェック',
+          visibility: 'hidden',
+          run: { code: '' },
+          expect: {
+            output: { value: 'T\nT\n', comparison: 'exact' },
+          },
+        },
+      ],
+    },
+  },
+  {
     id: 'basic-let-01',
     title: 'let による局所束縛',
     category: '基本構文',
@@ -2145,6 +2342,207 @@ Common Lisp では、式を評価せずそのまま扱いたいときに \`quote
           run: { code: '' },
           expect: {
             output: { value: '15\n9\n', comparison: 'exact' },
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'function-apply-02',
+    title: '関数を変数に入れて funcall する',
+    category: '高階関数',
+    difficulty: 'intermediate',
+    estimatedMinutes: 8,
+    learningGoals: ['function object', 'funcall'],
+    description: `## 関数を変数に入れて funcall する
+
+関数オブジェクトは、数値や文字列と同じように変数へ束縛できます。
+その変数を \`funcall\` で呼び出せば、関数を値として扱う感覚がつかめます。
+
+\`\`\`lisp
+(defvar *op* #'+)
+(funcall *op* 3 4 5) ; => 12
+\`\`\`
+
+### 問題
+次の 2 つを順に出力してください。
+- \`*op*\` に \`#'+\` を束縛して \`3 4 5\` を加算した結果
+- 別の変数に \`#'max\` を束縛して \`9 4 7 3\` の最大値`,
+    hint: 'どちらも defvar で関数を束縛し、funcall で呼び出します',
+    initialCode: '; 関数オブジェクトを変数に入れて funcall してください\n',
+    solution: `(defvar *op* #'+)
+(defvar *pick* #'max)
+(print (funcall *op* 3 4 5))
+(print (funcall *pick* 9 4 7 3))`,
+    judge: {
+      kind: 'program',
+      cases: [
+        {
+          id: 'function-apply-02-visible-1',
+          label: '変数経由の funcall を確認',
+          visibility: 'visible',
+          run: { code: '' },
+          expect: {
+            output: { value: '12\n9\n', comparison: 'exact' },
+          },
+        },
+        {
+          id: 'function-apply-02-hidden-1',
+          label: '関数オブジェクト束縛の非公開チェック',
+          visibility: 'hidden',
+          run: { code: '' },
+          expect: {
+            output: { value: '12\n9\n', comparison: 'exact' },
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'function-apply-03',
+    title: 'function と #\' の両方を使う',
+    category: '高階関数',
+    difficulty: 'intermediate',
+    estimatedMinutes: 8,
+    learningGoals: ['function', '#\'', 'funcall', 'apply'],
+    description: `## function と #\' の両方を使う
+
+\`#'\` は \`(function ...)\` の省略形です。
+この 2 つを両方使ってみると、\`#'\` がただの記号ではなく、関数を取り出す書き方だと分かります。
+
+\`\`\`lisp
+(funcall (function 1+) 9)   ; => 10
+(apply (function max) '(2 7 3)) ; => 7
+\`\`\`
+
+### 問題
+次の 2 つを順に出力してください。
+- \`(function 1+)\` を \`funcall\` して \`9\` を 1 増やした結果
+- \`(function max)\` を \`apply\` して \`(2 7 3)\` の最大値`,
+    hint: 'function で取り出した関数も、funcall と apply でそのまま使えます',
+    initialCode: '; function を使って関数を取り出し、funcall / apply してください\n',
+    solution: `(print (funcall (function 1+) 9))
+(print (apply (function max) '(2 7 3)))`,
+    judge: {
+      kind: 'program',
+      cases: [
+        {
+          id: 'function-apply-03-visible-1',
+          label: 'function で取り出した関数を呼び出す',
+          visibility: 'visible',
+          run: { code: '' },
+          expect: {
+            output: { value: '10\n7\n', comparison: 'exact' },
+          },
+        },
+        {
+          id: 'function-apply-03-hidden-1',
+          label: 'function 省略形理解の非公開チェック',
+          visibility: 'hidden',
+          run: { code: '' },
+          expect: {
+            output: { value: '10\n7\n', comparison: 'exact' },
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'function-apply-04',
+    title: 'apply の固定引数を使う',
+    category: '高階関数',
+    difficulty: 'advanced',
+    estimatedMinutes: 10,
+    learningGoals: ['apply', 'argument expansion'],
+    description: `## apply の固定引数を使う
+
+\`apply\` は最後のリストだけを展開し、それより前の引数はそのまま渡します。
+この形が分かると、固定値と可変個引数を組み合わせる場面で応用しやすくなります。
+
+\`\`\`lisp
+(apply #'+ 10 '(1 2 3))
+; => 16
+\`\`\`
+
+### 問題
+次の 2 つを順に出力してください。
+- \`(apply #'+ 10 '(1 2 3))\` の結果
+- \`(apply #'max 0 '(7 3 9 2))\` の結果`,
+    hint: '最後のリストだけが展開される点に注目してください',
+    initialCode: '; apply の固定引数付き呼び出しを 2 つ書いてください\n',
+    solution: `(print (apply #'+ 10 '(1 2 3)))
+(print (apply #'max 0 '(7 3 9 2)))`,
+    judge: {
+      kind: 'program',
+      cases: [
+        {
+          id: 'function-apply-04-visible-1',
+          label: '固定引数付き apply の結果を出力',
+          visibility: 'visible',
+          run: { code: '' },
+          expect: {
+            output: { value: '16\n9\n', comparison: 'exact' },
+          },
+        },
+        {
+          id: 'function-apply-04-hidden-1',
+          label: '固定引数付き apply の非公開チェック',
+          visibility: 'hidden',
+          run: { code: '' },
+          expect: {
+            output: { value: '16\n9\n', comparison: 'exact' },
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'function-dispatch-01',
+    title: '条件によって関数を返す',
+    category: '高階関数',
+    difficulty: 'advanced',
+    estimatedMinutes: 12,
+    learningGoals: ['function object', 'if', 'funcall'],
+    description: `## 条件によって関数を返す
+
+関数オブジェクトは、引数として渡すだけでなく、関数の戻り値として返すこともできます。
+これが分かると、「条件によって処理を切り替える関数」を Lisp らしく書けるようになります。
+
+\`\`\`lisp
+(defun choose-op (use-add)
+  (if use-add #'+ #'*))
+\`\`\`
+
+### 問題
+\`use-add\` が真なら \`#'+\`、偽なら \`#'*\` を返す \`choose-op\` を定義し、
+次の 2 つを順に出力してください。
+- \`(funcall (choose-op t) 2 3 4)\`
+- \`(funcall (choose-op nil) 2 3 4)\``,
+    hint: 'if の戻り値として関数オブジェクトを返し、その結果を funcall します',
+    initialCode: '; choose-op を定義して、戻ってきた関数を funcall してください\n',
+    solution: `(defun choose-op (use-add)
+  (if use-add #'+ #'*))
+(print (funcall (choose-op t) 2 3 4))
+(print (funcall (choose-op nil) 2 3 4))`,
+    judge: {
+      kind: 'program',
+      cases: [
+        {
+          id: 'function-dispatch-01-visible-1',
+          label: '条件分岐で返した関数を呼び出す',
+          visibility: 'visible',
+          run: { code: '' },
+          expect: {
+            output: { value: '9\n24\n', comparison: 'exact' },
+          },
+        },
+        {
+          id: 'function-dispatch-01-hidden-1',
+          label: '関数ディスパッチの非公開チェック',
+          visibility: 'hidden',
+          run: { code: '' },
+          expect: {
+            output: { value: '9\n24\n', comparison: 'exact' },
           },
         },
       ],

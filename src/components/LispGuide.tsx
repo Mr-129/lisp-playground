@@ -11,10 +11,10 @@ const GUIDE_SECTIONS: GuideSectionSummary[] = [
   { id: 'guide-intro', title: 'Lispとは', keywords: ['common lisp', 'john mccarthy', '同図像性', 'homoiconicity'] },
   { id: 'guide-s-expr', title: 'S式（S-expression）', keywords: ['s式', 'atom', 'list', 'prefix notation', '前置記法'] },
   { id: 'guide-types', title: '基本データ型', keywords: ['整数', '浮動小数点数', '文字列', 'シンボル', 'nil'] },
-  { id: 'guide-evaluation', title: '評価（Evaluation）とクォート', keywords: ['評価', 'quote', 'クォート', "'", 'quote'] },
+  { id: 'guide-evaluation', title: '評価（Evaluation）とクォート', keywords: ['評価', 'quote', 'クォート', "'", 'quote', 'symbol evaluation', 'code as data', 'list literal'] },
   { id: 'guide-variables', title: '変数の定義と束縛', keywords: ['defvar', 'defparameter', 'setq', 'let', 'let*', 'レキシカルスコープ'] },
   { id: 'guide-defun', title: '関数の定義（defun）', keywords: ['defun', 'optional', '関数定義'] },
-  { id: 'guide-lambda', title: '無名関数（lambda）', keywords: ['lambda', 'funcall', 'apply', "#'", 'mapcar'] },
+  { id: 'guide-lambda', title: '無名関数（lambda）', keywords: ['lambda', 'funcall', 'apply', "#'", 'mapcar', 'function', 'function object'] },
   { id: 'guide-conditions', title: '条件分岐', keywords: ['if', 'cond', 'when', 'unless', 'and', 'or', 'not'] },
   { id: 'guide-lists', title: 'リスト操作', keywords: ['car', 'cdr', 'cons', 'append', 'nth', 'member'] },
   { id: 'guide-loops', title: '繰り返し（ループ）', keywords: ['dotimes', 'dolist', '再帰', 'factorial'] },
@@ -169,6 +169,36 @@ foo         ; シンボルアトム
             <code>'</code>（クォート）を付けると、式は評価されずにそのままデータとして扱われます。
             リストリテラルを書くときに必須です。
           </p>
+          <h4>シンボルは通常は変数として評価される</h4>
+          <p>
+            シンボルをそのまま書くと、通常は「その名前の変数を参照する式」として扱われます。
+            シンボルそのものをデータとして扱いたいときは、<code>quote</code> を付けます。
+          </p>
+          <pre className="guide-code">{`(defvar x 10)
+
+x      ; => 10
+'x     ; => X`}</pre>
+          <h4>コードとデータは同じ形で書ける</h4>
+          <p>
+            <code>(+ 1 2)</code> は計算する式ですが、<code>'(+ 1 2)</code> は「足し算の式そのもの」というデータです。
+            Lisp ではプログラムとリストデータが同じ形で書けるため、コードをそのままデータとして扱えます。
+          </p>
+          <pre className="guide-code">{`(+ 1 2)      ; => 3
+'(+ 1 2)     ; => (+ 1 2)
+
+(first '(+ 1 2))   ; => +
+(rest '(+ 1 2))    ; => (1 2)`}</pre>
+          <h4>quote と list で式データを作る</h4>
+          <p>
+            <code>quote</code> は式をそのまま書く方法で、<code>list</code> は式を組み立てる方法です。
+            どちらも結果として同じ式データを作れます。
+          </p>
+          <pre className="guide-code">{`'(+ 1 2)           ; => (+ 1 2)
+(list '+ 1 2)      ; => (+ 1 2)`}</pre>
+          <div className="guide-note">
+            <strong>💡 よくある誤解:</strong> <code>'+</code> は<strong>シンボル</strong>、<code>#'+</code> は<strong>関数オブジェクト</strong>です。<br />
+            この違いを区別すると、<code>funcall</code> や <code>apply</code> を読みやすくなります。
+          </div>
         </section>
         )}
 
@@ -250,6 +280,35 @@ foo         ; シンボルアトム
 ;; #' で関数オブジェクトを取得
 (mapcar #'1+ '(1 2 3))         ; => (2 3 4)
 (mapcar (lambda (x) (* x x)) '(1 2 3 4))  ; => (1 4 9 16)`}</pre>
+          <h4>function と #'</h4>
+          <p>
+            <code>#'</code> は <code>(function ...)</code> の省略形です。
+            関数名や lambda 式を「関数オブジェクト」として扱いたいときに使います。
+          </p>
+          <pre className="guide-code">{`#'+
+(function +)
+(function (lambda (x) (* x x)))`}</pre>
+          <h4>funcall と apply</h4>
+          <p>
+            <code>funcall</code> は引数をそのまま並べて渡し、<code>apply</code> は最後のリストを展開して渡します。
+            見た目は似ていますが、可変長の引数列を扱うときに役割が分かれます。
+          </p>
+          <pre className="guide-code">{`(funcall #'+ 1 2 3)     ; => 6
+(apply #'+ '(1 2 3))    ; => 6
+(apply #'+ 10 '(1 2 3)) ; => 16`}</pre>
+          <h4>関数オブジェクトを変数に入れる</h4>
+          <p>
+            関数は値なので、変数に束縛したり、条件によって返したりできます。
+            ここまで理解できると、高階関数の見え方がかなり変わります。
+          </p>
+          <pre className="guide-code">{`(defvar *op* #'+)
+(funcall *op* 3 4 5)   ; => 12
+
+(defun choose-op (use-add)
+  (if use-add #'+ #'*))
+
+(funcall (choose-op t) 2 3 4)   ; => 9
+(funcall (choose-op nil) 2 3 4) ; => 24`}</pre>
           <div className="guide-note">
             <strong>💡 funcall vs apply:</strong>
             <code>funcall</code> は引数を個別に渡し、<code>apply</code> はリストとして渡します。<br />

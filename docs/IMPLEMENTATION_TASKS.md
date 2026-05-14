@@ -2,7 +2,7 @@
 
 **作成日**: 2026年4月21日  
 **位置づけ**: 内部向け実装タスク一覧  
-**関連文書**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md), [PROBLEM_ROADMAP_JP.md](./PROBLEM_ROADMAP_JP.md)
+**関連文書**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md), [PROBLEM_ROADMAP_JP.md](./PROBLEM_ROADMAP_JP.md), [LEARNING_COVERAGE_GAPS.md](./LEARNING_COVERAGE_GAPS.md)
 
 ---
 
@@ -633,7 +633,121 @@
 
 ---
 
-## 8. いまは着手しないタスク
+## 8. Phase 4: 学習コンテンツ拡張
+
+この phase は、Phase 3 の認証 / 課金判断と独立に進める。学習サイトとしての密度不足を解消するための、コンテンツ拡張トラックとして扱う。
+
+### T-501 評価モデルと quote 系の補強
+
+- **ステータス**: `done` (2026-05-14)
+- **目的**: `quote` / `#'` / `function` / `funcall` / `apply` と symbol 評価のつながりを説明と演習の両方で補強する
+- **判断資料**: [T501_QUOTE_EVALUATION_PLAN.md](./T501_QUOTE_EVALUATION_PLAN.md)
+- **対象ファイル**:
+  - [src/components/LispGuide.tsx](../src/components/LispGuide.tsx)
+  - [src/components/__tests__/LispGuide.test.tsx](../src/components/__tests__/LispGuide.test.tsx)
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
+  - [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx)
+- **依存関係**: T-104, T-102A
+- **実装内容**:
+  - ガイドに「評価されるもの / 評価させないもの」の説明を追加する
+  - `quote`、`#'`、`function`、`funcall`、`apply`、symbol の評価をつなぐ具体例を追加する
+  - `quote` 系の典型的なつまずきを扱う問題を 6 から 8 問追加する
+  - 新規ガイド節と問題が検索導線に自然に乗ることを確認する
+- **完了条件**:
+  - ガイドだけで `quote` と通常評価の違いが説明できる
+  - Explicit judge 付きの新規問題が 6 問以上追加されている
+  - ガイド表示、問題データ、学習導線に対するテストが追加されている
+- **完了メモ**:
+  - `guide-evaluation` と `guide-lambda` に評価モデルと関数オブジェクトの説明を追加済み
+  - `basic-quote-02` から `basic-quote-05`、`function-apply-02` から `function-dispatch-01` までの 8 問を追加済み
+  - `problems` / `LispGuide` / `LearnPage` の局所テストで導線と検索を確認済み
+
+### T-502 tree / association list / property list 問題群の追加
+
+- **ステータス**: `todo`
+- **目的**: 平坦な list 中心の学習から、Lisp らしいネストデータ処理へ進める
+- **対象ファイル**:
+  - [src/components/LispGuide.tsx](../src/components/LispGuide.tsx)
+  - [src/components/__tests__/LispGuide.test.tsx](../src/components/__tests__/LispGuide.test.tsx)
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
+  - [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx)
+- **依存関係**: T-501, T-102A
+- **実装内容**:
+  - ガイドに tree、ネストリスト走査、`assoc`、property list 的なデータの見方を追加する
+  - tree 再帰、設定表参照、変換処理を扱う問題を 6 から 8 問追加する
+  - 必要ならカテゴリや learning path の配置を見直す
+- **完了条件**:
+  - ネストデータを扱う新規問題が 6 問以上追加されている
+  - `assoc` を使う代表例がガイドと問題の両方に存在する
+  - 問題一覧と LearnPage 上で新規問題群が自然に辿れる
+
+### T-503 等価性・述語・型分岐の強化
+
+- **ステータス**: `todo`
+- **目的**: `eq` / `eql` / `equal`、`nil`、truthiness、述語関数の使い分けを曖昧なままにしない
+- **対象ファイル**:
+  - [src/components/LispGuide.tsx](../src/components/LispGuide.tsx)
+  - [src/components/__tests__/LispGuide.test.tsx](../src/components/__tests__/LispGuide.test.tsx)
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
+  - [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx)
+- **依存関係**: T-501
+- **実装内容**:
+  - ガイドに等価性比較の違いと、典型的に迷いやすいケースを追加する
+  - 述語関数、型判定、真偽値分岐の判断問題を 4 から 6 問追加する
+  - `nil`、空リスト、真値の扱いで誤答しやすいケースを含める
+- **完了条件**:
+  - ガイドに `eq` / `eql` / `equal` の比較表か使い分け説明がある
+  - 新規問題が 4 問以上追加されている
+  - 既存の比較 / 述語セクションと重複せず、判断基準が明示されている
+
+### T-504 束縛・状態更新・closure 問題群の拡張
+
+- **ステータス**: `todo`
+- **目的**: `let` / `let*` / `setf` / closure の関係を「状態がどこで変わるか」という観点で理解しやすくする
+- **対象ファイル**:
+  - [src/components/LispGuide.tsx](../src/components/LispGuide.tsx)
+  - [src/components/__tests__/LispGuide.test.tsx](../src/components/__tests__/LispGuide.test.tsx)
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
+  - [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx)
+- **依存関係**: T-501
+- **実装内容**:
+  - ガイドに lexical scope、再束縛、状態更新、closure の保持する環境を説明する節を追加する
+  - `let*`、`setf`、カウンタ、蓄積器、状態付き closure の問題を 5 から 6 問追加する
+  - 誤解しやすい「外側の変数が変わるのか / 新しい束縛なのか」を問題文に含める
+- **完了条件**:
+  - 新規問題が 5 問以上追加されている
+  - ガイドに scope と closure の関係を説明する具体例がある
+  - 学習者が状態更新の意図を読み取りやすい問題文になっている
+
+### T-505 読解・デバッグ・修正型演習の導入
+
+- **ステータス**: `todo`
+- **目的**: 新規実装だけでなく、既存コードを読んで原因を見つけて直す練習を導入する
+- **対象ファイル**:
+  - [src/types/index.ts](../src/types/index.ts)
+  - [src/components/ProblemView.tsx](../src/components/ProblemView.tsx)
+  - [src/components/__tests__/ProblemView.test.tsx](../src/components/__tests__/ProblemView.test.tsx)
+  - [src/pages/EditorPage.tsx](../src/pages/EditorPage.tsx)
+  - [src/pages/__tests__/EditorPage.test.tsx](../src/pages/__tests__/EditorPage.test.tsx)
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
+- **依存関係**: T-501, T-502, T-503, T-504, T-102A
+- **実装内容**:
+  - 現在の問題モデルで不足があれば、読解 / デバッグ / 修正型演習を表現する最小メタデータを追加する
+  - バグ修正、出力差分原因の特定、エラーメッセージ読解を扱う問題を 6 から 10 問追加する
+  - 必要なら ProblemView と EditorPage の表示を調整し、修正対象コードを見やすくする
+- **完了条件**:
+  - 読解 / デバッグ / 修正型の各タイプを最低 1 問ずつ追加できている
+  - 既存の editor / judge フローで解ける形に収まっている
+  - 問題表示と判定フローに対する回帰テストが追加されている
+
+---
+
+## 9. いまは着手しないタスク
 
 次は、現時点では backlog に置くが実行順の後ろに回す。
 
@@ -648,23 +762,23 @@
 
 ---
 
-## 9. 次に実行するべきタスク
+## 10. 次に実行するべきタスク
 
-次の実装対象は **T-401 認証方式の決定とクライアント層追加** とする。  
-前回更新: 2026-05-12
+次の実装対象は **T-502 tree / association list / property list 問題群の追加** とする。  
+前回更新: 2026-05-14
 
 理由は次の通り。
 
-1. T-304 までで Phase 2 の計測・導線整備が完了し、価格ページ・問い合わせ・waitlist 仮登録の 3 導線が揃った
-2. 次に進むなら、取得した需要シグナルを entitlement と購入体験へ接続するための認証方針を決める必要がある
-3. 現在の waitlist は GitHub issue ベースの暫定運用なので、Phase 3 では private form や課金導線との役割分担も含めて整理が必要になる
-4. T-401 以降は `blocked` だが、理由は未着手ではなく provider 選定待ちであり、次の意思決定点として最も近い
+1. T-501 で quote / 関数オブジェクトの基礎は補強できたので、次は tree / alist による Lisp 的データ処理の厚みを足す段階に移った
+2. T-502 も現行の学習モードのまま進められ、認証や課金 provider の選定を待たずに実装できる
+3. T-502 は T-503 以降の比較・読解問題へつながるデータ処理の前提を整えやすい
+4. 収益化トラックの次判断点は引き続き T-401 だが、Phase 3 は現時点で `blocked` のため、先に進めやすいのは Phase 4 である
 
 ---
 
-## 10. 全体進捗サマリー
+## 11. 全体進捗サマリー
 
-最終更新: 2026-05-12
+最終更新: 2026-05-14
 
 | Phase | タスク数 | 完了 | 進捗 |
 |---|---|---|---|
@@ -673,7 +787,8 @@
 | Phase 1.5: 商品設計前提 | 3 (T-201〜T-203) | 3 | 100% |
 | Phase 2: 計測・導線整備 | 6 (T-301, T-302, T-302A, T-302B, T-303, T-304) | 6 | 100% |
 | Phase 3: 初回サブスク実験 | 4 (T-401〜T-404) | 0 (blocked) | 0% |
-| **合計** | **25** | **21** | **84%** |
+| Phase 4: 学習コンテンツ拡張 | 5 (T-501〜T-505) | 1 | 20% |
+| **合計** | **30** | **22** | **73%** |
 
 ### 完了済みタスク一覧
 
@@ -700,32 +815,37 @@
 | T-302B | 価格公開前チェックリスト整備 | 2026-05-10 |
 | T-303 | 価格ページの静的実装 | 2026-05-10 |
 | T-304 | メール獲得導線 | 2026-05-12 |
+| T-501 | 評価モデルと quote 系の補強 | 2026-05-14 |
 
 ### 未着手タスク（実施推奨順）
 
 | 順番 | ID | タスク名 | 依存 |
 |---|---|---|---|
-| 1 | T-401 | 認証方式の決定とクライアント層追加 | T-303, T-304（blocked） |
-| 2 | T-402 | プレミアム権限モデル | T-401, T-201（blocked） |
-| 3 | T-403 | 有料コンテンツの外出し | T-402（blocked） |
-| 4 | T-404 | 課金導線の接続 | T-401, T-402（blocked） |
+| 1 | T-502 | tree / association list / property list 問題群の追加 | T-501, T-102A |
+| 2 | T-503 | 等価性・述語・型分岐の強化 | T-501 |
+| 3 | T-504 | 束縛・状態更新・closure 問題群の拡張 | T-501 |
+| 4 | T-505 | 読解・デバッグ・修正型演習の導入 | T-501〜T-504, T-102A |
+| 5 | T-401 | 認証方式の決定とクライアント層追加 | T-303, T-304（blocked） |
+| 6 | T-402 | プレミアム権限モデル | T-401, T-201（blocked） |
+| 7 | T-403 | 有料コンテンツの外出し | T-402（blocked） |
+| 8 | T-404 | 課金導線の接続 | T-401, T-402（blocked） |
 
 ### 採点モデル移行の完了状況（T-102A サブ項目）
 
-全 51 問が Explicit judge 形式へ移行済み。`expectedOutput` / `expectedReturnValue` の残存は 0 件。
+既存 51 問の Explicit judge 移行は完了済みで、T-501 追加 8 問も同形式で作成済み。現行 59 問に `expectedOutput` / `expectedReturnValue` の残存は 0 件。
 
 | カテゴリ | 問題数 | 移行完了 |
 |---|---|---|
-| 基本構文 | 7 | ✅ |
+| 基本構文 | 11 | ✅ |
 | 条件分岐 | 4 | ✅ |
 | 数値計算 | 3 | ✅ |
 | 文字列操作 | 4 | ✅ |
 | リスト操作 | 7 | ✅ |
 | ループ | 4 | ✅ |
-| 高階関数 | 8 | ✅ |
+| 高階関数 | 12 | ✅ |
 | 再帰 | 5 | ✅ |
 | クロージャ | 3 | ✅ |
 | スコープ | 2 | ✅ |
 | 型判定 | 1 | ✅ |
 | 総合問題 | 3 | ✅ |
-| **合計** | **51** | **✅ 全件** |
+| **合計** | **59** | **✅ 全件** |

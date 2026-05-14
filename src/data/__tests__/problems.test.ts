@@ -38,6 +38,21 @@ describe('problems データ', () => {
       const categories = new Set(problems.map(p => p.category));
       expect(categories.size).toBeGreaterThan(0);
     });
+
+    it('T-501 第1弾の quote / function object 問題が含まれている', () => {
+      const problemIds = problems.map((problem) => problem.id);
+
+      expect(problemIds).toEqual(expect.arrayContaining([
+        'basic-quote-02',
+        'basic-quote-03',
+        'basic-quote-04',
+        'basic-quote-05',
+        'function-apply-02',
+        'function-apply-03',
+        'function-apply-04',
+        'function-dispatch-01',
+      ]));
+    });
   });
 
   describe('getProblemsByCategory', () => {

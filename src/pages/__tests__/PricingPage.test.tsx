@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import type { Problem } from '../../types';
 import { PricingPage } from '../PricingPage';
 
 const { trackEventMock } = vi.hoisted(() => ({
@@ -20,14 +21,16 @@ const selectedProblem = {
   description: 'desc',
   initialCode: 'code',
   solution: 'solution',
+  order: 1,
   estimatedMinutes: 5,
   learningGoals: ['goal'],
   catalog: {
     tier: 'standard' as const,
-    courseId: 'starter',
+    courseId: 'intro-core',
     courseOrder: 1,
+    tags: ['syntax'],
   },
-};
+} satisfies Problem;
 
 function renderPricingPage(initialEntry = '/pricing?from=learn_problem&back=%2Flearn') {
   return render(

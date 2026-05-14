@@ -295,6 +295,19 @@ describe('LearnPage', () => {
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
   });
 
+  it('guide ルートで T-501 の新規問題を選ぶと learn へ遷移する', () => {
+    const { onSelectProblem } = renderStatefulLearnPage('/guide');
+
+    fireEvent.change(screen.getByLabelText('問題とガイドを検索'), {
+      target: { value: '変数とシンボルを見分ける' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /変数とシンボルを見分ける/ }));
+
+    expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-quote-02' }));
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn');
+    expect(screen.getAllByText(/変数とシンボルを見分ける/).length).toBeGreaterThan(0);
+  });
+
   it('問題ビューのエディタボタンで editor へ遷移しコールバックを呼ぶ', () => {
     const onNavigateToEditor = vi.fn();
 
