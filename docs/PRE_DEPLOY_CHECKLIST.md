@@ -1,8 +1,10 @@
-# Lisp Playground — 価格公開前チェックリスト
+# Lisp Playground — deploy 前チェックリスト
 
-**目的**: 価格や金銭関連の導線を `deploy` ブランチへ反映してよい条件を明文化し、公開判断を属人化させない  
-**対象**: `/contact`、`/pricing`、waitlist CTA、価格案内 CTA、問い合わせ導線、価格に紐づく文言やリンクを含む公開候補  
-**更新日**: 2026年5月10日
+**目的**: `deploy` ブランチへ反映してよい条件を明文化し、公開判断を属人化させない  
+**対象**: 学習導線、価格/問い合わせ導線、公開文言、計測、テスト、ドキュメント同期を含む公開候補  
+**更新日**: 2026年5月15日
+
+> 2026年5月時点の公開方針は free-only（`LIMITED_FREE_CAMPAIGN = true`）です。現行 UI では `/contact` と `/pricing` は公開せず、waitlist / 価格案内 CTA も非表示が正です。
 
 ---
 
@@ -12,7 +14,7 @@
 2. この文書の必須項目を上から確認する
 3. 必須項目に 1 つでも `NO` がある場合は `deploy` へ push しない
 4. すべて `YES` の場合のみ `deploy` ブランチへ反映する
-5. 公開後の結果は [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) に記録する
+5. 公開後の結果は [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) に記録し、公開失敗や rerun が発生した場合はローカルの個人用 runbook に残す
 
 ---
 
@@ -22,7 +24,6 @@
 
 - 必須項目がすべて `YES`
 - 未実装の決済、法務、サポートを実装済みのように見せる文言がない
-- 問い合わせ導線が公開ルートから到達可能
 - 現行の公開範囲と未公開範囲がチーム内で説明できる
 
 1 つでも満たさない場合は `NO-GO` とし、`main` で継続作業する。
@@ -33,17 +34,21 @@
 
 | 区分 | 確認項目 | 判定 |
 |---|---|---|
+| 公開基盤 | [../.github/workflows/deploy.yml](../.github/workflows/deploy.yml) の公開条件と `github-pages` environment の `Deployment branches and tags` が一致している（現行は `deploy` を許可） | YES / NO |
+| 公開方針 | `src/utils/siteMode.ts` の `LIMITED_FREE_CAMPAIGN` 設定値と、今回の公開意図（free-only か commercial-enabled か）が一致している | YES / NO |
 | 公開範囲 | 今回 `deploy` へ載せる route / CTA / 文言が列挙され、意図しない途中機能を含んでいない | YES / NO |
 | 公開範囲 | `main` と `deploy` の差分を確認し、金銭関連で未公開にしたい変更が `deploy` 側へ混入していない | YES / NO |
-| 問い合わせ | Header から `/contact` へ到達できる | YES / NO |
-| 問い合わせ | `/contact` に不具合報告と購入前質問の 2 導線があり、用途の違いが文言で分かる | YES / NO |
-| 問い合わせ | 返信期待値、GitHub issue が暫定窓口であること、個人情報や決済情報を書かないことが明示されている | YES / NO |
-| waitlist | 更新通知の導線が有効な遷移先を持ち、現行運用が GitHub issue の場合は個人情報やメールアドレスを書かせていない | YES / NO |
+| 問い合わせ | free-only の場合、Header から `/contact` 導線が非表示であり、`/#/contact` 直アクセスは `/` へリダイレクトされる | YES / NO |
+| 問い合わせ | commercial-enabled の場合のみ、Header から `/contact` へ到達できる | YES / NO |
+| 問い合わせ | commercial-enabled の場合のみ、`/contact` に用途別導線と注意文言（個人情報/決済情報を書かない）がある | YES / NO |
+| waitlist | free-only の場合、更新通知 CTA が非表示である | YES / NO |
+| waitlist | commercial-enabled の場合のみ、更新通知 CTA が有効な遷移先を持つ | YES / NO |
 | 価格文言 | 価格、プラン差分、提供内容に未確定の数字や誤解を招く表現がない | YES / NO |
 | 価格文言 | 決済未接続の段階では「購入」「決済完了」「今すぐ登録」など、実運用済みに見える CTA を出していない | YES / NO |
 | 価格文言 | 未対応のサポート、返金、請求、領収書、個別対応を約束する文言がない | YES / NO |
 | リンク | 問い合わせ先 URL、GitHub issue URL、外部リンクが実際に開ける | YES / NO |
-| 計測 | `pricing_cta_clicked` と `contact_cta_clicked` の対象導線が現在の UI と一致している | YES / NO |
+| 計測 | free-only の場合、`pricing_cta_clicked` と `contact_cta_clicked` がヘッダー導線前提になっていない | YES / NO |
+| 計測 | commercial-enabled の場合、`pricing_cta_clicked` と `contact_cta_clicked` の対象導線が現在の UI と一致している | YES / NO |
 | 計測 | GA4 未設定でも内部 queue / `dataLayer` 前提の確認ができ、計測コードが vendor 直結になっていない | YES / NO |
 | テスト | `npm test` が最新の `main` で通過している | YES / NO |
 | テスト | `npm run test:e2e` が通過している | YES / NO |
@@ -57,7 +62,9 @@
 
 | 区分 | 確認項目 | 判定 |
 |---|---|---|
-| 画面確認 | `/contact`、`/learn`、価格導線周辺をデスクトップ幅とモバイル幅で目視確認した | YES / NO |
+| 運用確認 | 直近で environment 設定を変更した場合、`Re-run failed jobs` か再 push の担当と手順が決まっている | YES / NO |
+| 画面確認 | free-only の場合、`/learn` 周辺と hidden ルート（`/contact`、`/pricing`）のリダイレクトをデスクトップ幅とモバイル幅で確認した | YES / NO |
+| 画面確認 | commercial-enabled の場合、`/contact`、`/learn`、価格導線周辺をデスクトップ幅とモバイル幅で目視確認した | YES / NO |
 | 画面確認 | GitHub issue への導線が新しいタブで開き、見た目崩れがない | YES / NO |
 | 文言確認 | 問い合わせ文言と価格文言が同じ前提で書かれており、矛盾がない | YES / NO |
 | 運用確認 | 公開後に誰が [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) を更新するか決めている | YES / NO |
@@ -68,13 +75,15 @@
 
 ### 公開してよい状態
 
-- 問い合わせ先が公開 UI から辿れる
+- free-only の場合、学習導線のみが公開され、`/contact` と `/pricing` は公開 UI から外れている
+- commercial-enabled の場合、問い合わせ先が公開 UI から辿れる
 - 価格やプランは静的な案内に留まり、決済未接続であることを隠していない
 - テストと deploy 方針が現在の運用ルールに一致している
 
 ### まだ公開してはいけない状態
 
-- 問い合わせ導線なしで価格や金銭関連だけが見える
+- free-only 方針なのに価格や問い合わせ導線が一部だけ露出している
+- commercial-enabled 方針なのに問い合わせ導線なしで価格や金銭関連だけが見える
 - checkout 未接続なのに購入できるように見せている
 - deploy 候補に未完成の金銭導線や誤案内が混ざっている
 - docs の記述が現行挙動とずれており、公開判断の根拠が残らない

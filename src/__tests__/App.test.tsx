@@ -30,7 +30,9 @@ vi.mock('../components/Header', () => ({
   Header: ({ onOpenPricingGuide }: { onOpenPricingGuide?: () => void }) => (
     <div>
       <div>header</div>
-      <button type="button" onClick={() => onOpenPricingGuide?.()}>open-pricing-from-header</button>
+      {onOpenPricingGuide && (
+        <button type="button" onClick={() => onOpenPricingGuide()}>open-pricing-from-header</button>
+      )}
     </div>
   ),
 }));
@@ -82,7 +84,9 @@ vi.mock('../pages/LearnPage', () => ({
       <button type="button" onClick={onShowSolution}>show-solution</button>
       <button type="button" onClick={onNavigateToEditor}>navigate-to-editor</button>
       <button type="button" onClick={() => onSelectProblem?.(selectableProblem)}>select-problem-from-learn</button>
-      <button type="button" onClick={() => onOpenPricingGuide?.('learn_problem')}>open-pricing-from-learn</button>
+      {onOpenPricingGuide && (
+        <button type="button" onClick={() => onOpenPricingGuide('learn_problem')}>open-pricing-from-learn</button>
+      )}
       <button
         type="button"
         onClick={() => {
@@ -170,7 +174,7 @@ describe('App', () => {
 
     render(<App />);
 
-    expect(screen.getByText('contact-page')).toBeInTheDocument();
+    expect(screen.getByText('home-page')).toBeInTheDocument();
   });
 
   it('選択した問題を最近見た問題として localStorage に保存する', async () => {
@@ -190,7 +194,7 @@ describe('App', () => {
       problemId: SECOND_VALID_PROBLEM_ID,
       category: selectableProblem.category,
       difficulty: selectableProblem.difficulty,
-      tier: 'unknown',
+      tier: 'free',
     });
   });
 
@@ -337,38 +341,26 @@ describe('App', () => {
     expect(window.location.hash).toBe('#/editor');
   });
 
-  it('ヘッダー CTA から価格ページへ遷移して計測する', async () => {
+  it('free-only モードではヘッダーから pricing CTA を渡さない', async () => {
     render(<App />);
 
-    fireEvent.click(screen.getByText('open-pricing-from-header'));
-
-    expect(trackEventMock).toHaveBeenCalledWith('pricing_cta_clicked', {
-      placement: 'header',
-      selectedProblemId: null,
-      selectedProblemTier: 'unknown',
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('pricing-page')).toBeInTheDocument();
-    });
+    expect(screen.queryByText('open-pricing-from-header')).not.toBeInTheDocument();
   });
 
-  it('学習ページ CTA から選択中問題つきで価格ページへ遷移して計測する', async () => {
+  it('free-only モードでは学習ページから pricing CTA を渡さない', async () => {
     window.location.hash = '#/learn';
     localStorage.setItem(STORAGE_KEY_PROBLEM, VALID_PROBLEM_ID);
 
     render(<App />);
 
-    fireEvent.click(screen.getByText('open-pricing-from-learn'));
+    expect(screen.queryByText('open-pricing-from-learn')).not.toBeInTheDocument();
+  });
 
-    expect(trackEventMock).toHaveBeenCalledWith('pricing_cta_clicked', {
-      placement: 'learn_problem',
-      selectedProblemId: VALID_PROBLEM_ID,
-      selectedProblemTier: problems[0].catalog?.tier ?? 'unknown',
-    });
+  it('free-only モードでは pricing ルートへ直接入ってもホームへ戻す', () => {
+    window.location.hash = '#/pricing';
 
-    await waitFor(() => {
-      expect(screen.getByText('pricing-page')).toBeInTheDocument();
-    });
+    render(<App />);
+
+    expect(screen.getByText('home-page')).toBeInTheDocument();
   });
 });

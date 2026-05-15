@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
 import { getWaitlistConfig, openWaitlistTarget } from '../utils/waitlist';
+import { COMMERCIAL_FEATURES_ENABLED, CONTACT_PAGE_ENABLED, WAITLIST_ENABLED } from '../utils/siteMode';
 
 interface HeaderProps {
   onOpenPricingGuide?: () => void;
@@ -9,10 +10,13 @@ interface HeaderProps {
 export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const waitlistConfig = getWaitlistConfig();
+  const waitlistConfig = WAITLIST_ENABLED
+    ? getWaitlistConfig()
+    : { url: null, channel: 'external_form' as const };
   const isLearningRoute =
     location.pathname === '/problems' ||
     location.pathname === '/learn' ||
+    location.pathname.startsWith('/learn/') ||
     location.pathname === '/guide';
   const isContactRoute = location.pathname === '/contact';
 
@@ -69,7 +73,7 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
         </button>
       </nav>
       <div className="header-right">
-        {waitlistConfig.url && (
+        {WAITLIST_ENABLED && waitlistConfig.url && (
           <button
             type="button"
             className="header-waitlist-button"
@@ -79,22 +83,26 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
             📮 更新通知
           </button>
         )}
-        <button
-          type="button"
-          className={`header-contact-button ${isContactRoute ? 'active' : ''}`}
-          onClick={handleNavigateToContact}
-          aria-label="お問い合わせページへ移動する"
-        >
-          ✉ お問い合わせ
-        </button>
-        <button
-          type="button"
-          className="header-pricing-cta"
-          onClick={onOpenPricingGuide}
-          aria-label="Standard プランの案内を見る"
-        >
-          ✨ Standard案内
-        </button>
+        {CONTACT_PAGE_ENABLED && (
+          <button
+            type="button"
+            className={`header-contact-button ${isContactRoute ? 'active' : ''}`}
+            onClick={handleNavigateToContact}
+            aria-label="お問い合わせページへ移動する"
+          >
+            ✉ お問い合わせ
+          </button>
+        )}
+        {COMMERCIAL_FEATURES_ENABLED && (
+          <button
+            type="button"
+            className="header-pricing-cta"
+            onClick={onOpenPricingGuide}
+            aria-label="Standard プランの案内を見る"
+          >
+            ✨ Standard案内
+          </button>
+        )}
         <a
           href="https://github.com/Mr-129/lisp-playground"
           target="_blank"

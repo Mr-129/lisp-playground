@@ -64,16 +64,26 @@ describe('App integration', () => {
     fireEvent.click((await screen.findAllByText('問題文を見る'))[0]);
 
     await waitFor(() => {
-      expect(window.location.hash).toBe('#/learn');
+      expect(window.location.hash).toBe('#/learn/basic-01');
     });
 
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
     expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
   });
 
-  it('保存済みの問題IDがある状態で LearnPage を開くと問題詳細を直接表示する', async () => {
+  it('保存済みの問題IDがあっても Learn トップでは概要を表示する', async () => {
     localStorage.setItem(STORAGE_KEY_PROBLEM, 'basic-01');
     window.location.hash = '#/learn';
+
+    render(<App />);
+
+    expect(await screen.findByText('問題を選択して練習を始める')).toBeInTheDocument();
+    expect(screen.getByText('📖 この問題の問題文へ')).toBeInTheDocument();
+    expect(screen.queryByText('💡 ヒントを表示')).not.toBeInTheDocument();
+  });
+
+  it('問題ごとの Learn URL を直接開くと問題詳細を表示する', async () => {
+    window.location.hash = '#/learn/basic-01';
 
     render(<App />);
 
@@ -83,8 +93,7 @@ describe('App integration', () => {
   });
 
   it('LearnPage で解答表示後にエディタへ進むと解答コードを引き継ぎ実行結果をリセットする', async () => {
-    localStorage.setItem(STORAGE_KEY_PROBLEM, 'basic-01');
-    window.location.hash = '#/learn';
+    window.location.hash = '#/learn/basic-01';
 
     render(<App />);
 

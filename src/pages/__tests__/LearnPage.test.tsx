@@ -83,6 +83,7 @@ function renderLearnPage(
       <LocationDisplay />
       <Routes>
         <Route path="/learn" element={<LearnPage {...defaultProps} />} />
+        <Route path="/learn/:problemId" element={<LearnPage {...defaultProps} />} />
         <Route path="/guide" element={<LearnPage {...defaultProps} initialView="guide" />} />
         <Route path="/problems" element={<div>problems-page</div>} />
         <Route path="/editor" element={<div>editor-page</div>} />
@@ -125,6 +126,7 @@ function renderStatefulLearnPage(initialPath = '/guide') {
       <LocationDisplay />
       <Routes>
         <Route path="/learn" element={<LearnPageHarness />} />
+        <Route path="/learn/:problemId" element={<LearnPageHarness />} />
         <Route path="/guide" element={<LearnPageHarness initialView="guide" />} />
         <Route path="/problems" element={<div>problems-page</div>} />
         <Route path="/editor" element={<div>editor-page</div>} />
@@ -148,7 +150,7 @@ describe('LearnPage', () => {
 
   it('問題未選択時に案内カードを表示する', () => {
     renderLearnPage();
-    expect(screen.getByText('問題を選択してください')).toBeInTheDocument();
+    expect(screen.getByText('問題を選択して練習を始める')).toBeInTheDocument();
   });
 
   it('問題一覧ページへの導線を表示する', () => {
@@ -156,9 +158,9 @@ describe('LearnPage', () => {
     expect(screen.getByText('📚 問題一覧ページへ')).toBeInTheDocument();
   });
 
-  it('フリーモードボタンがある', () => {
+  it('おすすめ問題への導線がある', () => {
     renderLearnPage();
-    expect(screen.getByText('🖊️ フリーモードで始める')).toBeInTheDocument();
+    expect(screen.getByText('📖 この問題の問題文へ')).toBeInTheDocument();
   });
 
   it('サイドバーに構文ガイドボタンがある', () => {
@@ -183,7 +185,7 @@ describe('LearnPage', () => {
   });
 
   it('問題が選択されているとき問題ビューを表示する', () => {
-    renderLearnPage({ selectedProblem: mockProblem });
+    renderLearnPage({ selectedProblem: mockProblem }, '/learn/test-01');
     expect(screen.getByText('テスト問題')).toBeInTheDocument();
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
   });
@@ -191,31 +193,21 @@ describe('LearnPage', () => {
   it('問題選択時に Standard 案内 CTA を表示してコールバックを呼ぶ', () => {
     const onOpenPricingGuide = vi.fn();
 
-    renderLearnPage({ selectedProblem: mockProblem, onOpenPricingGuide });
+    renderLearnPage({ selectedProblem: mockProblem, onOpenPricingGuide }, '/learn/test-01');
 
-    fireEvent.click(screen.getByText('✨ Standard の案内を見る'));
-
-    expect(onOpenPricingGuide).toHaveBeenCalledWith('learn_problem');
+    expect(screen.getByText('現在は全問題を無料公開中です')).toBeInTheDocument();
+    expect(screen.queryByText('✨ Standard の案内を見る')).not.toBeInTheDocument();
+    expect(onOpenPricingGuide).not.toHaveBeenCalled();
   });
 
-  it('問題選択時に更新通知 CTA を開いて計測する', () => {
-    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+  it('問題選択時に monetization CTA を表示しない', () => {
+    renderLearnPage({ selectedProblem: mockProblem }, '/learn/test-01');
 
-    renderLearnPage({ selectedProblem: mockProblem });
-
-    fireEvent.click(screen.getByText('📮 更新通知を受け取る'));
-
-    expect(trackEventMock).toHaveBeenCalledWith('waitlist_cta_clicked', {
-      placement: 'learn_problem',
-      channel: 'github_issue',
-      selectedProblemId: 'test-01',
-      selectedProblemTier: 'unknown',
-    });
-    expect(openSpy).toHaveBeenCalledWith(WAITLIST_URL, '_blank', 'noopener,noreferrer');
+    expect(screen.queryByText('📮 更新通知を受け取る')).not.toBeInTheDocument();
   });
 
   it('コース情報を持つ問題では現在のコースカードを表示する', () => {
-    renderLearnPage({ selectedProblem: firstCourseProblem });
+    renderLearnPage({ selectedProblem: firstCourseProblem }, `/learn/${firstCourseProblem.id}`);
 
     const courseCard = screen.getByLabelText('現在のコース情報');
 
@@ -236,10 +228,10 @@ describe('LearnPage', () => {
 
   it('問題を切り替えるとヒントと解答の表示状態がリセットされる', () => {
     const { rerender } = render(
-      <MemoryRouter initialEntries={['/learn']}>
+      <MemoryRouter key="first" initialEntries={['/learn/test-01']}>
         <Routes>
           <Route
-            path="/learn"
+            path="/learn/:problemId"
             element={
               <LearnPage
                 selectedProblem={mockProblem}
@@ -261,10 +253,10 @@ describe('LearnPage', () => {
     expect(screen.getByText('(+ 1 2)')).toBeInTheDocument();
 
     rerender(
-      <MemoryRouter initialEntries={['/learn']}>
+      <MemoryRouter key="second" initialEntries={['/learn/test-02']}>
         <Routes>
           <Route
-            path="/learn"
+            path="/learn/:problemId"
             element={
               <LearnPage
                 selectedProblem={anotherProblem}
@@ -290,7 +282,7 @@ describe('LearnPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /初めてのS式/ }));
 
     expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-01' }));
-    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn');
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn/basic-01');
     expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
   });
@@ -304,14 +296,14 @@ describe('LearnPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /変数とシンボルを見分ける/ }));
 
     expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-quote-02' }));
-    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn');
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn/basic-quote-02');
     expect(screen.getAllByText(/変数とシンボルを見分ける/).length).toBeGreaterThan(0);
   });
 
   it('問題ビューのエディタボタンで editor へ遷移しコールバックを呼ぶ', () => {
     const onNavigateToEditor = vi.fn();
 
-    renderLearnPage({ selectedProblem: mockProblem, onNavigateToEditor });
+    renderLearnPage({ selectedProblem: mockProblem, onNavigateToEditor }, '/learn/test-01');
 
     fireEvent.click(screen.getByText('🖊️ エディタで解く →'));
 
@@ -334,7 +326,7 @@ describe('LearnPage', () => {
 
     renderLearnPage({ onNavigateToEditor });
 
-    fireEvent.click(screen.getByText('🖊️ フリーモードで始める'));
+    fireEvent.click(screen.getAllByText('🖊️ フリーモードで始める')[0]);
 
     expect(onNavigateToEditor).toHaveBeenCalledTimes(1);
     expect(screen.getByText('editor-page')).toBeInTheDocument();
@@ -346,25 +338,24 @@ describe('LearnPage', () => {
 
     renderLearnPage({ onOpenPricingGuide });
 
-    fireEvent.click(screen.getByText('✨ Standard の案内を見る'));
-
-    expect(onOpenPricingGuide).toHaveBeenCalledWith('learn_empty');
+    expect(screen.getByText('現在は全問題を無料公開中です')).toBeInTheDocument();
+    expect(screen.queryByText('✨ Standard の案内を見る')).not.toBeInTheDocument();
+    expect(onOpenPricingGuide).not.toHaveBeenCalled();
   });
 
-  it('空状態で更新通知 CTA を開いて計測する', () => {
-    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+  it('問題詳細から Learn トップへ戻れる', () => {
+    renderLearnPage({ selectedProblem: mockProblem }, '/learn/test-01');
 
+    fireEvent.click(screen.getByText('← Learn に戻る'));
+
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn');
+    expect(screen.getByText('問題を選択して練習を始める')).toBeInTheDocument();
+  });
+
+  it('空状態でも更新通知 CTA を表示しない', () => {
     renderLearnPage();
 
-    fireEvent.click(screen.getByText('📮 更新通知を受け取る'));
-
-    expect(trackEventMock).toHaveBeenCalledWith('waitlist_cta_clicked', {
-      placement: 'learn_empty',
-      channel: 'github_issue',
-      selectedProblemId: null,
-      selectedProblemTier: 'unknown',
-    });
-    expect(openSpy).toHaveBeenCalledWith(WAITLIST_URL, '_blank', 'noopener,noreferrer');
+    expect(screen.queryByText('📮 更新通知を受け取る')).not.toBeInTheDocument();
   });
 
   it('検索入力で問題一覧を絞り込める', () => {

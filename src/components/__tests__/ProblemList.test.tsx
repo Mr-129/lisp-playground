@@ -102,15 +102,15 @@ describe('ProblemList', () => {
     expect(screen.getByText('上級')).toBeInTheDocument();
   });
 
-  it('tier に応じて Free / Standard 表示と lock 表示を切り替える', () => {
+  it('free-only モードでは全問題を Free 表示にし lock 表示を出さない', () => {
     render(<ProblemList selectedId={null} solvedProblemIds={[]} onSelect={() => {}} />);
 
     const freeButton = screen.getByRole('button', { name: /問題A/ });
     const standardButton = screen.getByRole('button', { name: /問題B/ });
 
     expect(within(freeButton).getByText('Free')).toBeInTheDocument();
-    expect(within(standardButton).getByText('Standard')).toBeInTheDocument();
-    expect(within(standardButton).getByLabelText('有料候補コンテンツ')).toBeInTheDocument();
+    expect(within(standardButton).getByText('Free')).toBeInTheDocument();
+    expect(within(standardButton).queryByLabelText('有料候補コンテンツ')).not.toBeInTheDocument();
   });
 
   it('選択された問題にselectedクラスが付く', () => {

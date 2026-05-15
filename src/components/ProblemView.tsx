@@ -1,5 +1,6 @@
 import { Problem } from '../types';
 import { useState } from 'react';
+import { getPublicProblemTier } from '../utils/siteMode';
 
 interface ProblemViewProps {
   problem: Problem;
@@ -24,7 +25,7 @@ export function ProblemView({
 }: ProblemViewProps) {
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
-  const tier = problem.catalog?.tier ?? 'free';
+  const tier = getPublicProblemTier(problem);
   const isStandardPreview = tier === 'standard';
 
   return (

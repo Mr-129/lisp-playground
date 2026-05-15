@@ -14,7 +14,7 @@ function renderProblemsPage(selectedProblemId: string | null = null) {
           path="/problems"
           element={<ProblemsPage selectedProblemId={selectedProblemId} solvedProblemIds={[]} onSelectProblem={onSelectProblem} />}
         />
-        <Route path="/learn" element={<div>learn-page</div>} />
+        <Route path="/learn/:problemId" element={<div>learn-page</div>} />
         <Route path="/guide" element={<div>guide-page</div>} />
         <Route path="/editor" element={<div>editor-page</div>} />
       </Routes>

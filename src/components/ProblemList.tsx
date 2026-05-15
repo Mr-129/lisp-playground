@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Problem } from '../types';
 import { getNextRecommendedProblem, getProblemsByCategory, getProblemsByCourse, getProblemsByLearningPath, PROBLEM_COURSES, problems } from '../data/problems';
+import { getPublicProblemTier } from '../utils/siteMode';
 
 interface ProblemListProps {
   selectedId: string | null;
@@ -109,7 +110,7 @@ export function ProblemList({
     || recentlyViewedProblems.length > 0;
 
   const renderProblemButton = (problem: Problem, compact = false, view: 'default' | 'path' | 'course' = 'default') => {
-    const tier = problem.catalog?.tier ?? 'free';
+    const tier = getPublicProblemTier(problem);
     const isStandardPreview = tier === 'standard';
     const pathStatus = view === 'path'
       ? solvedSet.has(problem.id)

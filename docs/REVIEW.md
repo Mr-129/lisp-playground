@@ -2,7 +2,7 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年5月12日 — T-304（waitlist 仮登録導線）実装、Vitest 564 件 / Playwright 3 件の再確認、暫定 GitHub issue 運用を反映
+**最終更新**: 2026年5月14日 — T-501（quote / function object 補強）公開、GitHub Pages environment branch policy 復旧、Vitest 578 件 / Playwright 3 件の再確認を反映
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開前チェック**: [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) — 価格や金銭関連を `deploy` へ反映してよい条件  
@@ -32,8 +32,8 @@
 
 | 観点 | 評価 | 備考 |
 |------|------|------|
-| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・コース別ナビゲーション・ロック済みコンテンツ UI・商品属性データ基盤・イベント計測抽象化・GA4 対応 CTA・価格ページ・問い合わせ導線・waitlist 仮登録・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索実装済、問題 51 問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 564 件 + Playwright 3 件の回帰確認 |
+| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・コース別ナビゲーション・ロック済みコンテンツ UI・商品属性データ基盤・イベント計測抽象化・GA4 対応 CTA・価格ページ・問い合わせ導線・waitlist 仮登録・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索・T-501 quote / function object 補強まで実装済、問題 59 問 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 578 件 + Playwright 3 件の回帰確認 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -253,7 +253,7 @@
 3. **コンポーネント分離** — Editor / Output / Problem / Guide が明確に分離
 4. **インタプリタの独立性** — React に依存せず、純粋な TypeScript
 5. **問題データの宣言的定義** — TypeScript の型安全性を活用
-6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 564件
+6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 578件
 
 ### 改善が望ましい点 ⚠️
 
@@ -262,7 +262,7 @@
 | ~~同期実行~~ | ~~UI スレッドで直接評価~~ | ✅ Web Worker に分離済 | — |
 | 状態管理 | useState の組み合わせ | useReducer or Zustand | 中 |
 | ~~コードの永続化~~ | ~~なし（リロードで消失）~~ | ✅ localStorage 実装済 | — |
-| テスタビリティ | ~~テストなし~~ Vitest 564件 | ✅ 対応済 | — |
+| テスタビリティ | ~~テストなし~~ Vitest 578件 | ✅ 対応済 | — |
 | CSS 管理 | 単一ファイル | CSS Modules or Tailwind | 低 |
 
 ---
@@ -333,24 +333,24 @@
 | loop-01 | dotimesループ | ループ | 初級 | ✅ | ✅ |
 | loop-02 | dolistループ | ループ | 初級 | ✅ | ✅ |
 
-**結果: 全51問とも正確** ✅
+**結果: 現行59問の問題データと追加 8 問を含む主要回帰に破綻なし** ✅
 
 ### カテゴリ別充実度
 
 | カテゴリ | 問題数 | 充実度 | 追加推奨トピック |
 |---------|--------|--------|----------------|
-| 基本構文 | 3 | ⭐⭐⭐ | 文字列操作、数値計算 |
-| 条件分岐 | 2 | ⭐⭐⭐ | when/unless, and/or |
-| リスト操作 | 2 | ⭐⭐☆ | cons の連鎖、assoc |
-| 再帰 | 1 | ⭐⭐☆ | 末尾再帰、相互再帰 |
-| 高階関数 | 1 | ⭐☆☆ | reduce, remove-if, sort |
-| クロージャ | 2 | ⭐⭐⭐⭐ | 十分 |
-| ループ | 2 | ⭐⭐⭐ | loop + return |
-| 文字列操作 | 3 | ⭐⭐⭐⭐ | — |
-| 数値計算 | 2 | ⭐⭐⭐ | — |
-| スコープ | 2 | ⭐⭐⭐ | — |
-| 型判定 | 1 | ⭐⭐☆ | 型変換 |
-| 総合問題 | 3 | ⭐⭐⭐⭐ | — |
+| 基本構文 | 11 | ⭐⭐⭐⭐ | hidden case 強化、評価モデルの補助例 |
+| 条件分岐 | 4 | ⭐⭐⭐⭐ | 論理演算の応用 |
+| リスト操作 | 7 | ⭐⭐⭐⭐ | tree / property list |
+| 再帰 | 5 | ⭐⭐⭐⭐ | tree walk、相互再帰 |
+| 高階関数 | 12 | ⭐⭐⭐⭐⭐ | 関数合成、predicate combinator |
+| クロージャ | 3 | ⭐⭐⭐ | 状態更新と closure の連携 |
+| ループ | 4 | ⭐⭐⭐⭐ | loop 変種、collecting |
+| 文字列操作 | 4 | ⭐⭐⭐ | trim / parse 系 |
+| 数値計算 | 3 | ⭐⭐⭐ | 丸め、比較、複合計算 |
+| スコープ | 2 | ⭐⭐⭐ | `setf`、shadowing |
+| 型判定 | 1 | ⭐⭐☆ | `eq` / `eql` / `equal`、型変換 |
+| 総合問題 | 3 | ⭐⭐⭐⭐ | 読解 / デバッグ型演習 |
 
 ---
 
@@ -382,7 +382,8 @@
 2. `.gitignore` で `node_modules/`, `dist/`, `coverage/`, `playwright-report/`, `test-results/`, `artifacts/` を除外済み
 3. `package-lock.json` をバージョン管理に含めること
 4. build の安定運用対象は Node 20 / 22 とする。2026-05-10 の再確認では、Windows 環境の Node 24.13.0 で `npm run build` が `EXIT=-1073740791` で再度異常終了し、`npx tsc -b` は成功、同じワークスペースを一時 Node 22.22.2 で実行した `vite build` は正常完了した。現時点では unsupported runtime 上の環境依存事象として扱い、ローカル build 検証と配布用 build は引き続き Node 20 / 22 または GitHub Actions の `deploy` ブランチ経由を正経路とする。`main` の push / PR は CI のみ、Pages 配信は `deploy` ブランチ push 時のみ実行する。Node 24 対応の恒久修正は再発条件を追加取得できた時点で再開する
-5. 価格や金銭関連の公開を伴う変更は、`deploy` ブランチへ push する前に [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) の必須項目をすべて満たすこと。問い合わせ導線、価格文言、決済未接続時の表現、テスト実行、docs 同期が揃わない限り公開しない
+5. `deploy-github-pages` job は `github-pages` environment を参照するため、`Deployment branches and tags` が workflow の公開条件と一致している必要がある。2026-05-14 には `deploy` ブランチが許可されていなかったため run `#36` attempt 1 が reject され、environment 側に `deploy` を追加したあと attempt 2 で成功した。詳細な復旧手順はローカルの個人用 runbook で管理する
+6. 価格や金銭関連の公開を伴う変更は、`deploy` ブランチへ push する前に [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) の必須項目をすべて満たすこと。問い合わせ導線、価格文言、決済未接続時の表現、テスト実行、docs 同期が揃わない限り公開しない
 
 ### 2026年4月29日の公開後確認
 
@@ -395,6 +396,14 @@
 - `29c898a` の公開環境で home 画面、問題一覧ページ、ヘッダーロゴの戻り導線、エディタからの問題一覧復帰導線を確認済み
 - `cce86dd` の公開環境で問題一覧ページのカード UI と CTA スタイルが復旧していることを確認済み
 - 詳細な確認手順と未確認範囲は [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) に記録
+
+### 2026年5月14日の公開反映
+
+- GitHub Actions `CI & Deploy` run `#36` は attempt 1 で `deploy-github-pages` reject となったが、`github-pages` environment に `deploy` を許可したあと attempt 2 で success した
+- 公開 Learn ページで `進捗 0/59`、`基本構文 0/11` を確認し、59 問版が反映されたことを確認済み
+- T-501 で追加した quote / function object 系の問題が公開一覧に出ることを確認済み
+- ローカル回帰として `npm test -- --run` を実行し、Vitest 30 files / 578 tests passed を確認済み
+- 反映失敗の原因と復旧手順はローカルの個人用 runbook に記録
 
 ---
 
@@ -421,3 +430,4 @@
 *2026-05-10: `/pricing` の静的ページを追加し、CTA の着地を modal から route に変更。`pricing_page_viewed` と価格ページから問い合わせ導線の計測を追加し、Vitest 561 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
 *2026-05-12: T-303 実装レビューとして LearnPage の価格案内文言を `/pricing` 公開済みの表現へ同期し、`main` push は CI のみ、Pages 配信は `deploy` push のみである運用を workflow で再確認。*
 *2026-05-12: waitlist 仮登録導線を Header / LearnPage に追加し、`waitlist_cta_clicked` を placement 付きで計測。現在の遷移先は [index.html](../index.html) の meta で定義した GitHub issue で、private form へ差し替え可能な構成とした。Vitest 564 件 + Playwright 3 件の最新ベースラインにドキュメントを同期。*
+*2026-05-14: T-501 の 8 問追加と guide 補強を公開し、Vitest 578 件 + Playwright 3 件の最新ベースラインに同期。GitHub Pages の `github-pages` environment branch policy が `deploy` を許可していないと公開が reject されることを run `#36` で確認し、復旧手順はローカルの個人用 runbook へ分離した。*

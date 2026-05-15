@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, type MouseEvent } from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
 import { ProblemsPage } from './pages/ProblemsPage';
@@ -22,6 +22,7 @@ import {
   loadBookmarkedProblemIds,
 } from './utils/storage';
 import { initializeAnalytics, trackEvent } from './utils/analytics';
+import { COMMERCIAL_FEATURES_ENABLED, CONTACT_PAGE_ENABLED, getPublicProblemTier } from './utils/siteMode';
 import { problems } from './data/problems';
 import './App.css';
 
@@ -39,7 +40,7 @@ function prependProblemId(problemIds: string[], problemId: string): string[] {
 }
 
 function getProblemTier(problem: Problem): 'free' | 'standard' | 'unknown' {
-  return problem.catalog?.tier ?? 'unknown';
+  return getPublicProblemTier(problem);
 }
 
 function getInitialSelectedProblem(): Problem | null {
@@ -237,7 +238,7 @@ function App() {
         <a className="skip-link" href="#main-content" onClick={handleSkipToMain}>
           メインコンテンツへスキップ
         </a>
-        <Header onOpenPricingGuide={() => handleOpenPricingGuide('header')} />
+        <Header onOpenPricingGuide={COMMERCIAL_FEATURES_ENABLED ? () => handleOpenPricingGuide('header') : undefined} />
         <main id="main-content" className="app-body" tabIndex={-1}>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -265,7 +266,27 @@ function App() {
                   onSearchQueryChange={setLearningSearchQuery}
                   onSelectGuideSection={setSelectedGuideSectionId}
                   onToggleBookmark={handleToggleBookmark}
-                  onOpenPricingGuide={handleOpenPricingGuide}
+                  onOpenPricingGuide={COMMERCIAL_FEATURES_ENABLED ? handleOpenPricingGuide : undefined}
+                  onShowSolution={handleShowSolution}
+                  onNavigateToEditor={handleNavigateToEditor}
+                />
+              }
+            />
+            <Route
+              path="/learn/:problemId"
+              element={
+                <LearnPage
+                  selectedProblem={selectedProblem}
+                  solvedProblemIds={solvedProblemIds}
+                  recentProblemIds={recentlyViewedProblemIds}
+                  bookmarkedProblemIds={bookmarkedProblemIds}
+                  searchQuery={learningSearchQuery}
+                  selectedGuideSectionId={selectedGuideSectionId}
+                  onSelectProblem={handleSelectProblem}
+                  onSearchQueryChange={setLearningSearchQuery}
+                  onSelectGuideSection={setSelectedGuideSectionId}
+                  onToggleBookmark={handleToggleBookmark}
+                  onOpenPricingGuide={COMMERCIAL_FEATURES_ENABLED ? handleOpenPricingGuide : undefined}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}
                 />
@@ -285,7 +306,7 @@ function App() {
                   onSearchQueryChange={setLearningSearchQuery}
                   onSelectGuideSection={setSelectedGuideSectionId}
                   onToggleBookmark={handleToggleBookmark}
-                  onOpenPricingGuide={handleOpenPricingGuide}
+                  onOpenPricingGuide={COMMERCIAL_FEATURES_ENABLED ? handleOpenPricingGuide : undefined}
                   onShowSolution={handleShowSolution}
                   onNavigateToEditor={handleNavigateToEditor}
                   initialView="guide"
@@ -315,8 +336,8 @@ function App() {
               path="/repl"
               element={<ReplPage />}
             />
-            <Route path="/contact" element={<ContactPage />} />
-                      <Route path="/pricing" element={<PricingPage selectedProblem={selectedProblem} />} />
+            <Route path="/contact" element={CONTACT_PAGE_ENABLED ? <ContactPage /> : <Navigate to="/" replace />} />
+            <Route path="/pricing" element={COMMERCIAL_FEATURES_ENABLED ? <PricingPage selectedProblem={selectedProblem} /> : <Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>

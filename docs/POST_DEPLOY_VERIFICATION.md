@@ -1,15 +1,35 @@
 # Lisp Playground — 公開後確認ログ
 
 **作成日**: 2026年4月29日  
+**最終更新**: 2026年5月14日  
 **対象公開先**: GitHub Pages  
 **公開 URL**: https://mr-129.github.io/lisp-playground/  
-**対象コミット**: `cce86dd` (`fix: restore problems page styles`)
+**初回確認対象コミット**: `cce86dd` (`fix: restore problems page styles`)  
+**最新確認対象コミット**: `74fda87` (`Add T-501 quote and function object content`)
 
-> この文書は公開後の確認ログです。`deploy` ブランチへ反映してよいかの事前判断には [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) を使います。
+> この文書は公開後確認の累積ログです。`deploy` ブランチへ反映してよいかの事前判断には [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) を使います。Pages 反映失敗の詳細な復旧手順はローカルの個人用 runbook で管理します。
 
 ---
 
-## 1. 結論
+## 0. 最新確認（2026年5月14日）
+
+- GitHub Actions `CI & Deploy` run `#36` の rerun（attempt 2）が `success` になり、`deploy` ブランチの `74fda87` が公開反映された
+- 公開 Learn ページで `進捗 0/59`、`基本構文 0/11` を確認し、59 問版が配信されていることを確認した
+- T-501 で追加した `変数とシンボルを見分ける`、`式をデータとして出力する`、`quote と list で同じ式を作る`、`'+ と #'+ を見分ける` が公開一覧に出ていることを確認した
+- 反映前に起きていた `deploy-github-pages` の reject は、`github-pages` environment の branch policy に `deploy` を許可したうえで rerun し解消した
+- ローカル回帰として `npm test -- --run` を再実行し、Vitest 30 files / 578 tests passed を確認した
+
+| 区分 | 確認内容 | 結果 | 補足 |
+|---|---|---|---|
+| デプロイ | GitHub Actions `CI & Deploy` run #36 attempt 2 | PASS | `deploy` / `74fda87` / success を確認 |
+| 公開内容 | `/#/learn` の問題数とカテゴリ数 | PASS | `進捗 0/59`、`基本構文 0/11` を確認 |
+| 新規コンテンツ | T-501 の追加問題表示 | PASS | quote / function object 系 8 問のうち公開一覧に追加分が表示されることを確認 |
+| 運用復旧 | environment branch policy 修正後の rerun | PASS | `deploy` を許可したあと `deploy-github-pages` が通過 |
+| ローカル回帰 | `npm test -- --run` | PASS | 30 files / 578 tests passed |
+
+---
+
+## 1. 初回公開時点の結論（2026年4月29日）
 
 - GitHub Pages へのデプロイは成功した
 - 主要導線の公開後スモークテストは通過した
@@ -24,7 +44,7 @@
 
 ---
 
-## 2. 実施した確認
+## 2. 初回公開時点で実施した確認
 
 | 区分 | 確認内容 | 結果 | 補足 |
 |---|---|---|---|
@@ -52,7 +72,7 @@
 
 ---
 
-## 3. 実施方法
+## 3. 初回公開時点の実施方法
 
 ### 3.1 デプロイ確認
 

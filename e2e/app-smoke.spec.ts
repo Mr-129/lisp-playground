@@ -46,7 +46,7 @@ test.describe('Lisp Playground smoke flows', () => {
     const normalizedTitle = recommendedTitle!.replace(/^\d+\.\s*/, '');
 
     await page.getByRole('button', { name: 'この問題から始める' }).click();
-    await expect(page).toHaveURL(/#\/learn$/);
+    await expect(page).toHaveURL(/#\/learn\/[^/]+$/);
     await expect(page.getByRole('heading', { level: 2, name: normalizedTitle })).toBeVisible();
 
     await page.getByRole('button', { name: /エディタで解く/ }).click();

@@ -91,6 +91,11 @@ describe('Header', () => {
     expect(screen.getByText('📚 学習')).toHaveClass('active');
   });
 
+  it('「/learn/:problemId」パスでも学習ボタンがactiveになる', () => {
+    renderWithRouter('/learn/basic-01');
+    expect(screen.getByText('📚 学習')).toHaveClass('active');
+  });
+
   it('「/guide」パスでも学習ボタンがactiveになる', () => {
     renderWithRouter('/guide');
     expect(screen.getByText('📚 学習')).toHaveClass('active');
@@ -155,30 +160,14 @@ describe('Header', () => {
   it('お問い合わせボタンをクリックすると問い合わせページへ移動して計測する', () => {
     renderWithRouter('/');
 
-    fireEvent.click(screen.getByLabelText('お問い合わせページへ移動する'));
-
-    expect(trackEventMock).toHaveBeenCalledWith('contact_cta_clicked', {
-      placement: 'header',
-      channel: 'route',
-      purpose: 'general',
-    });
-    expect(screen.getByTestId('location-path')).toHaveTextContent('/contact');
+    expect(screen.queryByLabelText('お問い合わせページへ移動する')).not.toBeInTheDocument();
   });
 
-  it('更新通知ボタンをクリックすると waitlist を開いて計測する', () => {
-    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
-
+  it('free-only モードでは waitlist と pricing CTA を表示しない', () => {
     renderWithRouter('/');
 
-    fireEvent.click(screen.getByLabelText('更新通知の仮登録を開く'));
-
-    expect(trackEventMock).toHaveBeenCalledWith('waitlist_cta_clicked', {
-      placement: 'header',
-      channel: 'github_issue',
-      selectedProblemId: null,
-      selectedProblemTier: 'unknown',
-    });
-    expect(openSpy).toHaveBeenCalledWith(WAITLIST_URL, '_blank', 'noopener,noreferrer');
+    expect(screen.queryByLabelText('更新通知の仮登録を開く')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Standard プランの案内を見る')).not.toBeInTheDocument();
   });
 
   it('GitHubリンクを表示する', () => {
@@ -188,7 +177,7 @@ describe('Header', () => {
     expect(link).toHaveAttribute('target', '_blank');
   });
 
-  it('Standard 案内ボタンを表示してコールバックを呼ぶ', () => {
+  it('free-only モードでは onOpenPricingGuide を渡しても Standard 案内を表示しない', () => {
     const onOpenPricingGuide = vi.fn();
 
     render(
@@ -199,8 +188,7 @@ describe('Header', () => {
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByLabelText('Standard プランの案内を見る'));
-
-    expect(onOpenPricingGuide).toHaveBeenCalledTimes(1);
+    expect(screen.queryByLabelText('Standard プランの案内を見る')).not.toBeInTheDocument();
+    expect(onOpenPricingGuide).not.toHaveBeenCalled();
   });
 });

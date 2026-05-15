@@ -110,6 +110,7 @@
   - 2026-05-09: Node 24.13.0 で一度だけ `npm run build` が Windows 異常終了コード `0xC0000409` 相当で終了したが、その後の再検証では `npm run build` 5回、`npx vite build` 5回とも成功した
   - 2026-05-10: 追加検証で、Windows 環境の Node 24.13.0 では `npm run build` が `EXIT=-1073740791` で再度異常終了し、`npx tsc -b` は成功、同じワークスペースを一時 Node 22.22.2 で実行した `vite build` は成功した。現時点では unsupported runtime 上の環境依存事象として扱う
   - 2026-05-10: GitHub Pages workflow は `deploy` ブランチ push 時のみ公開を実行し、`main` の push / PR は CI のみとする運用へ変更。Actions の Node 版数も 22 に固定
+  - 2026-05-14: `deploy-github-pages` job は `github-pages` environment の branch policy も通過条件になることを確認。run `#36` は attempt 1 で `Branch "deploy" is not allowed to deploy to github-pages due to environment protection rules.` により reject されたが、environment 側に `deploy` を許可したあと attempt 2 で success した。詳細な切り分けと復旧手順はローカルの個人用 runbook へ分離した
   - README / REVIEW に「ローカル Windows 日本語パスでは build が不安定であり、配布用 build は GitHub Actions の `deploy` ブランチ経由を正経路とする」旨を記載済み
   - Node 24 対応の恒久修正は現時点では着手しない。再発時に dump / event log を追加取得して調査を再開する
   - 2026-04-29: `main` への push 後に GitHub Actions `Build & Deploy` の success を確認し、`https://mr-129.github.io/lisp-playground/` で公開を確認済み
@@ -662,6 +663,7 @@
   - `guide-evaluation` と `guide-lambda` に評価モデルと関数オブジェクトの説明を追加済み
   - `basic-quote-02` から `basic-quote-05`、`function-apply-02` から `function-dispatch-01` までの 8 問を追加済み
   - `problems` / `LispGuide` / `LearnPage` の局所テストで導線と検索を確認済み
+  - 2026-05-14: GitHub Actions run `#36` attempt 2 の success と公開 Learn ページ `進捗 0/59` を確認し、59 問版の反映を確認済み。ローカル回帰として `npm test -- --run` 578 件通過を再確認
 
 ### T-502 tree / association list / property list 問題群の追加
 

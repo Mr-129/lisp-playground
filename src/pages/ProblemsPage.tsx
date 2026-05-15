@@ -46,7 +46,7 @@ export function ProblemsPage({ selectedProblemId, solvedProblemIds, onSelectProb
 
   const handleOpenProblem = (problem: Problem) => {
     onSelectProblem(problem);
-    navigate('/learn');
+    navigate(`/learn/${problem.id}`);
   };
 
   return (

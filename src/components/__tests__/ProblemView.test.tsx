@@ -89,12 +89,12 @@ describe('ProblemView', () => {
     expect(screen.queryByText(/将来の Standard 向け候補/)).not.toBeInTheDocument();
   });
 
-  it('standard 問題では lock 付き tier 表示と preview note を出す', () => {
+  it('free-only モードでは standard 問題も Free 表示にし preview note を出さない', () => {
     render(<ProblemView problem={mockStandardProblem} onShowSolution={() => {}} />);
 
-    expect(screen.getByText('🔒 Standard候補')).toBeInTheDocument();
-    expect(screen.getByText(/有料候補コンテンツ:/)).toBeInTheDocument();
-    expect(screen.getByText(/現段階では preview 表示のみ/)).toBeInTheDocument();
+    expect(screen.getByText('Free')).toBeInTheDocument();
+    expect(screen.queryByText('🔒 Standard候補')).not.toBeInTheDocument();
+    expect(screen.queryByText(/有料候補コンテンツ:/)).not.toBeInTheDocument();
   });
 
   it('ヒントボタンをクリックするとヒントが表示される', () => {
