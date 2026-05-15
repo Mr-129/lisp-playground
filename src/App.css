@@ -2091,6 +2091,10 @@
   color: #fff;
 }
 
+.back-to-problem {
+  margin-left: auto;
+}
+
 .current-problem-label {
   font-size: 14px;
   color: #c0c8d8;

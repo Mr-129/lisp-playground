@@ -105,9 +105,17 @@ export function EditorPage({
           ← 問題一覧に戻る
         </button>
         {selectedProblem && (
-          <span className="current-problem-label">
-            📝 {selectedProblem.title}
-          </span>
+          <>
+            <span className="current-problem-label">
+              📝 {selectedProblem.title}
+            </span>
+            <button
+              className="back-to-learn back-to-problem"
+              onClick={() => navigate(`/learn/${selectedProblem.id}`)}
+            >
+              問題文に戻る
+            </button>
+          </>
         )}
         {!selectedProblem && (
           <span className="current-problem-label">

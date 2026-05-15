@@ -132,6 +132,7 @@ function renderEditorPage(props: Partial<Parameters<typeof EditorPage>[0]> = {})
       <Routes>
         <Route path="/editor" element={<EditorPage {...defaultProps} />} />
         <Route path="/problems" element={<div>problems-page</div>} />
+        <Route path="/learn/:problemId" element={<div>learn-problem-page</div>} />
       </Routes>
     </MemoryRouter>
   ), props: defaultProps };
@@ -175,6 +176,7 @@ function renderEditorPageWithState(props: Partial<Parameters<typeof EditorPage>[
             )}
           />
           <Route path="/problems" element={<div>problems-page</div>} />
+          <Route path="/learn/:problemId" element={<div>learn-problem-page</div>} />
         </Routes>
       </MemoryRouter>
     );
@@ -205,6 +207,14 @@ describe('EditorPage', () => {
     fireEvent.click(screen.getByText('← 問題一覧に戻る'));
 
     expect(screen.getByText('problems-page')).toBeInTheDocument();
+  });
+
+  it('選択中問題があると「問題文に戻る」ボタンが表示され、learn 詳細へ遷移する', () => {
+    renderEditorPage({ selectedProblem: mockProblem });
+
+    fireEvent.click(screen.getByText('問題文に戻る'));
+
+    expect(screen.getByText('learn-problem-page')).toBeInTheDocument();
   });
 
   it('実行ボタンがある', () => {
