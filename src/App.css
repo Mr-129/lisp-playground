@@ -1673,16 +1673,22 @@
 
 .learn-problem-area .problem-view {
   max-height: none;
-  flex: 1;
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
 .learn-actions {
-  padding: 16px 20px;
-  background: #16213e;
-  border-top: 1px solid #1a3a6a;
+  padding: 12px 20px 0;
+  background: transparent;
+  border-top: none;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-shrink: 0;
+}
+
+.learn-problem-area > .learn-actions:last-child {
+  padding: 16px 20px 20px;
+  justify-content: center;
 }
 
 .start-coding-button {
