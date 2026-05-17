@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import manifest from '../../content/problems/manifest.json';
+import { loadExternalProblemSeeds } from '../problemContentLoader';
 import { problems, getNextRecommendedProblem, getProblemsByCategory, getProblemsByLearningPath } from '../problems';
 
 describe('problems データ', () => {
@@ -34,9 +36,25 @@ describe('problems データ', () => {
       expect(problems.length).toBeGreaterThan(0);
     });
 
+    it('外部コンテンツが manifest 順で全件読み込まれる', () => {
+      const externalProblemIds = loadExternalProblemSeeds().map((problem) => problem.id);
+
+      expect(externalProblemIds).toEqual(manifest.problemOrder);
+    });
+
     it('すべてのカテゴリに問題がある', () => {
       const categories = new Set(problems.map(p => p.category));
       expect(categories.size).toBeGreaterThan(0);
+    });
+
+    it('basic-03 は pilot 外部コンテンツにより function judge へ切り替わる', () => {
+      const problem = problems.find((candidate) => candidate.id === 'basic-03');
+
+      expect(problem?.judge).toMatchObject({
+        kind: 'function',
+        functionName: 'add',
+      });
+      expect(problem?.solution).toBe('(defun add (a b)\n  (+ a b))');
     });
 
     it('T-501 第1弾の quote / function object 問題が含まれている', () => {
@@ -51,6 +69,20 @@ describe('problems データ', () => {
         'function-apply-03',
         'function-apply-04',
         'function-dispatch-01',
+      ]));
+    });
+
+    it('T-502 の tree / assoc / property list 問題が含まれている', () => {
+      const problemIds = problems.map((problem) => problem.id);
+
+      expect(problemIds).toEqual(expect.arrayContaining([
+        'list-tree-01',
+        'list-assoc-02',
+        'list-assoc-03',
+        'list-plist-01',
+        'recursion-tree-01',
+        'recursion-tree-02',
+        'recursion-tree-03',
       ]));
     });
   });

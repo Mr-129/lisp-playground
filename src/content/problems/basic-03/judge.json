@@ -1,0 +1,26 @@
+{
+  "kind": "function",
+  "functionName": "add",
+  "cases": [
+    {
+      "id": "basic-03-visible-1",
+      "label": "3 + 7 を返す",
+      "visibility": "visible",
+      "run": { "code": "(print (add 3 7))" },
+      "expect": {
+        "output": { "value": "10\n", "comparison": "exact" },
+        "returnValue": { "value": "10", "comparison": "exact" }
+      }
+    },
+    {
+      "id": "basic-03-hidden-1",
+      "label": "-2 + 5 を返す",
+      "visibility": "hidden",
+      "run": { "code": "(print (add -2 5))" },
+      "expect": {
+        "output": { "value": "3\n", "comparison": "exact" },
+        "returnValue": { "value": "3", "comparison": "exact" }
+      }
+    }
+  ]
+}

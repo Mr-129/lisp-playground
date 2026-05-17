@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "list-01-visible-1",
+      "label": "先頭要素と残りのリストを出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "10\n(20 30 40 50)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-01-hidden-1",
+      "label": "list 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "10\n(20 30 40 50)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

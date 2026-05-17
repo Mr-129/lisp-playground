@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "list-04-visible-1",
+      "label": "assoc で apple の価格を取得",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "150\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-04-hidden-1",
+      "label": "assoc 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "150\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

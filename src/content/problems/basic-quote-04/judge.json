@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "basic-quote-04-visible-1",
+      "label": "quote と list で同じ式を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(+ 1 2)\n(+ 1 2)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "basic-quote-04-hidden-1",
+      "label": "式データ組み立ての非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(+ 1 2)\n(+ 1 2)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

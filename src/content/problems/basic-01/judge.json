@@ -1,0 +1,24 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "basic-01-visible-1",
+      "label": "足し算と掛け算の出力",
+      "visibility": "visible",
+      "run": { "code": "" },
+      "expect": {
+        "output": { "value": "30\n30\n", "comparison": "exact" },
+        "returnValue": { "value": "30", "comparison": "exact" }
+      }
+    },
+    {
+      "id": "basic-01-hidden-1",
+      "label": "エッジケース確認",
+      "visibility": "hidden",
+      "run": { "code": "" },
+      "expect": {
+        "output": { "value": "30\n30\n", "comparison": "exact" }
+      }
+    }
+  ]
+}

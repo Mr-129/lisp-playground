@@ -1,0 +1,41 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "higher-03-visible-1",
+      "label": "reduce で積を計算",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "120\n",
+          "comparison": "exact"
+        },
+        "returnValue": {
+          "value": "120",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "higher-03-hidden-1",
+      "label": "reduce 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "120\n",
+          "comparison": "exact"
+        },
+        "returnValue": {
+          "value": "120",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

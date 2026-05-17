@@ -1,0 +1,10 @@
+(defun fizzbuzz (n)
+  (cond
+    ((zerop (mod n 15)) "FizzBuzz")
+    ((zerop (mod n 3)) "Fizz")
+    ((zerop (mod n 5)) "Buzz")
+    (t n)))
+(let ((result nil))
+  (dotimes (i 20)
+    (setq result (append result (list (fizzbuzz (+ i 1))))))
+  (print result))

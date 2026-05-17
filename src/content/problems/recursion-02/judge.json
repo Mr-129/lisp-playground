@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "recursion-02-visible-1",
+      "label": "factorial の基本ケースを出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "1\n1\n120\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "recursion-02-hidden-1",
+      "label": "factorial の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "1\n1\n120\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

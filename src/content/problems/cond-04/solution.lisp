@@ -1,0 +1,5 @@
+(defun two-digit-p (n)
+  (and (>= n 10) (< n 100)))
+(print (two-digit-p 42))
+(print (two-digit-p 5))
+(print (two-digit-p 100))

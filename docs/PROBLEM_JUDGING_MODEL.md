@@ -2,13 +2,18 @@
 
 **作成日**: 2026年5月8日  
 **位置づけ**: 問題拡張前に採点基盤を固めるための設計メモ  
-**関連文書**: [IMPLEMENTATION_TASKS.md](./IMPLEMENTATION_TASKS.md), [REVIEW.md](./REVIEW.md)
+**関連文書**: [IMPLEMENTATION_TASKS.md](./IMPLEMENTATION_TASKS.md), [REVIEW.md](./REVIEW.md), [PROBLEM_AUTHORING_GUIDE.md](./PROBLEM_AUTHORING_GUIDE.md)
+
+**ステータス注記**:
+- 本書は 51 問時点の採点モデル移行メモである。
+- 現在は全 66 問が `src/content/problems/<id>/judge.json` を持つ外部コンテンツで管理されており、authoring の正規手順は [PROBLEM_AUTHORING_GUIDE.md](./PROBLEM_AUTHORING_GUIDE.md) を参照する。
+- `expectedOutput` / `expectedReturnValue` を前提にした互換移行の説明は、設計時点の判断ログとして残している。
 
 ---
 
 ## 1. 背景
 
-現行の採点は、[src/pages/EditorPage.tsx](../src/pages/EditorPage.tsx) で `expectedOutput` と `expectedReturnValue` の完全一致を直接比較する方式である。
+本書の作成時点では、採点は [src/pages/EditorPage.tsx](../src/pages/EditorPage.tsx) で `expectedOutput` と `expectedReturnValue` の完全一致を直接比較する方式だった。
 
 現状の方式は、小さな練習問題には十分機能している。一方で、今後の問題拡張を考えると次の制約がある。
 
@@ -26,7 +31,7 @@
 
 この設計の目標は次の 5 つである。
 
-1. 既存 51 問を壊さずに移行できること
+1. 当時の既存 51 問を壊さずに移行できること
 2. 将来の問題文拡張に耐えられること
 3. 現行のブラウザ内インタプリタ構成を大きく崩さないこと
 4. 学習者にとって結果が分かりやすいこと
@@ -278,7 +283,7 @@ function 型では undefined function エラーをそのまま出すのではな
 
 ---
 
-## 9. 既存 51 問との互換方針
+## 9. 既存 51 問との互換方針（設計当時）
 
 いきなり全問題を `judge` へ移行しない。
 

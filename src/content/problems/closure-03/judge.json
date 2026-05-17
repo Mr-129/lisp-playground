@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "closure-03-visible-1",
+      "label": "make-accumulator の出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(\"a\")\n(\"a\" \"b\")\n(\"a\" \"b\" \"c\")\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "closure-03-hidden-1",
+      "label": "クロージャ応用の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(\"a\")\n(\"a\" \"b\")\n(\"a\" \"b\" \"c\")\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

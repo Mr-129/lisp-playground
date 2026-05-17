@@ -1,0 +1,1 @@
+(print (concatenate 'string "Year: " (write-to-string 2026)))

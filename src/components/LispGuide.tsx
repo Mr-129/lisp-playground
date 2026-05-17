@@ -17,6 +17,7 @@ const GUIDE_SECTIONS: GuideSectionSummary[] = [
   { id: 'guide-lambda', title: '無名関数（lambda）', keywords: ['lambda', 'funcall', 'apply', "#'", 'mapcar', 'function', 'function object'] },
   { id: 'guide-conditions', title: '条件分岐', keywords: ['if', 'cond', 'when', 'unless', 'and', 'or', 'not'] },
   { id: 'guide-lists', title: 'リスト操作', keywords: ['car', 'cdr', 'cons', 'append', 'nth', 'member'] },
+  { id: 'guide-tree-data', title: '木構造・assoc・property list', keywords: ['tree', 'ネストリスト', 'assoc', 'association list', 'property list', 'plist', '設定表'] },
   { id: 'guide-loops', title: '繰り返し（ループ）', keywords: ['dotimes', 'dolist', '再帰', 'factorial'] },
   { id: 'guide-hof', title: '高階関数', keywords: ['mapcar', 'reduce', 'remove-if', 'funcall', 'apply'] },
   { id: 'guide-closures', title: 'クロージャ', keywords: ['closure', 'make-adder', 'make-counter', 'lambda'] },
@@ -407,7 +408,58 @@ x      ; => 10
         </section>
         )}
 
-        {/* 10. ループ */}
+        {/* 10. 木構造・assoc・property list */}
+        {shouldShowSection('guide-tree-data') && (
+        <section id="guide-tree-data" className="guide-section">
+          <h3>木構造・assoc・property list</h3>
+          <p>
+            Lisp では、リストの中にさらにリストが入った<strong>ネストリスト</strong>をそのまま扱えます。
+            こうしたデータは tree と見なして再帰でたどることが多く、設定表や辞書風データもリストで表せます。
+          </p>
+
+          <h4>ネストリストを tree として見る</h4>
+          <pre className="guide-code">{`(defvar *tree* '((1 2) (3 (4 5)) 6))
+
+(first *tree*)             ; => (1 2)
+(second (second *tree*))   ; => (4 5)`}</pre>
+          <p>
+            tree の再帰では、<code>null</code> を終端、<code>atom</code> を葉、<code>consp</code> を「まだ枝がある状態」と考えると整理しやすくなります。
+          </p>
+          <pre className="guide-code">{`(defun count-atoms (tree)
+  (cond
+    ((null tree) 0)
+    ((atom tree) 1)
+    (t (+ (count-atoms (first tree))
+          (count-atoms (rest tree))))))`}</pre>
+
+          <h4>association list と assoc</h4>
+          <p>
+            association list は、キーと値の組を並べたリストです。
+            <code>assoc</code> はキーに対応するペアを返すので、<code>second</code> と組み合わせると値だけを取り出せます。
+          </p>
+          <pre className="guide-code">{`(defvar *settings* '((mode "study") (level 3) (theme "light")))
+
+(assoc 'level *settings*)
+(second (assoc 'theme *settings*))`}</pre>
+
+          <h4>property list 的なデータ</h4>
+          <p>
+            property list は「キー 値 キー 値 ...」のように交互に並ぶリストです。
+            現在の学習モードでは <code>getf</code> は未実装ですが、先頭から 2 要素ずつ読み進めるだけでも plist 的な考え方を練習できます。
+          </p>
+          <pre className="guide-code">{`(defvar *profile* '(name "Lisp" year 1984 kind "language"))
+
+(first *profile*)
+(second *profile*)
+(rest (rest *profile*))`}</pre>
+
+          <div className="guide-note">
+            <strong>💡 見方のコツ:</strong> tree は「枝と葉」、association list は「キーと値のペア」、property list は「キーと値の交互列」と見ると、同じデータでも読み方を切り替えやすくなります。
+          </div>
+        </section>
+        )}
+
+        {/* 11. ループ */}
         {shouldShowSection('guide-loops') && (
         <section id="guide-loops" className="guide-section">
           <h3>繰り返し（ループ）</h3>
@@ -433,7 +485,7 @@ x      ; => 10
         </section>
   )}
 
-        {/* 11. 高階関数 */}
+          {/* 12. 高階関数 */}
   {shouldShowSection('guide-hof') && (
   <section id="guide-hof" className="guide-section">
           <h3>高階関数</h3>
@@ -459,7 +511,7 @@ x      ; => 10
         </section>
   )}
 
-        {/* 12. クロージャ */}
+          {/* 13. クロージャ */}
   {shouldShowSection('guide-closures') && (
   <section id="guide-closures" className="guide-section">
           <h3>クロージャ</h3>
@@ -489,7 +541,7 @@ x      ; => 10
         </section>
   )}
 
-        {/* 13. 出力 */}
+          {/* 14. 出力 */}
   {shouldShowSection('guide-io') && (
   <section id="guide-io" className="guide-section">
           <h3>入出力</h3>
@@ -512,7 +564,7 @@ x      ; => 10
         </section>
   )}
 
-        {/* 14. 比較と述語 */}
+          {/* 15. 比較と述語 */}
   {shouldShowSection('guide-predicates') && (
   <section id="guide-predicates" className="guide-section">
           <h3>比較と述語関数</h3>

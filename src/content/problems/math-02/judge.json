@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "math-02-visible-1",
+      "label": "positive-even-p の出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "T\nNIL\nNIL\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "math-02-hidden-1",
+      "label": "数値判定の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "T\nNIL\nNIL\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

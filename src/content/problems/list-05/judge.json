@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "list-05-visible-1",
+      "label": "偶数だけを抽出して出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(2 4 6 8 10)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-05-hidden-1",
+      "label": "フィルタリングの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(2 4 6 8 10)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

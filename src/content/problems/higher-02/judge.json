@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "higher-02-visible-1",
+      "label": "短い単語を除去して出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(\"love\" \"Common\" \"Lisp\" \"much\")\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "higher-02-hidden-1",
+      "label": "remove-if の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(\"love\" \"Common\" \"Lisp\" \"much\")\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

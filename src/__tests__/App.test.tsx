@@ -7,6 +7,7 @@ import { problems } from '../data/problems';
 const { selectableProblem, trackEventMock, initializeAnalyticsMock } = vi.hoisted(() => ({
   selectableProblem: {
     id: 'basic-02',
+    slug: 'basic-02',
     order: 2,
     title: 'モック問題',
     category: 'モック',

@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "function-apply-04-visible-1",
+      "label": "固定引数付き apply の結果を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "16\n9\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "function-apply-04-hidden-1",
+      "label": "固定引数付き apply の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "16\n9\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

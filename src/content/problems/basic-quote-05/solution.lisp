@@ -1,0 +1,2 @@
+(print (symbolp '+))
+(print (functionp #'+))

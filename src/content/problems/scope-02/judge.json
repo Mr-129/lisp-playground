@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "scope-02-visible-1",
+      "label": "progn で2つの出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Processing...\"\n42\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "scope-02-hidden-1",
+      "label": "progn の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Processing...\"\n42\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

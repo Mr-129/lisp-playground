@@ -6,6 +6,7 @@ import { Problem } from '../../types';
 
 const mockProblem: Problem = {
   id: 'test-01',
+  slug: 'test-01',
   order: 1,
   title: 'テスト問題',
   category: 'テスト',
@@ -23,6 +24,7 @@ const mockProblem: Problem = {
 const mockStandardProblem: Problem = {
   ...mockProblem,
   id: 'test-07',
+  slug: 'test-07',
   title: '有料候補問題',
   difficulty: 'intermediate',
   catalog: { tier: 'standard', courseId: 'functional-patterns', courseOrder: 2, tags: ['higher-order'] },
@@ -31,31 +33,50 @@ const mockStandardProblem: Problem = {
 const mockProblemNoHint: Problem = {
   ...mockProblem,
   id: 'test-02',
+  slug: 'test-02',
   hint: undefined,
 };
 
 const mockProblemWithInlineCode: Problem = {
   ...mockProblem,
   id: 'test-03',
+  slug: 'test-03',
   description: 'インラインコード `(+ 1 2)` を含む説明です。',
 };
 
 const mockProblemInlineAtEdges: Problem = {
   ...mockProblem,
   id: 'test-04',
+  slug: 'test-04',
   description: '`(+ 1 2)` と **強調**',
 };
 
 const mockProblemWithSubHeading: Problem = {
   ...mockProblem,
   id: 'test-05',
+  slug: 'test-05',
   description: '### 小見出し',
 };
 
 const mockProblemInlineOnly: Problem = {
   ...mockProblem,
   id: 'test-06',
+  slug: 'test-06',
   description: '`(+ 1 2)`',
+};
+
+const mockProblemWithOrderedList: Problem = {
+  ...mockProblem,
+  id: 'test-08',
+  slug: 'test-08',
+  description: '## 手順\n\n1. 最初の項目\n2. 2 番目の項目',
+};
+
+const mockProblemWithNestedCodeBlock: Problem = {
+  ...mockProblem,
+  id: 'test-09',
+  slug: 'test-09',
+  description: '## 例\n\n1. Lisp の例\n\n   ```lisp\n   (+ 10 20)\n   ```\n\n2. Python の例\n\n   ```python\n   10 + 20\n   ```',
 };
 
 describe('ProblemView', () => {
@@ -205,5 +226,21 @@ describe('ProblemView', () => {
     render(<ProblemView problem={mockProblemInlineOnly} onShowSolution={() => {}} />);
 
     expect(screen.getByText('(+ 1 2)', { selector: 'code' })).toBeInTheDocument();
+  });
+
+  it('番号付きリストをレンダリングする', () => {
+    render(<ProblemView problem={mockProblemWithOrderedList} onShowSolution={() => {}} />);
+
+    const items = screen.getAllByRole('listitem');
+    expect(items).toHaveLength(2);
+    expect(screen.getByText('最初の項目')).toBeInTheDocument();
+    expect(screen.getByText('2 番目の項目')).toBeInTheDocument();
+  });
+
+  it('リスト項目の下にあるコードブロックをレンダリングする', () => {
+    render(<ProblemView problem={mockProblemWithNestedCodeBlock} onShowSolution={() => {}} />);
+
+    expect(screen.getByText('(+ 10 20)')).toBeInTheDocument();
+    expect(screen.getByText('10 + 20')).toBeInTheDocument();
   });
 });

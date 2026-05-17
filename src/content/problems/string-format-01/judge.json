@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "string-format-01-visible-1",
+      "label": "format で文章を生成して出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Alice scored 95 points.\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "string-format-01-hidden-1",
+      "label": "format 文字列の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Alice scored 95 points.\"\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

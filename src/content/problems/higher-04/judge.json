@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "higher-04-visible-1",
+      "label": "every と some の判定結果を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "T\nNIL\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "higher-04-hidden-1",
+      "label": "some/every の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "T\nNIL\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

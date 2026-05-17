@@ -1,0 +1,34 @@
+{
+  "kind": "function",
+  "functionName": "plist-value",
+  "cases": [
+    {
+      "id": "list-plist-01-visible-1",
+      "label": "theme を探す",
+      "visibility": "visible",
+      "run": {
+        "code": "(print (plist-value 'theme '(mode \"study\" theme \"dark\" lang \"ja\")))"
+      },
+      "expect": {
+        "output": {
+          "value": "\"dark\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-plist-01-hidden-1",
+      "label": "見つからないキーは NIL",
+      "visibility": "hidden",
+      "run": {
+        "code": "(print (plist-value 'color '(mode \"study\" theme \"dark\")))"
+      },
+      "expect": {
+        "output": {
+          "value": "NIL\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

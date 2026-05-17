@@ -23,13 +23,12 @@ import {
 } from './utils/storage';
 import { initializeAnalytics, trackEvent } from './utils/analytics';
 import { COMMERCIAL_FEATURES_ENABLED, CONTACT_PAGE_ENABLED, getPublicProblemTier } from './utils/siteMode';
-import { problems } from './data/problems';
+import { problems, PROBLEM_BY_ID } from './data/problems';
 import './App.css';
 
 type PricingGuidePlacement = 'header' | 'learn_empty' | 'learn_problem';
 
 const VALID_PROBLEM_IDS = new Set(problems.map((problem) => problem.id));
-const PROBLEM_BY_ID = new Map(problems.map((problem) => [problem.id, problem]));
 
 function normalizeProblemIds(problemIds: string[]): string[] {
   return Array.from(new Set(problemIds.filter((problemId) => VALID_PROBLEM_IDS.has(problemId))));

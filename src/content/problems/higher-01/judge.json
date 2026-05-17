@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "higher-01-visible-1",
+      "label": "mapcar で各要素を2倍",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(2 4 6 8 10)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "higher-01-hidden-1",
+      "label": "mapcar 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(2 4 6 8 10)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

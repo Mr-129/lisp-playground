@@ -1,5 +1,7 @@
 import { Problem } from '../types';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { getPublicProblemTier } from '../utils/siteMode';
 
 interface ProblemViewProps {
@@ -56,7 +58,7 @@ export function ProblemView({
         </div>
       )}
       <div className="problem-description">
-        <SimpleMarkdown text={problem.description} />
+        <MarkdownDescription text={problem.description} />
       </div>
       <div className="problem-actions">
         <button
@@ -102,84 +104,31 @@ export function ProblemView({
   );
 }
 
-// Simple markdown renderer (handles basic markdown subset)
-function SimpleMarkdown({ text }: { text: string }) {
-  const lines = text.split('\n');
-  const elements: JSX.Element[] = [];
-  let inCodeBlock = false;
-  let codeLines: string[] = [];
-  let listItems: string[] = [];
+function MarkdownDescription({ text }: { text: string }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        h2: ({ children }) => <h3>{children}</h3>,
+        h3: ({ children }) => <h4>{children}</h4>,
+        code: ({ children, className, node: _node, ...props }) => {
+          const content = Array.isArray(children) ? children.join('') : String(children ?? '');
+          const isBlock = /language-/.test(className ?? '') || content.includes('\n');
 
-  const flushList = () => {
-    if (listItems.length > 0) {
-      elements.push(
-        <ul key={`list-${elements.length}`}>
-          {listItems.map((item, i) => <li key={i}>{formatInline(item)}</li>)}
-        </ul>
-      );
-      listItems = [];
-    }
-  };
+          if (isBlock) {
+            return (
+              <pre className="md-code">
+                <code className={className} {...props}>{content.replace(/\n$/, '')}</code>
+              </pre>
+            );
+          }
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    if (line.startsWith('```')) {
-      if (inCodeBlock) {
-        elements.push(<pre key={`code-${i}`} className="md-code">{codeLines.join('\n')}</pre>);
-        codeLines = [];
-        inCodeBlock = false;
-      } else {
-        flushList();
-        inCodeBlock = true;
-      }
-      continue;
-    }
-
-    if (inCodeBlock) {
-      codeLines.push(line);
-      continue;
-    }
-
-    if (line.startsWith('### ')) {
-      flushList();
-      elements.push(<h4 key={`h3-${i}`}>{formatInline(line.slice(4))}</h4>);
-    } else if (line.startsWith('## ')) {
-      flushList();
-      elements.push(<h3 key={`h2-${i}`}>{formatInline(line.slice(3))}</h3>);
-    } else if (line.startsWith('- ')) {
-      listItems.push(line.slice(2));
-    } else if (line.trim() === '') {
-      flushList();
-    } else {
-      flushList();
-      elements.push(<p key={`p-${i}`}>{formatInline(line)}</p>);
-    }
-  }
-  flushList();
-
-  return <>{elements}</>;
-}
-
-function formatInline(text: string): (string | JSX.Element)[] {
-  const parts: (string | JSX.Element)[] = [];
-  const regex = /(\*\*(.+?)\*\*)|(`(.+?)`)/g;
-  let lastIndex = 0;
-  let match;
-
-  while ((match = regex.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
-    }
-    if (match[1]) {
-      parts.push(<strong key={match.index}>{match[2]}</strong>);
-    } else if (match[3]) {
-      parts.push(<code key={match.index} className="md-inline-code">{match[4]}</code>);
-    }
-    lastIndex = regex.lastIndex;
-  }
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
-  }
-  return parts;
+          return <code className="md-inline-code" {...props}>{children}</code>;
+        },
+        pre: ({ children }) => <>{children}</>,
+      }}
+    >
+      {text}
+    </ReactMarkdown>
+  );
 }

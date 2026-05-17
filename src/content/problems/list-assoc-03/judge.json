@@ -1,0 +1,34 @@
+{
+  "kind": "function",
+  "functionName": "resolve-labels",
+  "cases": [
+    {
+      "id": "list-assoc-03-visible-1",
+      "label": "既知のキーを順番に変換する",
+      "visibility": "visible",
+      "run": {
+        "code": "(print (resolve-labels '(news weather sports) '((news \"ニュース\") (sports \"スポーツ\") (weather \"天気\"))))"
+      },
+      "expect": {
+        "output": {
+          "value": "(\"ニュース\" \"天気\" \"スポーツ\")\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-assoc-03-hidden-1",
+      "label": "未知のキーを unknown にする",
+      "visibility": "hidden",
+      "run": {
+        "code": "(print (resolve-labels '(news finance) '((news \"News\") (sports \"Sports\"))))"
+      },
+      "expect": {
+        "output": {
+          "value": "(\"News\" \"unknown\")\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

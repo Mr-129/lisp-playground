@@ -1,0 +1,5 @@
+(defun positive-even-p (n)
+  (and (plusp n) (evenp n)))
+(print (positive-even-p 4))
+(print (positive-even-p -2))
+(print (positive-even-p 3))

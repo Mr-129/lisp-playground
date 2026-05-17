@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "string-03-visible-1",
+      "label": "数値と文字列結合の出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Year: 2026\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "string-03-hidden-1",
+      "label": "文字列変換・結合の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Year: 2026\"\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

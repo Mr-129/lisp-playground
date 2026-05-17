@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "math-average-01-visible-1",
+      "label": "平均値の出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "5\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "math-average-01-hidden-1",
+      "label": "平均値計算の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "5\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

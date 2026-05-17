@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "list-assoc-01-visible-1",
+      "label": "name と year の値を取り出す",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Lisp\"\n1984\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-assoc-01-hidden-1",
+      "label": "assoc 応用の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Lisp\"\n1984\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

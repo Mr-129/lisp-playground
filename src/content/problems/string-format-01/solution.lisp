@@ -1,0 +1,1 @@
+(print (format nil "~A scored ~A points." "Alice" 95))

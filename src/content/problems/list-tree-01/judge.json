@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "list-tree-01-visible-1",
+      "label": "ネストリストの 2 箇所を読む",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(TEA COFFEE)\n(MAIN SOUP)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-tree-01-hidden-1",
+      "label": "同じ tree の読み取り確認",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(TEA COFFEE)\n(MAIN SOUP)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

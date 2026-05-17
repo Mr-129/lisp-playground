@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "cond-02-visible-1",
+      "label": "FizzBuzz の基本ケース",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"FizzBuzz\"\n\"Fizz\"\n\"Buzz\"\n7\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "cond-02-hidden-1",
+      "label": "FizzBuzz の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"FizzBuzz\"\n\"Fizz\"\n\"Buzz\"\n7\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

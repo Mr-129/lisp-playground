@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "challenge-02-visible-1",
+      "label": "FizzBuzz リスト生成を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(1 2 \"Fizz\" 4 \"Buzz\" \"Fizz\" 7 8 \"Fizz\" \"Buzz\" 11 \"Fizz\" 13 14 \"FizzBuzz\" 16 17 \"Fizz\" 19 \"Buzz\")\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "challenge-02-hidden-1",
+      "label": "FizzBuzz の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(1 2 \"Fizz\" 4 \"Buzz\" \"Fizz\" 7 8 \"Fizz\" \"Buzz\" 11 \"Fizz\" 13 14 \"FizzBuzz\" 16 17 \"Fizz\" 19 \"Buzz\")\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+(print (string-upcase (concatenate 'string "Hello" " " "Lisp")))

@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "basic-02-visible-1",
+      "label": "文字列を定義して出力する",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Hello, Lisp!\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "basic-02-hidden-1",
+      "label": "同一要件の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Hello, Lisp!\"\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

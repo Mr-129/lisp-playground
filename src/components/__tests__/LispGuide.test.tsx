@@ -73,6 +73,12 @@ describe('LispGuide', () => {
     expect(screen.getByText('リスト操作')).toBeInTheDocument();
   });
 
+  it('木構造と連想データのセクションを表示する', () => {
+    renderWithRouter();
+    expect(screen.getByText('木構造・assoc・property list')).toBeInTheDocument();
+    expect(screen.getByText('association list と assoc')).toBeInTheDocument();
+  });
+
   it('高階関数セクションを表示する', () => {
     renderWithRouter();
     expect(screen.getByRole('heading', { name: '高階関数' })).toBeInTheDocument();
@@ -130,6 +136,13 @@ describe('LispGuide', () => {
 
     expect(screen.getByRole('heading', { name: '無名関数（lambda）' })).toBeInTheDocument();
     expect(screen.queryByText('条件分岐')).not.toBeInTheDocument();
+  });
+
+  it('assoc 検索で tree / association list セクションを絞り込める', () => {
+    renderWithRouter({ searchQuery: 'assoc' });
+
+    expect(screen.getByRole('heading', { name: '木構造・assoc・property list' })).toBeInTheDocument();
+    expect(screen.queryByText('Lispとは')).not.toBeInTheDocument();
   });
 
   it('一致しない検索語では空メッセージを表示する', () => {

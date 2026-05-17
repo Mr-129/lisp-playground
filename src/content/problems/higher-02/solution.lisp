@@ -1,0 +1,1 @@
+(print (remove-if (lambda (s) (<= (length s) 3)) '("I" "love" "Common" "Lisp" "so" "much")))

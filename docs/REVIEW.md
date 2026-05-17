@@ -2,7 +2,7 @@
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年5月14日 — T-501（quote / function object 補強）公開、GitHub Pages environment branch policy 復旧、Vitest 578 件 / Playwright 3 件の再確認を反映
+**最終更新**: 2026年5月16日 — T-601〜T-605（問題コンテンツ外部化、slug canonical URL、authoring 導線整備）を反映し、route key 衝突防止の loader validation と focused Vitest 5 件の再確認を追記
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開前チェック**: [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) — 価格や金銭関連を `deploy` へ反映してよい条件  
@@ -32,8 +32,8 @@
 
 | 観点 | 評価 | 備考 |
 |------|------|------|
-| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・コース別ナビゲーション・ロック済みコンテンツ UI・商品属性データ基盤・イベント計測抽象化・GA4 対応 CTA・価格ページ・問い合わせ導線・waitlist 仮登録・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索・T-501 quote / function object 補強まで実装済、問題 59 問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 578 件 + Playwright 3 件の回帰確認 |
+| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・コース別ナビゲーション・ロック済みコンテンツ UI・商品属性データ基盤・イベント計測抽象化・GA4 対応 CTA・価格ページ・問い合わせ導線・waitlist 仮登録・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索・T-501 quote / function object 補強・T-502 tree / assoc / plist 問題群・T-601〜T-605 問題コンテンツ外部化 / slug ルーティング整備まで実装済、問題 66 問 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 604 件 + Playwright 3 件の回帰確認に加え、problem content loader の schema validation と route key 衝突防止テストを追加 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -47,6 +47,14 @@
 | 🟠 Major | 20 件 |
 | 🟡 Minor | 18 件 |
 | **合計** | **43 件** |
+
+### 2026年5月16日 追記
+
+- T-601〜T-605 の完了後、現行 66 問はすべて [src/content/problems](../src/content/problems) 配下の外部コンテンツで管理されている。runtime では [src/data/problemContentLoader.ts](../src/data/problemContentLoader.ts) が `problem.md` / `starter.lisp` / `solution.lisp` / `judge.json` / `manifest.json` を検証して `Problem[]` へ正規化する。
+- Learn 詳細 URL は `/learn/<slug>` が canonical。legacy の `/learn/<id>` は後方互換で受け付け、slug URL に正規化される。
+- 追加レビューで、別問題の `id` と `slug` が衝突すると route key が曖昧化することを確認し、loader 側で禁止する validation を追加した。focused 回帰として [src/data/__tests__/problemContentLoader.test.ts](../src/data/__tests__/problemContentLoader.test.ts) 5 件を再実行して通過を確認済み。
+- `npm test` を再実行し、Vitest 31 files / 604 tests passed を確認済み。
+- [scripts/archive/migrate-legacy-problems-to-content.mjs](../scripts/archive/migrate-legacy-problems-to-content.mjs) は pre-T604 状態からの一時移行補助として archive 済み。現在の通常 authoring フローには含めない。新規問題の追加・修正は [docs/PROBLEM_AUTHORING_GUIDE.md](./PROBLEM_AUTHORING_GUIDE.md) を参照する。
 
 ---
 
@@ -132,10 +140,10 @@
 - **修正案**: Web Worker でインタプリタを実行、タイムアウト付き
 
 #### 🟠 SEC-004: Markdown レンダリングの XSS リスク（潜在的）
-- **ファイル**: `src/components/ProblemView.tsx` — `SimpleMarkdown`
+- **ファイル**: `src/components/ProblemView.tsx` — `react-markdown` + `remark-gfm`
 - **重要度**: Major（将来的にリスク）
-- **内容**: 現在問題データはハードコードのため安全。将来 API 経由で問題データを取得する場合、`dangerouslySetInnerHTML` は使っていないが、JSX 内での文字列直接展開に注意が必要
-- **修正案**: 問題データの外部化時に DOMPurify 等のサニタイズライブラリを導入
+- **内容**: 現在は `react-markdown` を使い、raw HTML を有効化していないため、以前の自前 renderer より安全側です。ただし将来 API 経由の本文や raw HTML 解釈を導入する場合は、許可スキーマとサニタイズ方針を明示する必要があります
+- **修正案**: remote content や raw HTML を扱う段階で、許可 Markdown/HTML 範囲の固定と sanitize 層の追加を検討する
 
 ---
 
@@ -246,14 +254,16 @@
   └─ /pricing → [PricingPage]
 ```
 
+問題データは [src/content/problems](../src/content/problems) の外部ファイル群から [src/data/problemContentLoader.ts](../src/data/problemContentLoader.ts) を経由して読み込まれ、[src/data/problems.ts](../src/data/problems.ts) が UI 向けの facade を提供する。
+
 ### 良い点 ✅
 
 1. **完全クライアントサイド** — サーバー依存なし、デプロイが容易
 2. **主要ルートの分離** — home、問題一覧、学習詳細、エディタ、REPL を分け、導線ごとの責務を整理
 3. **コンポーネント分離** — Editor / Output / Problem / Guide が明確に分離
 4. **インタプリタの独立性** — React に依存せず、純粋な TypeScript
-5. **問題データの宣言的定義** — TypeScript の型安全性を活用
-6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テスト 578件
+5. **問題データの外部化** — Markdown/YAML frontmatter + judge.json + manifest.json を loader で正規化し、本文編集と runtime ロジックを分離
+6. **包括的テスト** — インタプリタ単体 + UI/アプリ統合テストに加え、problem content loader の focused 回帰を追加
 
 ### 改善が望ましい点 ⚠️
 
@@ -290,26 +300,28 @@
 | 7 | ~~localStorage によるコード永続化~~ | 高 | 中 | ✅ 完了 |
 | 8 | ~~Lisp 構文ハイライト (CodeMirror 拡張)~~ | 高 | 中 | ✅ 完了 |
 | 9 | ~~Web Worker によるバックグラウンド実行~~ | 高 | 大 | ✅ 完了 |
-| 10 | ~~問題データの追加（13問→51問）~~ | 中 | 中 | ✅ 完了 |
+| 10 | ~~問題データの追加（13問→51問、その後 66 問へ拡張）~~ | 中 | 中 | ✅ 完了 |
 | 11 | ~~REPL モード（1行ずつ実行）~~ | 中 | 中 | ✅ 完了 |
 | 12 | ~~進捗管理（解いた問題のチェック保存 + 進捗 UI）~~ | 中 | 小 | ✅ 完了 |
 | 12a | ~~最近見た問題 / ブックマーク~~ | 中 | 小 | ✅ 完了 |
 | 12b | ~~問題 / ガイド検索~~ | 中 | 小 | ✅ 完了 |
 | 12c | ~~REPL 履歴の永続化~~ | 中 | 小 | ✅ 完了 |
-| 13 | CSS カスタムプロパティへの集約 | 中 | 小 | 未着手 |
+| 13 | CSS カスタムプロパティへの集約 | 中 | 小 | 保留 |
 | 14 | ~~MAPCAR の複数リスト対応 (BUG-005)~~ | 低 | 小 | ✅ 完了 |
 
 ### Phase 3: 発展
 
-| # | タスク | 優先度 | 工数目安 |
-|---|--------|--------|---------|
-| 15 | ダーク/ライトテーマ切り替え | 中 | 中 |
-| 16 | 問題の JSON/YAML 外部ファイル化 | 中 | 中 |
+この節の未完項目は REVIEW 起点の改善候補であり、現行の実行バックログではない。実際の着手順は [IMPLEMENTATION_TASKS.md](./IMPLEMENTATION_TASKS.md) を優先する。
+
+| # | タスク | 優先度 | 工数目安 | 状態 |
+|---|--------|--------|---------|------|
+| 15 | ダーク/ライトテーマ切り替え | 中 | 中 | 保留 |
+| 16 | ~~問題コンテンツ外部ファイル化 (Markdown/YAML + judge.json)~~ | 中 | 中 | ✅ 完了 |
 | 17 | ~~Vitest によるインタプリタ単体テスト + UIテスト~~ | 中 | 大 | ✅ 完了 |
 | 18 | ~~Playwright E2E テスト~~ | 低 | 大 | ✅ 完了 |
-| 19 | PWA 対応（オフライン利用） | 低 | 中 |
-| 20 | ステップ実行デバッガ | 低 | 大 |
-| 21 | コード共有機能（URL エンコード） | 低 | 中 |
+| 19 | PWA 対応（オフライン利用） | 低 | 中 | 保留 |
+| 20 | ステップ実行デバッガ | 低 | 大 | 保留 |
+| 21 | コード共有機能（URL エンコード） | 低 | 中 | 保留 |
 
 ---
 
@@ -391,7 +403,7 @@
 - `Build & Deploy` workflow の success を確認済み
 - 学習ページ、エディタ、REPL の主要導線は公開環境でスモークテストを通過済み
 - localStorage の問題 ID、コード、解答済み ID 保存と再読込後の復元も公開環境で確認済み
-- 問題一覧に表示される全 51 問の解答総当たり実行がテスト環境で通過済み
+- 2026年4月29日時点で、問題一覧に表示されていた全 51 問の解答総当たり実行がテスト環境で通過済み
 - 公開環境で 390px / 320px のモバイル表示確認を実施し、学習ページ、エディタ、REPL ともに横方向オーバーフローがないことを確認済み
 - `29c898a` の公開環境で home 画面、問題一覧ページ、ヘッダーロゴの戻り導線、エディタからの問題一覧復帰導線を確認済み
 - `cce86dd` の公開環境で問題一覧ページのカード UI と CTA スタイルが復旧していることを確認済み
@@ -400,7 +412,7 @@
 ### 2026年5月14日の公開反映
 
 - GitHub Actions `CI & Deploy` run `#36` は attempt 1 で `deploy-github-pages` reject となったが、`github-pages` environment に `deploy` を許可したあと attempt 2 で success した
-- 公開 Learn ページで `進捗 0/59`、`基本構文 0/11` を確認し、59 問版が反映されたことを確認済み
+- 公開 Learn ページで当時の `進捗 0/59`、`基本構文 0/11` を確認し、2026-05-14 時点の 59 問版が反映されたことを確認済み。現行の content baseline は 66 問
 - T-501 で追加した quote / function object 系の問題が公開一覧に出ることを確認済み
 - ローカル回帰として `npm test -- --run` を実行し、Vitest 30 files / 578 tests passed を確認済み
 - 反映失敗の原因と復旧手順はローカルの個人用 runbook に記録

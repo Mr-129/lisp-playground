@@ -1,0 +1,11 @@
+(defun type-name (x)
+  (cond
+    ((numberp x) "number")
+    ((stringp x) "string")
+    ((null x) "nil")
+    ((listp x) "list")
+    (t "other")))
+(print (type-name 42))
+(print (type-name "hello"))
+(print (type-name '(1 2)))
+(print (type-name nil))

@@ -1,14 +1,24 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { ProblemsPage } from '../ProblemsPage';
+import { problems } from '../../data/problems';
+
+function LocationDisplay() {
+  const location = useLocation();
+
+  return <div data-testid="location-path">{location.pathname}</div>;
+}
+
+const BASIC_PROBLEM = problems.find((problem) => problem.id === 'basic-01');
 
 function renderProblemsPage(selectedProblemId: string | null = null) {
   const onSelectProblem = vi.fn();
 
   const view = render(
     <MemoryRouter initialEntries={['/problems']}>
+      <LocationDisplay />
       <Routes>
         <Route
           path="/problems"
@@ -37,6 +47,7 @@ describe('ProblemsPage', () => {
 
     expect(onSelectProblem).toHaveBeenCalledTimes(1);
     expect(screen.getByText('learn-page')).toBeInTheDocument();
+    expect(screen.getByTestId('location-path')).toHaveTextContent(`/learn/${BASIC_PROBLEM?.slug}`);
   });
 
   it('選択中の問題に現在の問題ラベルと selected クラスを付ける', () => {

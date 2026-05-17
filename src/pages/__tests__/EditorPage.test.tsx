@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useState } from 'react';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { EditorPage } from '../EditorPage';
 import { Problem } from '../../types';
 
@@ -40,6 +40,7 @@ vi.mock('../../editor/lisp-language', () => ({
 
 const mockProblem: Problem = {
   id: 'test-01',
+  slug: 'test-problem',
   order: 1,
   title: 'テスト問題',
   category: 'テスト',
@@ -68,6 +69,7 @@ const returnValueOnlyProblem: Problem = {
 const judgeProblem: Problem = {
   ...mockProblem,
   id: 'judge-01',
+  slug: 'judge-01',
   expectedOutput: undefined,
   expectedReturnValue: undefined,
   initialCode: '(defun add (a b) (+ a b))',
@@ -111,6 +113,12 @@ beforeEach(() => {
   });
 });
 
+function LocationDisplay() {
+  const location = useLocation();
+
+  return <div data-testid="location-path">{location.pathname}</div>;
+}
+
 function renderEditorPage(props: Partial<Parameters<typeof EditorPage>[0]> = {}) {
   const defaultProps = {
     code: '(+ 1 2)',
@@ -129,6 +137,7 @@ function renderEditorPage(props: Partial<Parameters<typeof EditorPage>[0]> = {})
   };
   return { ...render(
     <MemoryRouter initialEntries={['/editor']}>
+      <LocationDisplay />
       <Routes>
         <Route path="/editor" element={<EditorPage {...defaultProps} />} />
         <Route path="/problems" element={<div>problems-page</div>} />
@@ -155,6 +164,7 @@ function renderEditorPageWithState(props: Partial<Parameters<typeof EditorPage>[
 
     return (
       <MemoryRouter initialEntries={['/editor']}>
+        <LocationDisplay />
         <Routes>
           <Route
             path="/editor"
@@ -215,6 +225,7 @@ describe('EditorPage', () => {
     fireEvent.click(screen.getByText('問題文に戻る'));
 
     expect(screen.getByText('learn-problem-page')).toBeInTheDocument();
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn/test-problem');
   });
 
   it('実行ボタンがある', () => {

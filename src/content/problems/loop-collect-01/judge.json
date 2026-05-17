@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "loop-collect-01-visible-1",
+      "label": "1から5までの平方を順に出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "1\n4\n9\n16\n25\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "loop-collect-01-hidden-1",
+      "label": "dotimes 応用ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "1\n4\n9\n16\n25\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

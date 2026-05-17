@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "higher-filter-01-visible-1",
+      "label": "remove-if-not で偶数を抽出",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(2 4 6 8)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "higher-filter-01-hidden-1",
+      "label": "filter の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(2 4 6 8)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

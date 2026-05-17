@@ -10,6 +10,11 @@
 - [IMPLEMENTATION_TASKS.md](./IMPLEMENTATION_TASKS.md)
 - [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md)
 
+**ステータス注記**:
+- 本書は 38 問時点の長期ロードマップとして作成した文書である。
+- 現在の問題数は 66 問で、直近の実装順は [IMPLEMENTATION_TASKS.md](./IMPLEMENTATION_TASKS.md) と [LEARNING_COVERAGE_GAPS.md](./LEARNING_COVERAGE_GAPS.md) を参照する。
+- 本書の 38 → 120 / 144 / 180 の件数表は、将来目標との差分を見るための baseline として維持する。
+
 ---
 
 ## 1. この文書の結論
@@ -61,11 +66,11 @@
 
 ---
 
-## 3. 現在地
+## 3. 作成時点の現在地
 
-現行の問題数は **38 問** である。
+本書の作成時点では、現行の問題数は **38 問** だった。現在は 59 問だが、以下の表は 38 問を基準にした拡張計画として残す。
 
-### 現行カテゴリと件数
+### 作成時点のカテゴリと件数
 
 | カテゴリ | 現行件数 |
 |---|---:|

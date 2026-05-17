@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "higher-05-visible-1",
+      "label": "apply-all の結果を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(-2 9 3)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "higher-05-hidden-1",
+      "label": "高階関数応用の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(-2 9 3)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

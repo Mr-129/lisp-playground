@@ -64,7 +64,7 @@ describe('App integration', () => {
     fireEvent.click((await screen.findAllByText('問題文を見る'))[0]);
 
     await waitFor(() => {
-      expect(window.location.hash).toBe('#/learn/basic-01');
+      expect(window.location.hash).toBe(`#/learn/${BASIC_PROBLEM?.slug}`);
     });
 
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
@@ -86,6 +86,10 @@ describe('App integration', () => {
     window.location.hash = '#/learn/basic-01';
 
     render(<App />);
+
+    await waitFor(() => {
+      expect(window.location.hash).toBe(`#/learn/${BASIC_PROBLEM?.slug}`);
+    });
 
     expect(await screen.findByText('💡 ヒントを表示')).toBeInTheDocument();
     expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);

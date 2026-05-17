@@ -21,7 +21,7 @@
 - **ブラウザ内 Lisp インタプリタ** — サーバー不要、完全クライアントサイド実行
 - **クロージャ対応** — レキシカルスコープ、高階関数、状態を持つクロージャ
 - **主要ルート分離** — Home、問題一覧、学習詳細、エディタ、REPL を分けた導線設計
-- **Lisp 構文ガイド** — 15セクションの包括的な Common Lisp リファレンス
+- **Lisp 構文ガイド** — 16セクションの包括的な Common Lisp リファレンス
 - **Lisp 構文ハイライト** — キーワード・ビルトイン・文字列・コメントの色分け
 - **バックグラウンド実行** — Web Worker によるUIブロックなし実行 + 10秒タイムアウト
 - **コード永続化** — localStorage によるコード・選択中問題・解答済み問題の自動保存
@@ -30,7 +30,7 @@
 - **価格ページ** — `/pricing` で Free / Standard / Supporter の差分を静的に比較できる
 - **問い合わせ導線** — Header から `/contact` へ遷移でき、不具合報告と購入前の質問を公開前の一次窓口へ誘導できる
 - **更新通知の仮登録** — Header / LearnPage から waitlist 導線へ進み、どこから登録意向が出たかを計測できる
-- **問題モード** — カテゴリ別の学習問題（全59問） + 進捗ダッシュボード + 自動正答判定
+- **問題モード** — カテゴリ別の学習問題（全66問） + 進捗ダッシュボード + 自動正答判定
 - **REPL モード** — 1行ずつ式を評価、環境を引き継いだ対話的実行
 - **フリーモード** — 自由にコードを書いて実験
 - **日本語 UI / エラーメッセージ** — 日本語学習者に最適化
@@ -43,7 +43,7 @@
 |---|---|---|
 | `/` | Home 画面 | 学習導線の入口。構文ガイド、問題一覧、フリーモードへの導線を表示 |
 | `/problems` | 問題一覧ページ | カテゴリ別の問題カード一覧、進捗ダッシュボード、おすすめ問題導線 |
-| `/learn` | 学習詳細ページ | 選択中の問題文、ヒント、解答表示、エディタ遷移 |
+| `/learn`, `/learn/:slug` | 学習詳細ページ | 選択中の問題文、ヒント、解答表示、エディタ遷移 |
 | `/guide` | 構文ガイドページ | Lisp 基本構文ガイドの通読導線 |
 | `/editor` | エディタページ | コード実行、正答判定、結果表示 |
 | `/repl` | REPL ページ | 1行ずつ評価する対話実行環境 |
@@ -73,7 +73,7 @@
 │  📚 問題一覧ページ                                      │
 │  進捗とおすすめ問題を見ながら詳細ページへ進む          │
 ├─────────────────────────────────────────────────────────┤
-│  総問題数 59 / 解いた問題 0 / 想定学習時間 約8時間28分  │
+│  総問題数 66 / 解いた問題 0 / 想定学習時間 約9時間50分  │
 │  次のおすすめ: 1. 初めてのS式                          │
 ├─────────────────────────────────────────────────────────┤
 │  基本構文                                                │
@@ -86,7 +86,7 @@
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 学習詳細ページ (`/learn`, `/guide`)
+### 学習詳細ページ (`/learn`, `/learn/:slug`, `/guide`)
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  λ Lisp Playground    [学習]  [エディタ]  [REPL]       │
@@ -161,7 +161,7 @@
 | エディタ | CodeMirror 6 (via @uiw/react-codemirror) + Lisp構文ハイライト | 4.x |
 | Lisp実行 | カスタムインタプリタ (TypeScript) + Web Worker | — |
 | テスト | Vitest + Testing Library | 4.x / 16.x |
-| スタイリング | Pure CSS (カスタムプロパティ) | — |
+| スタイリング | Pure CSS | — |
 
 ---
 
@@ -492,37 +492,47 @@ Lisp Playground は、当面は静的配信を維持しながら、学習体験�
 
 ## 問題の追加方法
 
-[src/data/problems.ts](src/data/problems.ts) に `Problem` オブジェクトを追加します。
+問題データは [src/content/problems](src/content/problems) 配下の「1 問 1 フォルダ」構成で管理します。
 
-```typescript
-// src/data/problems.ts
-{
-  id: 'category-nn',           // ユニークID
-  title: '問題タイトル',         // サイドバーに表示
-  category: 'カテゴリ名',       // グループ分け
-  difficulty: 'beginner',      // 'beginner' | 'intermediate' | 'advanced'
-  description: `
-## 解説タイトル
+詳細なテンプレートと運用ルールは [docs/PROBLEM_AUTHORING_GUIDE.md](docs/PROBLEM_AUTHORING_GUIDE.md) を参照してください。
 
-マークダウン形式で構文説明を記載。
-\`\`\`lisp
-(コード例)
-\`\`\`
+1. [src/content/problems/manifest.json](src/content/problems/manifest.json) の `problemOrder` に問題 ID を追加する
+2. [src/content/problems/basic-01/problem.md](src/content/problems/basic-01/problem.md) を雛形にして `src/content/problems/<id>/problem.md` を作る
+3. 同じフォルダに `starter.lisp`, `solution.lisp`, `judge.json` を置く
 
-### 問題
-ここに問題文を書く。
-  `,
-  hint: 'ヒントテキスト（省略可）',
-  initialCode: '; エディタに表示される初期コード\n',
-  expectedOutput: '期待する print 出力\n',     // 省略可
-  expectedReturnValue: '期待する戻り値文字列',   // 省略可
-  solution: '(模範解答コード)',
-}
+`problem.md` は本文を Markdown で書き、先頭に YAML frontmatter を持たせます。
+
+```yaml
+---
+id: list-06
+slug: list-06
+title: 要素数を数える
+category: リスト操作
+difficulty: beginner
+estimatedMinutes: 8
+learningGoals:
+  - リスト操作
+hint: length が使えます
+draft: false
+---
+
+## リストの長さ
+
+本文は Markdown で記述します。
 ```
+
+`starter.lisp` は初期コード、`solution.lisp` は模範解答、`judge.json` は採点条件です。採点は `program` / `function` judge を使います。
+
+補足:
+
+- [src/data/problems.ts](src/data/problems.ts) は現在、外部コンテンツを読み込んで `order` / `learningPath` / `catalog` を付与する薄い facade です
+- Learn 詳細 URL の canonical 形式は `/learn/<slug>` です
+- legacy の `/learn/<id>` は後方互換で解決され、slug URL に正規化されます
+- `slug` は他の問題の `id` / `slug` と衝突しない値を使います
 
 ### カテゴリの自動生成
 
-`category` フィールドでグルーピングされます。新しいカテゴリ名を指定するだけで自動的にサイドバーに新セクションが追加されます。
+`problem.md` の `category` frontmatter でグルーピングされます。新しいカテゴリ名を指定するだけで自動的にサイドバーに新セクションが追加されます。
 
 ---
 

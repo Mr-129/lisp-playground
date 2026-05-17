@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "list-member-01-visible-1",
+      "label": "length と member の結果を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "4\n(C D)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-member-01-hidden-1",
+      "label": "member 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "4\n(C D)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "recursion-sum-01-visible-1",
+      "label": "sum-list の結果を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "15\n0\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "recursion-sum-01-hidden-1",
+      "label": "sum-list 非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "15\n0\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

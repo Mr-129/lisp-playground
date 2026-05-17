@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "loop-02-visible-1",
+      "label": "dolist で各要素を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Common\"\n\"Lisp\"\n\"is\"\n\"fun\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "loop-02-hidden-1",
+      "label": "dolist 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"Common\"\n\"Lisp\"\n\"is\"\n\"fun\"\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

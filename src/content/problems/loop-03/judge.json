@@ -1,0 +1,41 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "loop-03-visible-1",
+      "label": "loop で合計を計算して出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "15\n",
+          "comparison": "exact"
+        },
+        "returnValue": {
+          "value": "15",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "loop-03-hidden-1",
+      "label": "loop 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "15\n",
+          "comparison": "exact"
+        },
+        "returnValue": {
+          "value": "15",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

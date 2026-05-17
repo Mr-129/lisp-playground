@@ -34,6 +34,7 @@ export interface LearningPathStep {
 
 export interface Problem {
   id: string;
+  slug: string;
   title: string;
   category: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';

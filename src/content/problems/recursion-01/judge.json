@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "recursion-01-visible-1",
+      "label": "fib の基本ケースを出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "0\n1\n55\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "recursion-01-hidden-1",
+      "label": "fib の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "0\n1\n55\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

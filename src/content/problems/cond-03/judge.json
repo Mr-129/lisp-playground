@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "cond-03-visible-1",
+      "label": "when で正の数だけ出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "3\n4\n5\n2\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "cond-03-hidden-1",
+      "label": "when/unless の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "3\n4\n5\n2\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

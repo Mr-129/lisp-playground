@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "type-01-visible-1",
+      "label": "type-name の出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"number\"\n\"string\"\n\"list\"\n\"nil\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "type-01-hidden-1",
+      "label": "型判定の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"number\"\n\"string\"\n\"list\"\n\"nil\"\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

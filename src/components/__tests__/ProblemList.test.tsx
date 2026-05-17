@@ -9,6 +9,7 @@ vi.mock('../../data/problems', () => {
   const mockProblems: Problem[] = [
     {
       id: 'cat1-01',
+      slug: 'cat1-01',
       order: 1,
       title: '問題A',
       category: 'カテゴリ1',
@@ -23,6 +24,7 @@ vi.mock('../../data/problems', () => {
     },
     {
       id: 'cat1-02',
+      slug: 'cat1-02',
       order: 2,
       title: '問題B',
       category: 'カテゴリ1',
@@ -37,6 +39,7 @@ vi.mock('../../data/problems', () => {
     },
     {
       id: 'cat2-01',
+      slug: 'cat2-01',
       order: 3,
       title: '問題C',
       category: 'カテゴリ2',

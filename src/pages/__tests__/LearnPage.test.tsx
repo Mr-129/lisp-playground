@@ -27,6 +27,7 @@ function setWaitlistMeta(url = WAITLIST_URL) {
 
 const mockProblem: Problem = {
   id: 'test-01',
+  slug: 'test-01',
   order: 1,
   title: 'テスト問題',
   category: 'テスト',
@@ -41,6 +42,7 @@ const mockProblem: Problem = {
 
 const anotherProblem: Problem = {
   id: 'test-02',
+  slug: 'test-02',
   order: 2,
   title: '別の問題',
   category: 'テスト',
@@ -54,6 +56,9 @@ const anotherProblem: Problem = {
 };
 
 const firstCourseProblem = problems.find((problem) => problem.catalog?.courseId === 'intro-core') as Problem;
+const sluggedProblem = problems.find((problem) => problem.id === 'basic-01') as Problem;
+const basicQuoteProblem = problems.find((problem) => problem.id === 'basic-quote-02') as Problem;
+const treeCountProblem = problems.find((problem) => problem.id === 'recursion-tree-01') as Problem;
 
 function LocationDisplay() {
   const location = useLocation();
@@ -282,7 +287,7 @@ describe('LearnPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /初めてのS式/ }));
 
     expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-01' }));
-    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn/basic-01');
+    expect(screen.getByTestId('location-path')).toHaveTextContent(`/learn/${sluggedProblem.slug}`);
     expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
     expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
   });
@@ -296,8 +301,28 @@ describe('LearnPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /変数とシンボルを見分ける/ }));
 
     expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-quote-02' }));
-    expect(screen.getByTestId('location-path')).toHaveTextContent('/learn/basic-quote-02');
+    expect(screen.getByTestId('location-path')).toHaveTextContent(`/learn/${basicQuoteProblem.slug}`);
     expect(screen.getAllByText(/変数とシンボルを見分ける/).length).toBeGreaterThan(0);
+  });
+
+  it('guide ルートで T-502 の新規問題を選ぶと learn へ遷移する', () => {
+    const { onSelectProblem } = renderStatefulLearnPage('/guide');
+
+    fireEvent.change(screen.getByLabelText('問題とガイドを検索'), {
+      target: { value: 'tree の葉を数える' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /tree の葉を数える/ }));
+
+    expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'recursion-tree-01' }));
+    expect(screen.getByTestId('location-path')).toHaveTextContent(`/learn/${treeCountProblem.slug}`);
+    expect(screen.getAllByText(/tree の葉を数える/).length).toBeGreaterThan(0);
+  });
+
+  it('legacy な id ルートで開くと canonical な slug URL に置き換える', () => {
+    renderLearnPage({ selectedProblem: sluggedProblem }, `/learn/${sluggedProblem.id}`);
+
+    expect(screen.getByTestId('location-path')).toHaveTextContent(`/learn/${sluggedProblem.slug}`);
+    expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
   });
 
   it('問題ビューのエディタボタンで editor へ遷移しコールバックを呼ぶ', () => {

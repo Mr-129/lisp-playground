@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "cond-01-visible-1",
+      "label": "正負判定の基本ケース",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"positive\"\n\"non-positive\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "cond-01-hidden-1",
+      "label": "正負判定の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"positive\"\n\"non-positive\"\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

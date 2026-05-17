@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "string-01-visible-1",
+      "label": "文字列結合と大文字変換の出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"HELLO LISP\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "string-01-hidden-1",
+      "label": "文字列操作の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "\"HELLO LISP\"\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

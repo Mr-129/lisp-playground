@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "binding-let-star-01-visible-1",
+      "label": "let* で前の束縛を使って計算",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "15\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "binding-let-star-01-hidden-1",
+      "label": "let* 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "15\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

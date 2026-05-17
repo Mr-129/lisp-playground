@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "challenge-03-visible-1",
+      "label": "flatten の結果を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(1 2 3 4 5 6)\n(1 2 3)\nNIL\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "challenge-03-hidden-1",
+      "label": "flatten の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(1 2 3 4 5 6)\n(1 2 3)\nNIL\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

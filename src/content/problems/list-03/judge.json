@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "list-03-visible-1",
+      "label": "cons で (1 2 3) を構築",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(1 2 3)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-03-hidden-1",
+      "label": "cons 構築の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(1 2 3)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

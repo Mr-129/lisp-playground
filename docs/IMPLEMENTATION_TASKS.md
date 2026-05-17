@@ -2,7 +2,7 @@
 
 **作成日**: 2026年4月21日  
 **位置づけ**: 内部向け実装タスク一覧  
-**関連文書**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md), [PROBLEM_ROADMAP_JP.md](./PROBLEM_ROADMAP_JP.md), [LEARNING_COVERAGE_GAPS.md](./LEARNING_COVERAGE_GAPS.md)
+**関連文書**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md), [PROBLEM_ROADMAP_JP.md](./PROBLEM_ROADMAP_JP.md), [LEARNING_COVERAGE_GAPS.md](./LEARNING_COVERAGE_GAPS.md), [PROBLEM_CONTENT_EXTERNALIZATION_PLAN.md](./PROBLEM_CONTENT_EXTERNALIZATION_PLAN.md)
 
 ---
 
@@ -663,27 +663,33 @@
   - `guide-evaluation` と `guide-lambda` に評価モデルと関数オブジェクトの説明を追加済み
   - `basic-quote-02` から `basic-quote-05`、`function-apply-02` から `function-dispatch-01` までの 8 問を追加済み
   - `problems` / `LispGuide` / `LearnPage` の局所テストで導線と検索を確認済み
-  - 2026-05-14: GitHub Actions run `#36` attempt 2 の success と公開 Learn ページ `進捗 0/59` を確認し、59 問版の反映を確認済み。ローカル回帰として `npm test -- --run` 578 件通過を再確認
+  - 2026-05-14: GitHub Actions run `#36` attempt 2 の success と公開 Learn ページの当時の `進捗 0/59` を確認し、59 問版の反映を確認済み。ローカル回帰として `npm test -- --run` 578 件通過を再確認
 
 ### T-502 tree / association list / property list 問題群の追加
 
-- **ステータス**: `todo`
+- **ステータス**: `done` (2026-05-17)
 - **目的**: 平坦な list 中心の学習から、Lisp らしいネストデータ処理へ進める
 - **対象ファイル**:
   - [src/components/LispGuide.tsx](../src/components/LispGuide.tsx)
   - [src/components/__tests__/LispGuide.test.tsx](../src/components/__tests__/LispGuide.test.tsx)
-  - [src/data/problems.ts](../src/data/problems.ts)
+  - src/content/problems/**
   - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
   - [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx)
-- **依存関係**: T-501, T-102A
+- **依存関係**: T-501, T-102A, T-604
 - **実装内容**:
   - ガイドに tree、ネストリスト走査、`assoc`、property list 的なデータの見方を追加する
   - tree 再帰、設定表参照、変換処理を扱う問題を 6 から 8 問追加する
+  - 新規問題は外部化後の問題フォルダ形式で追加する
   - 必要ならカテゴリや learning path の配置を見直す
 - **完了条件**:
   - ネストデータを扱う新規問題が 6 問以上追加されている
   - `assoc` を使う代表例がガイドと問題の両方に存在する
   - 問題一覧と LearnPage 上で新規問題群が自然に辿れる
+- **完了メモ**:
+  - `guide-tree-data` を追加し、ネストリスト、tree 再帰、`assoc`、property list 的データの説明を [src/components/LispGuide.tsx](../src/components/LispGuide.tsx) に反映済み
+  - `list-tree-01`、`list-assoc-02`、`list-assoc-03`、`list-plist-01`、`recursion-tree-01`、`recursion-tree-02`、`recursion-tree-03` の 7 問を externalized problem 形式で追加済み
+  - [src/content/problems/manifest.json](../src/content/problems/manifest.json) に順序を追加し、[src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts) と [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx) に導線確認を追加済み
+  - 2026-05-17: `npm test -- --run src/data/__tests__/problemContentLoader.test.ts src/data/__tests__/problems.test.ts src/components/__tests__/LispGuide.test.tsx src/pages/__tests__/LearnPage.test.tsx` で 138 件通過を確認済み
 
 ### T-503 等価性・述語・型分岐の強化
 
@@ -692,13 +698,14 @@
 - **対象ファイル**:
   - [src/components/LispGuide.tsx](../src/components/LispGuide.tsx)
   - [src/components/__tests__/LispGuide.test.tsx](../src/components/__tests__/LispGuide.test.tsx)
-  - [src/data/problems.ts](../src/data/problems.ts)
+  - src/content/problems/**
   - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
   - [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx)
-- **依存関係**: T-501
+- **依存関係**: T-501, T-604
 - **実装内容**:
   - ガイドに等価性比較の違いと、典型的に迷いやすいケースを追加する
   - 述語関数、型判定、真偽値分岐の判断問題を 4 から 6 問追加する
+  - 新規問題は外部化後の問題フォルダ形式で追加する
   - `nil`、空リスト、真値の扱いで誤答しやすいケースを含める
 - **完了条件**:
   - ガイドに `eq` / `eql` / `equal` の比較表か使い分け説明がある
@@ -712,13 +719,14 @@
 - **対象ファイル**:
   - [src/components/LispGuide.tsx](../src/components/LispGuide.tsx)
   - [src/components/__tests__/LispGuide.test.tsx](../src/components/__tests__/LispGuide.test.tsx)
-  - [src/data/problems.ts](../src/data/problems.ts)
+  - src/content/problems/**
   - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
   - [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx)
-- **依存関係**: T-501
+- **依存関係**: T-501, T-604
 - **実装内容**:
   - ガイドに lexical scope、再束縛、状態更新、closure の保持する環境を説明する節を追加する
   - `let*`、`setf`、カウンタ、蓄積器、状態付き closure の問題を 5 から 6 問追加する
+  - 新規問題は外部化後の問題フォルダ形式で追加する
   - 誤解しやすい「外側の変数が変わるのか / 新しい束縛なのか」を問題文に含める
 - **完了条件**:
   - 新規問題が 5 問以上追加されている
@@ -735,12 +743,13 @@
   - [src/components/__tests__/ProblemView.test.tsx](../src/components/__tests__/ProblemView.test.tsx)
   - [src/pages/EditorPage.tsx](../src/pages/EditorPage.tsx)
   - [src/pages/__tests__/EditorPage.test.tsx](../src/pages/__tests__/EditorPage.test.tsx)
-  - [src/data/problems.ts](../src/data/problems.ts)
+  - src/content/problems/**
   - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
-- **依存関係**: T-501, T-502, T-503, T-504, T-102A
+- **依存関係**: T-501, T-502, T-503, T-504, T-102A, T-604
 - **実装内容**:
   - 現在の問題モデルで不足があれば、読解 / デバッグ / 修正型演習を表現する最小メタデータを追加する
   - バグ修正、出力差分原因の特定、エラーメッセージ読解を扱う問題を 6 から 10 問追加する
+  - 新規問題は外部化後の問題フォルダ形式で追加する
   - 必要なら ProblemView と EditorPage の表示を調整し、修正対象コードを見やすくする
 - **完了条件**:
   - 読解 / デバッグ / 修正型の各タイプを最低 1 問ずつ追加できている
@@ -749,14 +758,147 @@
 
 ---
 
-## 9. いまは着手しないタスク
+## 9. Phase 4.5: 問題コンテンツ外部化
+
+この phase は、今後の問題追加と修正をコード本体から切り離し、Markdown / frontmatter / judge.json ベースで運用できるようにするための基盤整備トラックである。Phase 4 の今後の問題追加より先に進める。
+
+### T-601 問題コンテンツ外部化の設計確定
+
+- **ステータス**: `done` (2026-05-15)
+- **目的**: 問題フォルダ構成、frontmatter 項目、manifest、judge 形式、移行順序を手戻り少なく確定する
+- **判断資料**: [PROBLEM_CONTENT_EXTERNALIZATION_PLAN.md](./PROBLEM_CONTENT_EXTERNALIZATION_PLAN.md)
+- **対象ファイル**:
+  - [docs/PROBLEM_CONTENT_EXTERNALIZATION_PLAN.md](./PROBLEM_CONTENT_EXTERNALIZATION_PLAN.md)
+  - [docs/IMPLEMENTATION_TASKS.md](./IMPLEMENTATION_TASKS.md)
+- **依存関係**: なし
+- **実装内容**:
+  - 1 問 = 1 フォルダの正式構成を決める
+  - Markdown + YAML frontmatter、`starter.lisp`、`solution.lisp`、`judge.json` の責務分離を定義する
+  - `manifest.json` で順序を固定し、`slug` は持つが初期移行では id route を維持する方針を明文化する
+  - 段階移行、pilot 問題、validation 方針を整理する
+- **完了条件**:
+  - 設計文書が存在する
+  - 後続の実装タスクへ分解されている
+- **完了メモ**:
+  - [PROBLEM_CONTENT_EXTERNALIZATION_PLAN.md](./PROBLEM_CONTENT_EXTERNALIZATION_PLAN.md) を追加し、target directory、schema、manifest、judge 形式、二重系移行、slug 方針を確定済み
+  - docs-only 変更のため追加テストは不要
+
+### T-602 build-time loader / validation / manifest 基盤
+
+- **ステータス**: `done` (2026-05-15)
+- **目的**: 外部ファイル群を build 時に読み込み、現行の `Problem[]` へ正規化する基盤を作る
+- **対象ファイル**:
+  - [package.json](../package.json)
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - `src/data/problemContentSchema.ts`（新規）
+  - `src/data/problemContentLoader.ts`（新規）
+  - `src/data/problemCatalog.ts`（新規）
+  - `src/data/__tests__/problemContentLoader.test.ts`（新規）
+  - `src/content/problems/manifest.json`（新規）
+- **依存関係**: T-601, T-105, T-201, T-102A
+- **実装内容**:
+  - `yaml` と `zod` を導入し、frontmatter / manifest / judge の validation を追加する
+  - `import.meta.glob` で Markdown、Lisp、JSON を raw import し、問題単位へ束ねる
+  - `order`、`catalog`、`learningPath` を現行ルールで導出し、既存の `Problem[]` export 面を維持する
+  - invalid content を明確に失敗させる loader test を整備する
+- **完了条件**:
+  - `problems` export の利用側をほぼ変更せずに新 loader へ切り替えられる
+  - manifest と content の整合性エラーを自動検知できる
+- **完了メモ**:
+  - `src/data/problemContentSchema.ts`、`src/data/problemContentLoader.ts`、`src/data/problemCatalog.ts` を追加し、frontmatter / manifest / judge の validation と build-time loader を実装済み
+  - `src/content/problems/manifest.json` を追加し、manifest ベースの content 読み込み経路を導入済み
+  - `src/data/problems.ts` は external content を legacy `problemSeeds` と merge する構成へ更新済み
+  - `src/data/__tests__/problemContentLoader.test.ts` を追加し、validation と読み込みの局所テストを整備済み
+  - 2026-05-15: `src/data/__tests__/problemContentLoader.test.ts` と `src/data/__tests__/problems.test.ts` の 78 件通過を確認済み
+
+### T-603 二重系読み込みと pilot 3 問移行
+
+- **ステータス**: `done` (2026-05-15)
+- **目的**: 全件移行前に、外部ファイル形式が Learn / Editor / judge を壊さないことを確認する
+- **対象ファイル**:
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - `src/content/problems/basic-01/**`（新規）
+  - `src/content/problems/...`（pilot 3 問）
+  - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
+  - [src/pages/__tests__/LearnPage.test.tsx](../src/pages/__tests__/LearnPage.test.tsx)
+  - [src/pages/__tests__/EditorPage.test.tsx](../src/pages/__tests__/EditorPage.test.tsx)
+- **依存関係**: T-602
+- **実装内容**:
+  - 外部ファイル問題と legacy `problemSeeds` の二重系読み込みを可能にする
+  - 同一 `id` は外部ファイル側を優先する
+  - `program` judge、`function` judge、長文 Markdown を含む代表 3 問を移行する
+  - Learn、Problems、Editor、judge の局所回帰を確認する
+- **完了条件**:
+  - pilot 3 問が外部ファイルから配信される
+  - 既存ルート、採点、表示が維持される
+- **完了メモ**:
+  - `basic-01`、`basic-03`、`function-dispatch-01` を `src/content/problems/<id>/` 配下へ外部化済み
+  - `basic-03` は pilot の function judge 代表として、external content 側で `kind: 'function'` / `functionName: 'add'` へ切り替え済み
+  - `src/content/problems/manifest.json` に pilot 3 問を登録し、同一 ID は external content を優先する二重系読み込みを実運用へ反映済み
+  - `src/data/__tests__/problems.test.ts` に pilot content 読み込みと `basic-03` の function judge 化を確認するテストを追加済み
+  - 2026-05-15: `src/pages/__tests__/ProblemsPage.test.tsx` と `src/pages/__tests__/LearnPage.test.tsx` の 29 件通過を確認済み
+
+### T-604 全問題移行と legacy `problemSeeds` 廃止
+
+- **ステータス**: `done`
+- **目的**: 問題データの単一ソースを外部コンテンツへ移し、巨大な TypeScript 配列を解消する
+- **対象ファイル**:
+  - [src/data/problems.ts](../src/data/problems.ts)
+  - `src/content/problems/**`
+  - [src/data/__tests__/problems.test.ts](../src/data/__tests__/problems.test.ts)
+  - [README.md](../README.md)
+- **依存関係**: T-603
+- **実装内容**:
+  - 残り全問題を問題フォルダ形式へ移行する
+  - `problemSeeds` を削除し、`src/data/problems.ts` を facade / normalizer 中心へ縮小する
+  - 問題件数、カテゴリ、judge 整合性、学習パス順の回帰を確認する
+  - authoring ルールを README か専用 guide に追加する
+- **完了条件**:
+  - 全問題が外部コンテンツ由来になる
+  - `src/data/problems.ts` に問題本文や solution の巨大配列が残らない
+- **完了メモ**:
+  - 2026-05-15: 一時移行スクリプト [scripts/archive/migrate-legacy-problems-to-content.mjs](../scripts/archive/migrate-legacy-problems-to-content.mjs) で残り 56 問を外部コンテンツへ書き出し、pilot 3 問とあわせて当時の全 59 問を `src/content/problems/<id>/` 配下へ移行済み
+  - 2026-05-17: T-502 追加 7 問も同じ external content 構成で追加され、現行 66 問が `src/content/problems/<id>/` 配下に揃っている
+  - `src/content/problems/manifest.json` を単一の順序ソースとし、`src/data/problems.ts` は external content を読み込んで `learningPath` / `catalog` を付与する薄い facade へ縮小済み
+  - `src/data/problemCatalog.ts` から legacy merge ロジックを削除し、authoring 導線は README の外部コンテンツ手順へ統一済み
+  - `npm test -- --run src/data/__tests__/problemContentLoader.test.ts src/data/__tests__/problems.test.ts` で 80 件通過を確認済み
+
+### T-605 slug ルーティングと authoring 導線の整備
+
+- **ステータス**: `done`
+- **目的**: id と URL を分離し、問題追加時の authoring 体験をさらに改善する
+- **対象ファイル**:
+  - [src/types/index.ts](../src/types/index.ts)
+  - [src/App.tsx](../src/App.tsx)
+  - [src/pages/ProblemsPage.tsx](../src/pages/ProblemsPage.tsx)
+  - [src/pages/LearnPage.tsx](../src/pages/LearnPage.tsx)
+  - [src/pages/EditorPage.tsx](../src/pages/EditorPage.tsx)
+  - [README.md](../README.md)
+  - `docs/PROBLEM_AUTHORING_GUIDE.md`（新規候補）
+- **依存関係**: T-604
+- **実装内容**:
+  - frontmatter の `slug` を route 解決に使えるようにする
+  - 既存 id route は redirect か後方互換で維持する方針を決める
+  - 問題追加テンプレートと執筆手順を文書化する
+- **完了条件**:
+  - `/learn/:slug` が解決できる
+  - 新規問題追加手順が文書だけで再現できる
+- **完了メモ**:
+  - 2026-05-15: `Problem` runtime type と external content loader に `slug` を通し、`src/data/problems.ts` に route 解決 helper と canonical Learn path helper を追加済み
+  - `src/pages/LearnPage.tsx` で `/learn/<slug>` を canonical としつつ、legacy の `/learn/<id>` は後方互換で解決して slug URL へ正規化するよう更新済み
+  - `src/pages/ProblemsPage.tsx` と `src/pages/EditorPage.tsx` の Learn 導線を slug ベースへ統一済み
+  - [PROBLEM_AUTHORING_GUIDE.md](./PROBLEM_AUTHORING_GUIDE.md) を追加し、`id` / `slug` の責務、frontmatter テンプレート、judge テンプレート、検証手順を文書化済み
+  - `npm test -- --run src/data/__tests__/problemContentLoader.test.ts src/pages/__tests__/LearnPage.test.tsx src/pages/__tests__/ProblemsPage.test.tsx src/pages/__tests__/EditorPage.test.tsx src/__tests__/App.integration.test.tsx src/__tests__/App.test.tsx` で 74 件通過を確認済み
+
+---
+
+## 10. いまは着手しないタスク
 
 次は、現時点では backlog に置くが実行順の後ろに回す。
 
 - ダーク / ライトテーマ
 - PWA 対応
 - ステップ実行デバッガ
-- エディタから現在の問題文へ戻る導線（問題一覧を経由せず、選択中問題の Learn / 問題文へ戻るボタンを追加）
 - コード共有 URL
 - バックエンドベースの実 Lisp 実行環境導入（現行の学習モードと分離し、バックエンド確保と学習プラットフォーム成立後に検討）
 - 教育機関向けクラス管理
@@ -764,23 +906,23 @@
 
 ---
 
-## 10. 次に実行するべきタスク
+## 11. 次に実行するべきタスク
 
-次の実装対象は **T-502 tree / association list / property list 問題群の追加** とする。  
-前回更新: 2026-05-14
+次の実装対象は **T-503 等価性・述語・型分岐の強化** とする。  
+前回更新: 2026-05-17
 
 理由は次の通り。
 
-1. T-501 で quote / 関数オブジェクトの基礎は補強できたので、次は tree / alist による Lisp 的データ処理の厚みを足す段階に移った
-2. T-502 も現行の学習モードのまま進められ、認証や課金 provider の選定を待たずに実装できる
-3. T-502 は T-503 以降の比較・読解問題へつながるデータ処理の前提を整えやすい
-4. 収益化トラックの次判断点は引き続き T-401 だが、Phase 3 は現時点で `blocked` のため、先に進めやすいのは Phase 4 である
+1. T-502 が完了し、tree / association list / property list の学習カバレッジが追加されたため、次は比較・述語・真偽値判断の穴を埋めるのが自然である
+2. [PROBLEM_AUTHORING_GUIDE.md](./PROBLEM_AUTHORING_GUIDE.md) と externalized problem 運用が機能しており、T-503 も同じ追加フローで継続できる
+3. `eq` / `eql` / `equal`、`nil`、truthiness は今後の読解・デバッグ問題の前提になりやすく、T-504 / T-505 より先に揃える価値が高い
+4. 既存の比較演算・条件分岐セクションと接続しやすく、LearnPage 上の導線も現行カテゴリのまま拡張できる
 
 ---
 
-## 11. 全体進捗サマリー
+## 12. 全体進捗サマリー
 
-最終更新: 2026-05-14
+最終更新: 2026-05-17
 
 | Phase | タスク数 | 完了 | 進捗 |
 |---|---|---|---|
@@ -789,8 +931,9 @@
 | Phase 1.5: 商品設計前提 | 3 (T-201〜T-203) | 3 | 100% |
 | Phase 2: 計測・導線整備 | 6 (T-301, T-302, T-302A, T-302B, T-303, T-304) | 6 | 100% |
 | Phase 3: 初回サブスク実験 | 4 (T-401〜T-404) | 0 (blocked) | 0% |
-| Phase 4: 学習コンテンツ拡張 | 5 (T-501〜T-505) | 1 | 20% |
-| **合計** | **30** | **22** | **73%** |
+| Phase 4: 学習コンテンツ拡張 | 5 (T-501〜T-505) | 2 | 40% |
+| Phase 4.5: 問題コンテンツ外部化 | 5 (T-601〜T-605) | 5 | 100% |
+| **合計** | **35** | **28** | **80%** |
 
 ### 完了済みタスク一覧
 
@@ -818,23 +961,28 @@
 | T-303 | 価格ページの静的実装 | 2026-05-10 |
 | T-304 | メール獲得導線 | 2026-05-12 |
 | T-501 | 評価モデルと quote 系の補強 | 2026-05-14 |
+| T-502 | tree / association list / property list 問題群の追加 | 2026-05-17 |
+| T-601 | 問題コンテンツ外部化の設計確定 | 2026-05-15 |
+| T-602 | build-time loader / validation / manifest 基盤 | 2026-05-15 |
+| T-603 | 二重系読み込みと pilot 3 問移行 | 2026-05-15 |
+| T-604 | 全問題移行と legacy `problemSeeds` 廃止 | 2026-05-15 |
+| T-605 | slug ルーティングと authoring 導線の整備 | 2026-05-15 |
 
 ### 未着手タスク（実施推奨順）
 
 | 順番 | ID | タスク名 | 依存 |
 |---|---|---|---|
-| 1 | T-502 | tree / association list / property list 問題群の追加 | T-501, T-102A |
-| 2 | T-503 | 等価性・述語・型分岐の強化 | T-501 |
-| 3 | T-504 | 束縛・状態更新・closure 問題群の拡張 | T-501 |
-| 4 | T-505 | 読解・デバッグ・修正型演習の導入 | T-501〜T-504, T-102A |
-| 5 | T-401 | 認証方式の決定とクライアント層追加 | T-303, T-304（blocked） |
-| 6 | T-402 | プレミアム権限モデル | T-401, T-201（blocked） |
-| 7 | T-403 | 有料コンテンツの外出し | T-402（blocked） |
-| 8 | T-404 | 課金導線の接続 | T-401, T-402（blocked） |
+| 1 | T-503 | 等価性・述語・型分岐の強化 | T-501, T-604 |
+| 2 | T-504 | 束縛・状態更新・closure 問題群の拡張 | T-501, T-604 |
+| 3 | T-505 | 読解・デバッグ・修正型演習の導入 | T-501〜T-504, T-102A, T-604 |
+| 4 | T-401 | 認証方式の決定とクライアント層追加 | T-303, T-304（blocked） |
+| 5 | T-402 | プレミアム権限モデル | T-401, T-201（blocked） |
+| 6 | T-403 | 有料コンテンツの外出し | T-402（blocked） |
+| 7 | T-404 | 課金導線の接続 | T-401, T-402（blocked） |
 
 ### 採点モデル移行の完了状況（T-102A サブ項目）
 
-既存 51 問の Explicit judge 移行は完了済みで、T-501 追加 8 問も同形式で作成済み。現行 59 問に `expectedOutput` / `expectedReturnValue` の残存は 0 件。
+既存 51 問の Explicit judge 移行は完了済みで、T-501 追加 8 問と T-502 追加 7 問も同形式で作成済み。現行 66 問に `expectedOutput` / `expectedReturnValue` の残存は 0 件。
 
 | カテゴリ | 問題数 | 移行完了 |
 |---|---|---|
@@ -842,12 +990,12 @@
 | 条件分岐 | 4 | ✅ |
 | 数値計算 | 3 | ✅ |
 | 文字列操作 | 4 | ✅ |
-| リスト操作 | 7 | ✅ |
+| リスト操作 | 11 | ✅ |
 | ループ | 4 | ✅ |
 | 高階関数 | 12 | ✅ |
-| 再帰 | 5 | ✅ |
+| 再帰 | 8 | ✅ |
 | クロージャ | 3 | ✅ |
 | スコープ | 2 | ✅ |
 | 型判定 | 1 | ✅ |
 | 総合問題 | 3 | ✅ |
-| **合計** | **59** | **✅ 全件** |
+| **合計** | **66** | **✅ 全件** |

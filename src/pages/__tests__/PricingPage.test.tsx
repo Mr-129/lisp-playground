@@ -15,6 +15,7 @@ vi.mock('../../utils/analytics', () => ({
 
 const selectedProblem = {
   id: 'basic-01',
+  slug: 'first-s-expression',
   title: '初めてのS式',
   category: '基本構文',
   difficulty: 'beginner' as const,

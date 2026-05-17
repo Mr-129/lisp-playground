@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "basic-quote-01-visible-1",
+      "label": "quote したシンボルとリストを出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "HELLO\n(LISP COMMON LAMBDA)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "basic-quote-01-hidden-1",
+      "label": "quote 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "HELLO\n(LISP COMMON LAMBDA)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

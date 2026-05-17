@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "loop-01-visible-1",
+      "label": "1から10までを出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "loop-01-hidden-1",
+      "label": "dotimes 基本ケースの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

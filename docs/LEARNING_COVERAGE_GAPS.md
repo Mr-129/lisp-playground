@@ -30,12 +30,12 @@
 
 現時点の構成は次のように整理できる。
 
-- 問題数は **59 問**
-- ガイドは **15 セクション**
-- 厚い領域は、基本構文、条件分岐、リスト操作、再帰、高階関数、クロージャ、ループ、文字列、数値、基本的な述語である
-- 薄い、または未収録の領域は、symbol と評価の深掘り、木構造、association list、property list、等価性の使い分け、状態更新、読解 / デバッグ、package、macro、CLOS、condition system、array / vector / hash table、stream / file / pathname である
+- 問題数は **66 問**
+- ガイドは **16 セクション**
+- 厚い領域は、基本構文、条件分岐、リスト操作、tree / association list / property list を含むデータ処理、再帰、高階関数、クロージャ、ループ、文字列、数値、基本的な述語である
+- まだ薄い、または未収録の領域は、symbol と評価のさらなる深掘り、等価性の使い分け、状態更新、読解 / デバッグ、package、macro、CLOS、condition system、array / vector / hash table、stream / file / pathname である
 
-2026年5月14日時点で、Priority 1 の `symbol / quote / function object / 評価モデル` は T-501 第1弾として 8 問とガイド追記を反映済みである。次の主対象は `tree / association list / property list` と `等価性・述語・型分岐` に移っている。
+2026年5月17日時点で、Priority 1 の `symbol / quote / function object / 評価モデル` は T-501、第2弾の `tree / association list / property list` は T-502 として反映済みである。次の主対象は `等価性・述語・型分岐`、`状態変化 / 束縛 / closure の強化`、`読解 / デバッグ` に移っている。
 
 重要なのは、現状が「空っぽ」なのではなく、**説明と演習が短くまとまっているため、深さが不足して見える** ことである。問題は量の絶対不足だけではなく、**中級に橋をかける章と問題の不足** にある。
 

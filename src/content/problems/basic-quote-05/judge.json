@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "basic-quote-05-visible-1",
+      "label": "symbol と function object の判定結果を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "T\nT\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "basic-quote-05-hidden-1",
+      "label": "quote と function の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "T\nT\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

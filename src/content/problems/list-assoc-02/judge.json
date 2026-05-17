@@ -1,0 +1,34 @@
+{
+  "kind": "function",
+  "functionName": "lookup-setting",
+  "cases": [
+    {
+      "id": "list-assoc-02-visible-1",
+      "label": "theme を探す",
+      "visibility": "visible",
+      "run": {
+        "code": "(print (lookup-setting 'theme '((mode \"study\") (theme \"dark\") (lang \"ja\"))))"
+      },
+      "expect": {
+        "output": {
+          "value": "\"dark\"\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-assoc-02-hidden-1",
+      "label": "存在しないキーは NIL",
+      "visibility": "hidden",
+      "run": {
+        "code": "(print (lookup-setting 'missing '((mode \"study\") (theme \"dark\"))))"
+      },
+      "expect": {
+        "output": {
+          "value": "NIL\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

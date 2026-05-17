@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "function-apply-02-visible-1",
+      "label": "変数経由の funcall を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "12\n9\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "function-apply-02-hidden-1",
+      "label": "関数オブジェクト束縛の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "12\n9\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

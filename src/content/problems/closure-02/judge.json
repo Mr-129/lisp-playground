@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "closure-02-visible-1",
+      "label": "make-counter の増加を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "11\n12\n13\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "closure-02-hidden-1",
+      "label": "クロージャ状態保持の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "11\n12\n13\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

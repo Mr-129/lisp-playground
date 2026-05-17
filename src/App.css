@@ -533,6 +533,11 @@
   margin: 4px 0;
 }
 
+.problem-description ol {
+  padding-left: 20px;
+  margin: 4px 0;
+}
+
 .problem-description li {
   margin: 2px 0;
 }

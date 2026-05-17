@@ -1,0 +1,5 @@
+(defun make-multiplier (n)
+  (lambda (x) (* x n)))
+(defvar *triple* (make-multiplier 3))
+(print (funcall *triple* 7))
+(print (funcall *triple* 10))

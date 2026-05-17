@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "basic-quote-03-visible-1",
+      "label": "評価結果と式データを出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "3\n(+ 1 2)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "basic-quote-03-hidden-1",
+      "label": "コードとデータの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "3\n(+ 1 2)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

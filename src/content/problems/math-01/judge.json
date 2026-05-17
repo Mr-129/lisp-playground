@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "math-01-visible-1",
+      "label": "数学関数3つの出力を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "42\n256\n2\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "math-01-hidden-1",
+      "label": "数学関数の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "42\n256\n2\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

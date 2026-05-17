@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Editor } from '../components/Editor';
 import { OutputPanel } from '../components/OutputPanel';
+import { getLearnProblemPath } from '../data/problems';
 import { runProblemJudge } from '../judge';
 import type { JudgeRunResult } from '../judge';
 import { executeLispAsync } from '../worker';
@@ -111,7 +112,7 @@ export function EditorPage({
             </span>
             <button
               className="back-to-learn back-to-problem"
-              onClick={() => navigate(`/learn/${selectedProblem.id}`)}
+              onClick={() => navigate(getLearnProblemPath(selectedProblem))}
             >
               問題文に戻る
             </button>

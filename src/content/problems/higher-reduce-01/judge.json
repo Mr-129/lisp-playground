@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "higher-reduce-01-visible-1",
+      "label": "reduce で合計と積を出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "30\n24\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "higher-reduce-01-hidden-1",
+      "label": "reduce 応用の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "30\n24\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

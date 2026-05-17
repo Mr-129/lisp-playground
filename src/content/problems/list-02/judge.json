@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "list-02-visible-1",
+      "label": "結合して反転したリストを出力",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(6 5 4 3 2 1)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "list-02-hidden-1",
+      "label": "list 操作の非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(6 5 4 3 2 1)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

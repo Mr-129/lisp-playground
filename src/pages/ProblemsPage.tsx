@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { getNextRecommendedProblem, getProblemsByCategory, problems } from '../data/problems';
+import { getLearnProblemPath, getNextRecommendedProblem, getProblemsByCategory, problems } from '../data/problems';
 import { Problem } from '../types';
 
 interface ProblemsPageProps {
@@ -46,7 +46,7 @@ export function ProblemsPage({ selectedProblemId, solvedProblemIds, onSelectProb
 
   const handleOpenProblem = (problem: Problem) => {
     onSelectProblem(problem);
-    navigate(`/learn/${problem.id}`);
+    navigate(getLearnProblemPath(problem));
   };
 
   return (

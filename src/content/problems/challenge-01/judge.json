@@ -1,0 +1,33 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "challenge-01-visible-1",
+      "label": "qsort の結果を確認",
+      "visibility": "visible",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(1 1 2 3 3 4 5 5 6 9)\n",
+          "comparison": "exact"
+        }
+      }
+    },
+    {
+      "id": "challenge-01-hidden-1",
+      "label": "クイックソートの非公開チェック",
+      "visibility": "hidden",
+      "run": {
+        "code": ""
+      },
+      "expect": {
+        "output": {
+          "value": "(1 1 2 3 3 4 5 5 6 9)\n",
+          "comparison": "exact"
+        }
+      }
+    }
+  ]
+}

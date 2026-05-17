@@ -1,0 +1,23 @@
+{
+  "kind": "program",
+  "cases": [
+    {
+      "id": "function-dispatch-01-visible-1",
+      "label": "条件分岐で返した関数を呼び出す",
+      "visibility": "visible",
+      "run": { "code": "" },
+      "expect": {
+        "output": { "value": "9\n24\n", "comparison": "exact" }
+      }
+    },
+    {
+      "id": "function-dispatch-01-hidden-1",
+      "label": "関数ディスパッチの非公開チェック",
+      "visibility": "hidden",
+      "run": { "code": "" },
+      "expect": {
+        "output": { "value": "9\n24\n", "comparison": "exact" }
+      }
+    }
+  ]
+}

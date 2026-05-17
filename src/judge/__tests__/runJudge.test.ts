@@ -7,6 +7,7 @@ import type { FunctionJudgeSpec, ProgramJudgeSpec } from '../types';
 
 const legacyProblem: Problem = {
   id: 'legacy-01',
+  slug: 'legacy-01',
   order: 1,
   title: 'legacy',
   category: 'test',

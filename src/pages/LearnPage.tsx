@@ -3,7 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ProblemList } from '../components/ProblemList';
 import { ProblemView } from '../components/ProblemView';
 import { LispGuide, filterGuideSections } from '../components/LispGuide';
-import { getNextRecommendedProblem, getProblemsByCourse, PROBLEM_COURSES, problems } from '../data/problems';
+import {
+  getLearnProblemPath,
+  getNextRecommendedProblem,
+  getProblemsByCourse,
+  PROBLEM_COURSES,
+  resolveProblemByRouteKey,
+} from '../data/problems';
 import { trackEvent } from '../utils/analytics';
 import { getWaitlistConfig, openWaitlistTarget } from '../utils/waitlist';
 import { COMMERCIAL_FEATURES_ENABLED, WAITLIST_ENABLED, getPublicProblemTier } from '../utils/siteMode';
@@ -25,8 +31,6 @@ interface LearnPageProps {
   onNavigateToEditor: () => void;
   initialView?: 'problem' | 'guide';
 }
-
-const PROBLEM_BY_ID = new Map(problems.map((problem) => [problem.id, problem]));
 
 function getProblemSummary(description: string): string {
   const lines = description
@@ -73,7 +77,17 @@ export function LearnPage({
       return null;
     }
 
-    return PROBLEM_BY_ID.get(problemId) ?? (selectedProblem?.id === problemId ? selectedProblem : null);
+    const resolvedProblem = resolveProblemByRouteKey(problemId);
+
+    if (resolvedProblem) {
+      return resolvedProblem;
+    }
+
+    if (selectedProblem && (selectedProblem.id === problemId || selectedProblem.slug === problemId)) {
+      return selectedProblem;
+    }
+
+    return null;
   }, [problemId, selectedProblem]);
   const activeProblem = routeProblem;
   const activeProblemTier = getPublicProblemTier(activeProblem);
@@ -115,11 +129,19 @@ export function LearnPage({
     onSelectProblem(routeProblem);
   }, [onSelectProblem, routeProblem, selectedProblem?.id]);
 
+  useEffect(() => {
+    if (!problemId || !routeProblem || routeProblem.slug === problemId) {
+      return;
+    }
+
+    navigate(getLearnProblemPath(routeProblem), { replace: true });
+  }, [navigate, problemId, routeProblem]);
+
   const handleSelectProblem = useCallback((problem: Problem) => {
     onSelectGuideSection(null);
     onSelectProblem(problem);
     setShowGuide(false);
-    navigate(`/learn/${problem.id}`);
+    navigate(getLearnProblemPath(problem));
   }, [navigate, onSelectGuideSection, onSelectProblem]);
 
   const handleOpenGuide = useCallback(() => {
