@@ -37,6 +37,9 @@ export function HomePage() {
             <button className="guide-start-button" type="button" onClick={() => navigate('/guide')}>
               📘 はじめに構文ガイド
             </button>
+            <button className="guide-start-button" type="button" onClick={() => navigate('/glossary')}>
+              📖 用語集を開く
+            </button>
             <button className="guide-start-button" type="button" onClick={() => navigate('/problems')}>
               📚 問題から始める
             </button>

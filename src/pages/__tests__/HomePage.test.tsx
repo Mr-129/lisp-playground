@@ -10,6 +10,7 @@ function renderHomePage() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/guide" element={<div>guide-page</div>} />
+        <Route path="/glossary" element={<div>glossary-page</div>} />
         <Route path="/problems" element={<div>problems-page</div>} />
         <Route path="/editor" element={<div>editor-page</div>} />
       </Routes>
@@ -33,5 +34,11 @@ describe('HomePage', () => {
     renderHomePage();
     fireEvent.click(screen.getByText('📘 はじめに構文ガイド'));
     expect(screen.getByText('guide-page')).toBeInTheDocument();
+  });
+
+  it('用語集ボタンから用語集ページへ移動できる', () => {
+    renderHomePage();
+    fireEvent.click(screen.getByText('📖 用語集を開く'));
+    expect(screen.getByText('glossary-page')).toBeInTheDocument();
   });
 });

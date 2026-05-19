@@ -75,7 +75,15 @@ describe('Header', () => {
   it('ナビゲーションボタンを表示する', () => {
     renderWithRouter();
     expect(screen.getByText('📚 学習')).toBeInTheDocument();
+    expect(screen.getByText('📖 用語集')).toBeInTheDocument();
     expect(screen.getByText('🖊️ エディタ')).toBeInTheDocument();
+  });
+
+  it('「/glossary」パスで用語集ボタンがactiveになる', () => {
+    renderWithRouter('/glossary');
+    const glossaryButton = screen.getByText('📖 用語集');
+    expect(glossaryButton).toHaveClass('active');
+    expect(screen.getByText('📚 学習')).not.toHaveClass('active');
   });
 
   it('「/problems」パスで学習ボタンがactiveになる', () => {
@@ -147,6 +155,14 @@ describe('Header', () => {
     fireEvent.click(screen.getByText('🖊️ エディタ'));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/editor');
+  });
+
+  it('用語集ボタンをクリックすると用語集ページへ移動する', () => {
+    renderWithRouter('/');
+
+    fireEvent.click(screen.getByText('📖 用語集'));
+
+    expect(screen.getByTestId('location-path')).toHaveTextContent('/glossary');
   });
 
   it('REPLボタンをクリックするとREPLへ移動する', () => {

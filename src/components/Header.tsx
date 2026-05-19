@@ -18,6 +18,7 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
     location.pathname === '/learn' ||
     location.pathname.startsWith('/learn/') ||
     location.pathname === '/guide';
+  const isGlossaryRoute = location.pathname === '/glossary';
   const isContactRoute = location.pathname === '/contact';
 
   const handleNavigateToContact = () => {
@@ -58,6 +59,12 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
           onClick={() => navigate('/problems')}
         >
           📚 学習
+        </button>
+        <button
+          className={`header-nav-button ${isGlossaryRoute ? 'active' : ''}`}
+          onClick={() => navigate('/glossary')}
+        >
+          📖 用語集
         </button>
         <button
           className={`header-nav-button ${location.pathname === '/editor' ? 'active' : ''}`}

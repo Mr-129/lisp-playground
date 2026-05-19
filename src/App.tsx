@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, type MouseEvent } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
+import { GlossaryPage } from './pages/GlossaryPage';
 import { ProblemsPage } from './pages/ProblemsPage';
 import { LearnPage } from './pages/LearnPage';
 import { EditorPage } from './pages/EditorPage';
@@ -241,6 +242,7 @@ function App() {
         <main id="main-content" className="app-body" tabIndex={-1}>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/glossary" element={<GlossaryPage />} />
             <Route
               path="/problems"
               element={

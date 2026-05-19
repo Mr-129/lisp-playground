@@ -42,6 +42,10 @@ vi.mock('../pages/HomePage', () => ({
   HomePage: () => <div>home-page</div>,
 }));
 
+vi.mock('../pages/GlossaryPage', () => ({
+  GlossaryPage: () => <div>glossary-page</div>,
+}));
+
 vi.mock('../pages/ProblemsPage', () => ({
   ProblemsPage: ({
     onSelectProblem,
@@ -160,6 +164,14 @@ describe('App', () => {
 
     expect(screen.getByText('home-page')).toBeInTheDocument();
     expect(initializeAnalyticsMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('ルート「/glossary」で用語集ページを表示する', () => {
+    window.location.hash = '#/glossary';
+
+    render(<App />);
+
+    expect(screen.getByText('glossary-page')).toBeInTheDocument();
   });
 
   it('ルート「/problems」で問題一覧ページを表示する', () => {
