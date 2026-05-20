@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Icon } from '../components/Icon';
 
 interface GlossaryTerm {
   term: string;
@@ -293,10 +294,10 @@ export function GlossaryPage() {
           </p>
           <div className="glossary-page-actions">
             <button type="button" className="glossary-page-primary" onClick={() => navigate('/guide')}>
-              📘 構文ガイドへ
+              <span className="ui-label"><Icon name="guide" /><span>構文ガイドへ</span></span>
             </button>
             <button type="button" className="glossary-page-secondary" onClick={() => navigate('/problems')}>
-              📚 問題一覧へ
+              <span className="ui-label"><Icon name="problem" /><span>問題一覧へ</span></span>
             </button>
           </div>
         </section>

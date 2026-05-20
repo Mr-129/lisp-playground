@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Icon } from './Icon';
 import { Problem } from '../types';
 import { getNextRecommendedProblem, getProblemsByCategory, getProblemsByCourse, getProblemsByLearningPath, PROBLEM_COURSES, problems } from '../data/problems';
 import { getPublicProblemTier } from '../utils/siteMode';
@@ -147,13 +148,13 @@ export function ProblemList({
         </span>
         <span className="problem-item-meta">
           {isStandardPreview && (
-            <span className="problem-status-icon locked-preview" aria-label="有料候補コンテンツ">🔒</span>
+            <span className="problem-status-icon locked-preview" aria-label="有料候補コンテンツ"><Icon name="lock" className="ui-icon-small" /></span>
           )}
           {bookmarkedSet.has(problem.id) && (
-            <span className="problem-status-icon bookmarked" aria-label="ブックマーク">★</span>
+            <span className="problem-status-icon bookmarked" aria-label="ブックマーク"><Icon name="bookmark" className="ui-icon-small" /></span>
           )}
           {solvedSet.has(problem.id) && (
-            <span className="problem-status-icon" aria-label="解答済み">✓</span>
+            <span className="problem-status-icon" aria-label="解答済み"><Icon name="check" className="ui-icon-small" /></span>
           )}
           <span
             className="difficulty-badge"
@@ -172,12 +173,12 @@ export function ProblemList({
   return (
     <div className="problem-list">
       <div className="problem-list-header">
-        <h2>📚 問題一覧</h2>
+        <h2><span className="ui-label"><Icon name="problem" /><span>問題一覧</span></span></h2>
       </div>
       <div className="problem-list-body">
         <div className="learning-path-panel">
           <div className="learning-path-copy">
-            <h3 className="learning-path-title">🧭 学習ナビ</h3>
+            <h3 className="learning-path-title"><span className="ui-label"><Icon name="compass" /><span>学習ナビ</span></span></h3>
             <p className="learning-path-description">学習パス、コース、カテゴリの3軸で問題を見比べられます。</p>
             <p className="learning-path-progress">進捗 {solvedPathCount}/{pathProblems.length}</p>
             <p className="learning-path-next">{learningPathMessage}</p>
@@ -214,7 +215,7 @@ export function ProblemList({
           <div className="problem-shortcuts">
             {bookmarkedProblems.length > 0 && (
               <div className="problem-shortcut-section">
-                <h3 className="problem-shortcut-title">★ ブックマーク</h3>
+                <h3 className="problem-shortcut-title"><span className="ui-label"><Icon name="bookmark" /><span>ブックマーク</span></span></h3>
                 {bookmarkedProblems.map((problem) => renderProblemButton(problem, true))}
               </div>
             )}

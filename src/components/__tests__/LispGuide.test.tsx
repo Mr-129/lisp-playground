@@ -108,12 +108,12 @@ describe('LispGuide', () => {
 
   it('フッターに「問題一覧に戻る」ボタンがある', () => {
     renderWithRouter();
-    expect(screen.getByText('← 問題一覧に戻る')).toBeInTheDocument();
+    expect(screen.getByText('問題一覧に戻る')).toBeInTheDocument();
   });
 
   it('「問題一覧に戻る」ボタンで問題一覧ページへ戻れる', () => {
     renderWithRouter();
-    fireEvent.click(screen.getByText('← 問題一覧に戻る'));
+    fireEvent.click(screen.getByText('問題一覧に戻る'));
     expect(screen.getByText('problems-page')).toBeInTheDocument();
   });
 

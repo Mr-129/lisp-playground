@@ -1,4 +1,5 @@
 import type { JudgeCaseResult, JudgeMismatch, JudgeRunResult } from '../judge';
+import { Icon } from './Icon';
 
 interface OutputPanelProps {
   output: string;
@@ -50,18 +51,21 @@ export function OutputPanel({ output, returnValue, error, isCorrect, isRunning, 
         <span className="output-label">実行結果</span>
         {isCorrect !== null && isCorrect !== undefined && (
           <span className={`judge-badge ${isCorrect ? 'correct' : 'incorrect'}`}>
-            {isCorrect ? '✓ 正解！' : '✗ 不正解'}
+            <span className="ui-label ui-label-compact">
+              <Icon name={isCorrect ? 'check-circle' : 'x-circle'} className="ui-icon-small" />
+              <span>{isCorrect ? '正解' : '不正解'}</span>
+            </span>
           </span>
         )}
       </div>
       <div className="output-body">
         {isRunning ? (
           <div className="output-placeholder">
-            ⏳ 実行中...
+            実行中...
           </div>
         ) : error ? (
           <div className="output-error">
-            <span className="error-icon">⚠</span>
+            <span className="error-icon"><Icon name="warning" className="ui-icon-small" /></span>
             <span>{error}</span>
           </div>
         ) : (

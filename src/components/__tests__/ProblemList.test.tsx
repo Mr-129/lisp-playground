@@ -142,7 +142,7 @@ describe('ProblemList', () => {
     );
 
     expect(screen.getByText('最近見た問題')).toBeInTheDocument();
-    expect(screen.getByText('★ ブックマーク')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'ブックマーク' })).toBeInTheDocument();
   });
 
   it('次に学ぶべき学習パスの問題を表示する', () => {
@@ -163,7 +163,7 @@ describe('ProblemList', () => {
       />
     );
 
-    const bookmarkedSection = screen.getByText('★ ブックマーク').parentElement;
+    const bookmarkedSection = screen.getByRole('heading', { name: 'ブックマーク' }).closest('.problem-shortcut-section');
     fireEvent.click(within(bookmarkedSection as HTMLElement).getByRole('button', { name: /問題C/ }));
 
     expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ id: 'cat2-01', title: '問題C' }));

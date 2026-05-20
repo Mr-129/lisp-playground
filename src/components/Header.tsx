@@ -1,4 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { BRAND } from '../config/brand';
+import { BrandMark, Icon } from './Icon';
 import { trackEvent } from '../utils/analytics';
 import { getWaitlistConfig, openWaitlistTarget } from '../utils/waitlist';
 import { COMMERCIAL_FEATURES_ENABLED, CONTACT_PAGE_ENABLED, WAITLIST_ENABLED } from '../utils/siteMode';
@@ -47,36 +49,40 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
   return (
     <header className="app-header">
       <div className="header-left">
-        <button className="header-logo" onClick={() => navigate('/')} aria-label="ホームへ戻る">λ</button>
-        <h1 className="header-title">
-          <button className="header-title-link" onClick={() => navigate('/')}>Lisp Playground</button>
-        </h1>
-        <span className="header-subtitle">Common Lisp 学習環境</span>
+        <button className="header-logo" onClick={() => navigate('/')} aria-label="ホームへ戻る">
+          <BrandMark className="header-logo-mark" />
+        </button>
+        <div className="header-brand-copy">
+          <h1 className="header-title">
+            <button className="header-title-link" onClick={() => navigate('/')}>{BRAND.name}</button>
+          </h1>
+          <span className="header-subtitle">{BRAND.subtitle}</span>
+        </div>
       </div>
       <nav className="header-nav">
         <button
           className={`header-nav-button ${isLearningRoute ? 'active' : ''}`}
           onClick={() => navigate('/problems')}
         >
-          📚 学習
+          <span className="ui-label ui-label-compact"><Icon name="learn" /><span>学習</span></span>
         </button>
         <button
           className={`header-nav-button ${isGlossaryRoute ? 'active' : ''}`}
           onClick={() => navigate('/glossary')}
         >
-          📖 用語集
+          <span className="ui-label ui-label-compact"><Icon name="glossary" /><span>用語集</span></span>
         </button>
         <button
           className={`header-nav-button ${location.pathname === '/editor' ? 'active' : ''}`}
           onClick={() => navigate('/editor')}
         >
-          🖊️ エディタ
+          <span className="ui-label ui-label-compact"><Icon name="editor" /><span>エディタ</span></span>
         </button>
         <button
           className={`header-nav-button ${location.pathname === '/repl' ? 'active' : ''}`}
           onClick={() => navigate('/repl')}
         >
-          🖥️ REPL
+          <span className="ui-label ui-label-compact"><Icon name="terminal" /><span>REPL</span></span>
         </button>
       </nav>
       <div className="header-right">
@@ -87,7 +93,7 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
             onClick={handleOpenWaitlist}
             aria-label="更新通知の仮登録を開く"
           >
-            📮 更新通知
+            <span className="ui-label ui-label-compact"><Icon name="updates" /><span>更新通知</span></span>
           </button>
         )}
         {CONTACT_PAGE_ENABLED && (
@@ -97,7 +103,7 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
             onClick={handleNavigateToContact}
             aria-label="お問い合わせページへ移動する"
           >
-            ✉ お問い合わせ
+            <span className="ui-label ui-label-compact"><Icon name="contact" /><span>お問い合わせ</span></span>
           </button>
         )}
         {COMMERCIAL_FEATURES_ENABLED && (
@@ -107,11 +113,11 @@ export function Header({ onOpenPricingGuide = () => {} }: HeaderProps) {
             onClick={onOpenPricingGuide}
             aria-label="Standard プランの案内を見る"
           >
-            ✨ Standard案内
+            <span className="ui-label ui-label-compact"><Icon name="spark" /><span>Standard案内</span></span>
           </button>
         )}
         <a
-          href="https://github.com/Mr-129/lisp-playground"
+          href={BRAND.githubUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="header-link"

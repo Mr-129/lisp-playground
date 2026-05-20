@@ -198,23 +198,23 @@ function renderEditorPageWithState(props: Partial<Parameters<typeof EditorPage>[
 describe('EditorPage', () => {
   it('フリーモード表示（問題未選択）', () => {
     renderEditorPage();
-    expect(screen.getByText('🖊️ フリーモード')).toBeInTheDocument();
+    expect(screen.getByText('フリーモード')).toBeInTheDocument();
   });
 
   it('選択中の問題名を表示する', () => {
     renderEditorPage({ selectedProblem: mockProblem });
-    expect(screen.getByText('📝 テスト問題')).toBeInTheDocument();
+    expect(screen.getByText('テスト問題')).toBeInTheDocument();
   });
 
   it('「問題一覧に戻る」ボタンがある', () => {
     renderEditorPage();
-    expect(screen.getByText('← 問題一覧に戻る')).toBeInTheDocument();
+    expect(screen.getByText('問題一覧に戻る')).toBeInTheDocument();
   });
 
   it('「問題一覧に戻る」ボタンで problems へ遷移する', () => {
     renderEditorPage();
 
-    fireEvent.click(screen.getByText('← 問題一覧に戻る'));
+    fireEvent.click(screen.getByText('問題一覧に戻る'));
 
     expect(screen.getByText('problems-page')).toBeInTheDocument();
   });

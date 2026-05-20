@@ -28,18 +28,18 @@ describe('OutputPanel', () => {
 
   it('正解バッジを表示する', () => {
     render(<OutputPanel output="ok" returnValue="ok" isCorrect={true} />);
-    expect(screen.getByText('✓ 正解！')).toBeInTheDocument();
+    expect(screen.getByText('正解')).toBeInTheDocument();
   });
 
   it('不正解バッジを表示する', () => {
     render(<OutputPanel output="ng" returnValue="ng" isCorrect={false} />);
-    expect(screen.getByText('✗ 不正解')).toBeInTheDocument();
+    expect(screen.getByText('不正解')).toBeInTheDocument();
   });
 
   it('isCorrect が null のときバッジを表示しない', () => {
     render(<OutputPanel output="test" returnValue="test" isCorrect={null} />);
-    expect(screen.queryByText('✓ 正解！')).not.toBeInTheDocument();
-    expect(screen.queryByText('✗ 不正解')).not.toBeInTheDocument();
+    expect(screen.queryByText('正解')).not.toBeInTheDocument();
+    expect(screen.queryByText('不正解')).not.toBeInTheDocument();
   });
 
   it('judge サマリーと visible case の差分を表示する', () => {

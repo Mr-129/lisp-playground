@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Icon } from './Icon';
 
 export interface GuideSectionSummary {
   id: string;
@@ -23,7 +24,7 @@ const GUIDE_SECTIONS: GuideSectionSummary[] = [
   { id: 'guide-closures', title: 'クロージャ', keywords: ['closure', 'make-adder', 'make-counter', 'lambda'] },
   { id: 'guide-io', title: '入出力', keywords: ['print', 'princ', 'format', '~A', '~S', '~D'] },
   { id: 'guide-predicates', title: '比較と述語関数', keywords: ['eq', 'eql', 'equal', 'numberp', 'stringp', 'oddp'] },
-  { id: 'guide-references', title: '📚 参考', keywords: ['hyperspec', 'practical common lisp', 'cltl2', 'reference'] },
+  { id: 'guide-references', title: '参考', keywords: ['hyperspec', 'practical common lisp', 'cltl2', 'reference'] },
 ];
 
 function normalizeSearchText(text: string): string {
@@ -70,7 +71,7 @@ export function LispGuide({ searchQuery = '', selectedSectionId = null }: LispGu
   return (
     <div className="lisp-guide">
       <div className="guide-content">
-        <h2 className="guide-main-title">📘 Common Lisp 基本構文ガイド</h2>
+        <h2 className="guide-main-title"><span className="ui-label"><Icon name="guide" /><span>Common Lisp 基本構文ガイド</span></span></h2>
         {hasActiveSearch && (
           <div className="guide-search-summary" role="status">
             {filteredSections.length > 0
@@ -119,7 +120,7 @@ foo         ; シンボルアトム
             これを<strong>前置記法（prefix notation）</strong>と呼びます。
           </p>
           <div className="guide-note">
-            <strong>💡 ポイント:</strong> 数学では <code>1 + 2</code> と書きますが、Lispでは <code>(+ 1 2)</code> と書きます。
+            <strong className="guide-note-label">ポイント:</strong> 数学では <code>1 + 2</code> と書きますが、Lispでは <code>(+ 1 2)</code> と書きます。
             演算子が常に先頭に来るため、引数の数に制限がなく <code>(+ 1 2 3 4 5)</code> も有効です。
           </div>
         </section>
@@ -143,7 +144,7 @@ foo         ; シンボルアトム
             </tbody>
           </table>
           <div className="guide-note">
-            <strong>💡 ポイント:</strong> Common Lispでは <code>nil</code> は「偽」と「空リスト」の両方を表します。
+            <strong className="guide-note-label">ポイント:</strong> Common Lispでは <code>nil</code> は「偽」と「空リスト」の両方を表します。
             <code>nil</code> 以外のすべての値は真（truthy）です。<code>0</code> や <code>""</code> も真です。
           </div>
         </section>
@@ -197,7 +198,7 @@ x      ; => 10
           <pre className="guide-code">{`'(+ 1 2)           ; => (+ 1 2)
 (list '+ 1 2)      ; => (+ 1 2)`}</pre>
           <div className="guide-note">
-            <strong>💡 よくある誤解:</strong> <code>'+</code> は<strong>シンボル</strong>、<code>#'+</code> は<strong>関数オブジェクト</strong>です。<br />
+            <strong className="guide-note-label">よくある誤解:</strong> <code>'+</code> は<strong>シンボル</strong>、<code>#'+</code> は<strong>関数オブジェクト</strong>です。<br />
             この違いを区別すると、<code>funcall</code> や <code>apply</code> を読みやすくなります。
           </div>
         </section>
@@ -217,7 +218,7 @@ x      ; => 10
 ;; setq: 既存の変数に値を代入
 (setq *name* "Common Lisp")`}</pre>
           <div className="guide-note">
-            <strong>💡 慣例:</strong> グローバル変数は <code>*asterisks*</code>（イヤーマフ記法）で囲むのが Common Lisp の慣例です。
+            <strong className="guide-note-label">慣例:</strong> グローバル変数は <code>*asterisks*</code>（イヤーマフ記法）で囲むのが Common Lisp の慣例です。
           </div>
 
           <h4>ローカル変数（let / let*）</h4>
@@ -311,7 +312,7 @@ x      ; => 10
 (funcall (choose-op t) 2 3 4)   ; => 9
 (funcall (choose-op nil) 2 3 4) ; => 24`}</pre>
           <div className="guide-note">
-            <strong>💡 funcall vs apply:</strong>
+            <strong className="guide-note-label">funcall vs apply:</strong>
             <code>funcall</code> は引数を個別に渡し、<code>apply</code> はリストとして渡します。<br />
             <code>(funcall #'+ 1 2 3)</code> → 6、<code>(apply #'+ '(1 2 3))</code> → 6
           </div>
@@ -400,7 +401,7 @@ x      ; => 10
 (last '(1 2 3))          ; => (3)       最後のコンスセル`}</pre>
 
           <div className="guide-note">
-            <strong>💡 car / cdr の由来:</strong>
+            <strong className="guide-note-label">car / cdr の由来:</strong>
             IBMの機械語命令に由来します。<code>car</code> = Contents of Address Register、
             <code>cdr</code> = Contents of Decrement Register。
             現代では <code>first</code> / <code>rest</code> というエイリアスも使えます。
@@ -454,7 +455,7 @@ x      ; => 10
 (rest (rest *profile*))`}</pre>
 
           <div className="guide-note">
-            <strong>💡 見方のコツ:</strong> tree は「枝と葉」、association list は「キーと値のペア」、property list は「キーと値の交互列」と見ると、同じデータでも読み方を切り替えやすくなります。
+            <strong className="guide-note-label">見方のコツ:</strong> tree は「枝と葉」、association list は「キーと値のペア」、property list は「キーと値の交互列」と見ると、同じデータでも読み方を切り替えやすくなります。
           </div>
         </section>
         )}
@@ -597,7 +598,7 @@ x      ; => 10
         {/* 参照リンク */}
   {shouldShowSection('guide-references') && (
   <section id="guide-references" className="guide-section guide-references">
-          <h3>📚 参考</h3>
+          <h3><span className="ui-label"><Icon name="reference" /><span>参考</span></span></h3>
           <ul className="reference-list">
             <li>
               <a href="https://www.lispworks.com/documentation/HyperSpec/Front/" target="_blank" rel="noopener noreferrer">
@@ -642,7 +643,7 @@ x      ; => 10
         <div className="guide-footer">
           <p>上記の構文を理解したら、問題を選択して実際にコードを書いてみましょう！</p>
           <button className="guide-start-button" onClick={() => navigate('/problems')}>
-            ← 問題一覧に戻る
+            <span className="ui-label"><Icon name="back" /><span>問題一覧に戻る</span></span>
           </button>
         </div>
       </div>

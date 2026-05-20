@@ -2,6 +2,7 @@ import { Problem } from '../types';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Icon } from './Icon';
 import { getPublicProblemTier } from '../utils/siteMode';
 
 interface ProblemViewProps {
@@ -39,7 +40,7 @@ export function ProblemView({
           <span className="problem-meta-chip">{DIFFICULTY_LABEL[problem.difficulty]}</span>
           <span className="problem-meta-chip">{problem.estimatedMinutes}分</span>
           <span className={`problem-meta-chip tier ${tier}`}>
-            {isStandardPreview ? '🔒 Standard候補' : 'Free'}
+            {isStandardPreview ? <span className="ui-label ui-label-compact"><Icon name="lock" className="ui-icon-small" /><span>Standard候補</span></span> : 'Free'}
           </span>
           {isSolved && <span className="problem-meta-chip solved">クリア済み</span>}
         </div>
@@ -67,7 +68,7 @@ export function ProblemView({
           aria-pressed={isBookmarked}
           onClick={onToggleBookmark}
         >
-          {isBookmarked ? '★ ブックマーク済み' : '☆ ブックマーク'}
+          <span className="ui-label ui-label-compact"><Icon name="bookmark" className="ui-icon-small" /><span>{isBookmarked ? 'ブックマーク済み' : 'ブックマーク'}</span></span>
         </button>
         {problem.hint && (
           <button
@@ -75,7 +76,7 @@ export function ProblemView({
             className="hint-button"
             onClick={() => setShowHint(!showHint)}
           >
-            💡 {showHint ? 'ヒントを隠す' : 'ヒントを表示'}
+            <span className="ui-label ui-label-compact"><Icon name="hint" className="ui-icon-small" /><span>{showHint ? 'ヒントを隠す' : 'ヒントを表示'}</span></span>
           </button>
         )}
         <button
@@ -86,7 +87,7 @@ export function ProblemView({
             if (!showSolution) onShowSolution();
           }}
         >
-          📖 {showSolution ? '解答を隠す' : '解答を表示'}
+          <span className="ui-label ui-label-compact"><Icon name="solution" className="ui-icon-small" /><span>{showSolution ? '解答を隠す' : '解答を表示'}</span></span>
         </button>
       </div>
       {showHint && problem.hint && (

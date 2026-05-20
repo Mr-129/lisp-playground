@@ -160,12 +160,12 @@ describe('LearnPage', () => {
 
   it('問題一覧ページへの導線を表示する', () => {
     renderLearnPage();
-    expect(screen.getByText('📚 問題一覧ページへ')).toBeInTheDocument();
+    expect(screen.getByText('問題一覧ページへ')).toBeInTheDocument();
   });
 
   it('おすすめ問題への導線がある', () => {
     renderLearnPage();
-    expect(screen.getByText('📖 この問題の問題文へ')).toBeInTheDocument();
+    expect(screen.getByText('この問題の問題文へ')).toBeInTheDocument();
   });
 
   it('サイドバーに構文ガイドボタンがある', () => {
@@ -192,7 +192,7 @@ describe('LearnPage', () => {
   it('問題が選択されているとき問題ビューを表示する', () => {
     renderLearnPage({ selectedProblem: mockProblem }, '/learn/test-01');
     expect(screen.getByText('テスト問題')).toBeInTheDocument();
-    expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
+    expect(screen.getByText('エディタで解く')).toBeInTheDocument();
   });
 
   it('問題選択時に Standard 案内 CTA を表示してコールバックを呼ぶ', () => {
@@ -201,14 +201,14 @@ describe('LearnPage', () => {
     renderLearnPage({ selectedProblem: mockProblem, onOpenPricingGuide }, '/learn/test-01');
 
     expect(screen.getByText('現在は全問題を無料公開中です')).toBeInTheDocument();
-    expect(screen.queryByText('✨ Standard の案内を見る')).not.toBeInTheDocument();
+    expect(screen.queryByText('Standard の案内を見る')).not.toBeInTheDocument();
     expect(onOpenPricingGuide).not.toHaveBeenCalled();
   });
 
   it('問題選択時に monetization CTA を表示しない', () => {
     renderLearnPage({ selectedProblem: mockProblem }, '/learn/test-01');
 
-    expect(screen.queryByText('📮 更新通知を受け取る')).not.toBeInTheDocument();
+    expect(screen.queryByText('更新通知を受け取る')).not.toBeInTheDocument();
   });
 
   it('コース情報を持つ問題では現在のコースカードを表示する', () => {
@@ -225,10 +225,10 @@ describe('LearnPage', () => {
   it('サイドバートグルボタンが動作する', () => {
     renderLearnPage();
     const toggleBtn = screen.getByLabelText('サイドバーを切り替え');
-    expect(toggleBtn).toHaveTextContent('◀');
+    expect(toggleBtn.querySelector('svg')).not.toBeNull();
     
     fireEvent.click(toggleBtn);
-    expect(toggleBtn).toHaveTextContent('▶');
+    expect(toggleBtn.querySelector('svg')).not.toBeNull();
   });
 
   it('問題を切り替えるとヒントと解答の表示状態がリセットされる', () => {
@@ -251,8 +251,8 @@ describe('LearnPage', () => {
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByText('💡 ヒントを表示'));
-    fireEvent.click(screen.getByText('📖 解答を表示'));
+    fireEvent.click(screen.getByText('ヒントを表示'));
+    fireEvent.click(screen.getByText('解答を表示'));
 
     expect(screen.getByText('ヒント')).toBeInTheDocument();
     expect(screen.getByText('(+ 1 2)')).toBeInTheDocument();
@@ -289,7 +289,7 @@ describe('LearnPage', () => {
     expect(onSelectProblem).toHaveBeenCalledWith(expect.objectContaining({ id: 'basic-01' }));
     expect(screen.getByTestId('location-path')).toHaveTextContent(`/learn/${sluggedProblem.slug}`);
     expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
-    expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
+    expect(screen.getByText('エディタで解く')).toBeInTheDocument();
   });
 
   it('guide ルートで T-501 の新規問題を選ぶと learn へ遷移する', () => {
@@ -330,7 +330,7 @@ describe('LearnPage', () => {
 
     renderLearnPage({ selectedProblem: mockProblem, onNavigateToEditor }, '/learn/test-01');
 
-    fireEvent.click(screen.getByText('🖊️ エディタで解く →'));
+    fireEvent.click(screen.getByText('エディタで解く'));
 
     expect(onNavigateToEditor).toHaveBeenCalledTimes(1);
     expect(screen.getByText('editor-page')).toBeInTheDocument();
@@ -340,7 +340,7 @@ describe('LearnPage', () => {
   it('空状態の問題一覧ボタンで problems へ遷移する', () => {
     renderLearnPage();
 
-    fireEvent.click(screen.getByText('📚 問題一覧ページへ'));
+    fireEvent.click(screen.getByText('問題一覧ページへ'));
 
     expect(screen.getByText('problems-page')).toBeInTheDocument();
     expect(screen.getByTestId('location-path')).toHaveTextContent('/problems');
@@ -351,7 +351,7 @@ describe('LearnPage', () => {
 
     renderLearnPage({ onNavigateToEditor });
 
-    fireEvent.click(screen.getAllByText('🖊️ フリーモードで始める')[0]);
+    fireEvent.click(screen.getAllByText('フリーモードで始める')[0]);
 
     expect(onNavigateToEditor).toHaveBeenCalledTimes(1);
     expect(screen.getByText('editor-page')).toBeInTheDocument();
@@ -364,14 +364,14 @@ describe('LearnPage', () => {
     renderLearnPage({ onOpenPricingGuide });
 
     expect(screen.getByText('現在は全問題を無料公開中です')).toBeInTheDocument();
-    expect(screen.queryByText('✨ Standard の案内を見る')).not.toBeInTheDocument();
+    expect(screen.queryByText('Standard の案内を見る')).not.toBeInTheDocument();
     expect(onOpenPricingGuide).not.toHaveBeenCalled();
   });
 
   it('問題詳細から Learn トップへ戻れる', () => {
     renderLearnPage({ selectedProblem: mockProblem }, '/learn/test-01');
 
-    fireEvent.click(screen.getByText('← Learn に戻る'));
+    fireEvent.click(screen.getByText('Learn に戻る'));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/learn');
     expect(screen.getByText('問題を選択して練習を始める')).toBeInTheDocument();
@@ -380,7 +380,7 @@ describe('LearnPage', () => {
   it('空状態でも更新通知 CTA を表示しない', () => {
     renderLearnPage();
 
-    expect(screen.queryByText('📮 更新通知を受け取る')).not.toBeInTheDocument();
+    expect(screen.queryByText('更新通知を受け取る')).not.toBeInTheDocument();
   });
 
   it('検索入力で問題一覧を絞り込める', () => {

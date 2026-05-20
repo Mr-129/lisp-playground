@@ -59,70 +59,70 @@ describe('Header', () => {
 
   it('タイトルを表示する', () => {
     renderWithRouter();
-    expect(screen.getByText('Lisp Playground')).toBeInTheDocument();
+    expect(screen.getByText('Lambda Atelier')).toBeInTheDocument();
   });
 
   it('サブタイトルを表示する', () => {
     renderWithRouter();
-    expect(screen.getByText('Common Lisp 学習環境')).toBeInTheDocument();
+    expect(screen.getByText('Common Lisp 学習スタジオ')).toBeInTheDocument();
   });
 
-  it('ロゴ（λ）を表示する', () => {
+  it('ロゴボタンを表示する', () => {
     renderWithRouter();
-    expect(screen.getByText('λ')).toBeInTheDocument();
+    expect(screen.getByLabelText('ホームへ戻る')).toBeInTheDocument();
   });
 
   it('ナビゲーションボタンを表示する', () => {
     renderWithRouter();
-    expect(screen.getByText('📚 学習')).toBeInTheDocument();
-    expect(screen.getByText('📖 用語集')).toBeInTheDocument();
-    expect(screen.getByText('🖊️ エディタ')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '学習' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '用語集' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'エディタ' })).toBeInTheDocument();
   });
 
   it('「/glossary」パスで用語集ボタンがactiveになる', () => {
     renderWithRouter('/glossary');
-    const glossaryButton = screen.getByText('📖 用語集');
+    const glossaryButton = screen.getByRole('button', { name: '用語集' });
     expect(glossaryButton).toHaveClass('active');
-    expect(screen.getByText('📚 学習')).not.toHaveClass('active');
+    expect(screen.getByRole('button', { name: '学習' })).not.toHaveClass('active');
   });
 
   it('「/problems」パスで学習ボタンがactiveになる', () => {
     renderWithRouter('/problems');
-    const learnButton = screen.getByText('📚 学習');
+    const learnButton = screen.getByRole('button', { name: '学習' });
     expect(learnButton).toHaveClass('active');
-    const editorButton = screen.getByText('🖊️ エディタ');
+    const editorButton = screen.getByRole('button', { name: 'エディタ' });
     expect(editorButton).not.toHaveClass('active');
   });
 
   it('「/learn」パスでも学習ボタンがactiveになる', () => {
     renderWithRouter('/learn');
-    expect(screen.getByText('📚 学習')).toHaveClass('active');
+    expect(screen.getByRole('button', { name: '学習' })).toHaveClass('active');
   });
 
   it('「/learn/:problemId」パスでも学習ボタンがactiveになる', () => {
     renderWithRouter('/learn/basic-01');
-    expect(screen.getByText('📚 学習')).toHaveClass('active');
+    expect(screen.getByRole('button', { name: '学習' })).toHaveClass('active');
   });
 
   it('「/guide」パスでも学習ボタンがactiveになる', () => {
     renderWithRouter('/guide');
-    expect(screen.getByText('📚 学習')).toHaveClass('active');
+    expect(screen.getByRole('button', { name: '学習' })).toHaveClass('active');
   });
 
   it('「/editor」パスでエディタボタンがactiveになる', () => {
     renderWithRouter('/editor');
-    const editorButton = screen.getByText('🖊️ エディタ');
+    const editorButton = screen.getByRole('button', { name: 'エディタ' });
     expect(editorButton).toHaveClass('active');
-    const learnButton = screen.getByText('📚 学習');
+    const learnButton = screen.getByRole('button', { name: '学習' });
     expect(learnButton).not.toHaveClass('active');
   });
 
   it('「/repl」パスでREPLボタンがactiveになる', () => {
     renderWithRouter('/repl');
-    const replButton = screen.getByText('🖥️ REPL');
+    const replButton = screen.getByRole('button', { name: 'REPL' });
     expect(replButton).toHaveClass('active');
-    expect(screen.getByText('📚 学習')).not.toHaveClass('active');
-    expect(screen.getByText('🖊️ エディタ')).not.toHaveClass('active');
+    expect(screen.getByRole('button', { name: '学習' })).not.toHaveClass('active');
+    expect(screen.getByRole('button', { name: 'エディタ' })).not.toHaveClass('active');
   });
 
   it('ロゴをクリックするとホームへ戻る', () => {
@@ -136,7 +136,7 @@ describe('Header', () => {
   it('タイトルをクリックするとホームへ戻る', () => {
     renderWithRouter('/repl');
 
-    fireEvent.click(screen.getByText('Lisp Playground'));
+    fireEvent.click(screen.getByText('Lambda Atelier'));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/');
   });
@@ -144,7 +144,7 @@ describe('Header', () => {
   it('学習ボタンをクリックすると問題一覧へ移動する', () => {
     renderWithRouter('/editor');
 
-    fireEvent.click(screen.getByText('📚 学習'));
+    fireEvent.click(screen.getByRole('button', { name: '学習' }));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/problems');
   });
@@ -152,7 +152,7 @@ describe('Header', () => {
   it('エディタボタンをクリックするとエディタへ移動する', () => {
     renderWithRouter('/');
 
-    fireEvent.click(screen.getByText('🖊️ エディタ'));
+    fireEvent.click(screen.getByRole('button', { name: 'エディタ' }));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/editor');
   });
@@ -160,7 +160,7 @@ describe('Header', () => {
   it('用語集ボタンをクリックすると用語集ページへ移動する', () => {
     renderWithRouter('/');
 
-    fireEvent.click(screen.getByText('📖 用語集'));
+    fireEvent.click(screen.getByRole('button', { name: '用語集' }));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/glossary');
   });
@@ -168,7 +168,7 @@ describe('Header', () => {
   it('REPLボタンをクリックするとREPLへ移動する', () => {
     renderWithRouter('/');
 
-    fireEvent.click(screen.getByText('🖥️ REPL'));
+    fireEvent.click(screen.getByRole('button', { name: 'REPL' }));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/repl');
   });

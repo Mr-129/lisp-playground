@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Icon } from '../components/Icon';
 import { getLearnProblemPath, getNextRecommendedProblem, getProblemsByCategory, problems } from '../data/problems';
 import { Problem } from '../types';
 
@@ -53,15 +54,15 @@ export function ProblemsPage({ selectedProblemId, solvedProblemIds, onSelectProb
     <div className="problems-page">
       <div className="problems-page-header">
         <div>
-          <h2>📚 問題一覧ページ</h2>
+          <h2><span className="ui-label"><Icon name="problem" /><span>問題一覧ページ</span></span></h2>
           <p>カテゴリごとに問題を選んで、問題文の詳細ページに進めます。</p>
         </div>
         <div className="problems-page-actions">
           <button className="guide-start-button" type="button" onClick={() => navigate('/guide')}>
-            📘 構文ガイドへ
+            <span className="ui-label"><Icon name="guide" /><span>構文ガイドへ</span></span>
           </button>
           <button className="start-coding-button" type="button" onClick={() => navigate('/editor')}>
-            🖊️ フリーモード
+            <span className="ui-label"><Icon name="editor" /><span>フリーモード</span></span>
           </button>
         </div>
       </div>

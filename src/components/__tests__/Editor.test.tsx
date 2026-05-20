@@ -130,6 +130,6 @@ describe('Editor', () => {
     const button = screen.getByLabelText('コードを実行');
 
     expect(button).toBeDisabled();
-    expect(button).toHaveTextContent('⏳ 実行中...');
+    expect(button).toHaveTextContent('実行中...');
   });
 });

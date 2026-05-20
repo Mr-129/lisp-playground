@@ -39,7 +39,7 @@ describe('GlossaryPage', () => {
   it('構文ガイドボタンからガイドへ移動できる', () => {
     renderGlossaryPage();
 
-    fireEvent.click(screen.getByText('📘 構文ガイドへ'));
+    fireEvent.click(screen.getByText('構文ガイドへ'));
 
     expect(screen.getByText('guide-page')).toBeInTheDocument();
   });

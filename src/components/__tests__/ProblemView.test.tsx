@@ -114,7 +114,7 @@ describe('ProblemView', () => {
     render(<ProblemView problem={mockStandardProblem} onShowSolution={() => {}} />);
 
     expect(screen.getByText('Free')).toBeInTheDocument();
-    expect(screen.queryByText('🔒 Standard候補')).not.toBeInTheDocument();
+    expect(screen.queryByText('Standard候補')).not.toBeInTheDocument();
     expect(screen.queryByText(/有料候補コンテンツ:/)).not.toBeInTheDocument();
   });
 
@@ -123,17 +123,17 @@ describe('ProblemView', () => {
     
     expect(screen.queryByText('これはヒントです')).not.toBeInTheDocument();
     
-    fireEvent.click(screen.getByText('💡 ヒントを表示'));
+    fireEvent.click(screen.getByText('ヒントを表示'));
     expect(screen.getByText('これはヒントです')).toBeInTheDocument();
   });
 
   it('ヒントボタンを再度クリックするとヒントを隠す', () => {
     render(<ProblemView problem={mockProblem} onShowSolution={() => {}} />);
 
-    fireEvent.click(screen.getByText('💡 ヒントを表示'));
+    fireEvent.click(screen.getByText('ヒントを表示'));
     expect(screen.getByText('これはヒントです')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('💡 ヒントを隠す'));
+    fireEvent.click(screen.getByText('ヒントを隠す'));
     expect(screen.queryByText('これはヒントです')).not.toBeInTheDocument();
   });
 
@@ -141,7 +141,7 @@ describe('ProblemView', () => {
     const onShowSolution = vi.fn();
     render(<ProblemView problem={mockProblem} onShowSolution={onShowSolution} />);
     
-    fireEvent.click(screen.getByText('📖 解答を表示'));
+    fireEvent.click(screen.getByText('解答を表示'));
     expect(screen.getByText('(print (+ 1 2))')).toBeInTheDocument();
     expect(onShowSolution).toHaveBeenCalled();
   });
@@ -150,11 +150,11 @@ describe('ProblemView', () => {
     const onShowSolution = vi.fn();
     render(<ProblemView problem={mockProblem} onShowSolution={onShowSolution} />);
 
-    fireEvent.click(screen.getByText('📖 解答を表示'));
+    fireEvent.click(screen.getByText('解答を表示'));
     expect(screen.getByText('(print (+ 1 2))')).toBeInTheDocument();
     expect(onShowSolution).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByText('📖 解答を隠す'));
+    fireEvent.click(screen.getByText('解答を隠す'));
     expect(screen.queryByText('(print (+ 1 2))')).not.toBeInTheDocument();
     expect(onShowSolution).toHaveBeenCalledTimes(1);
   });
@@ -170,7 +170,7 @@ describe('ProblemView', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '☆ ブックマーク' }));
+    fireEvent.click(screen.getByRole('button', { name: 'ブックマーク' }));
 
     expect(onToggleBookmark).toHaveBeenCalledTimes(1);
   });
@@ -184,7 +184,7 @@ describe('ProblemView', () => {
       />
     );
 
-    expect(screen.getByRole('button', { name: '★ ブックマーク済み' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: 'ブックマーク済み' })).toHaveAttribute(
       'aria-pressed',
       'true'
     );
@@ -192,7 +192,7 @@ describe('ProblemView', () => {
 
   it('ヒントがない場合、ヒントボタンを表示しない', () => {
     render(<ProblemView problem={mockProblemNoHint} onShowSolution={() => {}} />);
-    expect(screen.queryByText('💡 ヒントを表示')).not.toBeInTheDocument();
+    expect(screen.queryByText('ヒントを表示')).not.toBeInTheDocument();
   });
 
   it('リスト項目をレンダリングする', () => {

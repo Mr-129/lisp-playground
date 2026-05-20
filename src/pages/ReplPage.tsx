@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { Icon } from '../components/Icon';
 import { executeLispRepl, Environment } from '../interpreter';
 import {
   clearReplSession,
@@ -130,10 +131,10 @@ export function ReplPage() {
   return (
     <div className="repl-page">
       <div className="repl-header">
-        <h2 className="repl-title">🖥️ REPL</h2>
+        <h2 className="repl-title"><span className="ui-label"><Icon name="terminal" /><span>REPL</span></span></h2>
         <span className="repl-subtitle">対話的 Lisp 実行環境 — 式を入力して Enter で評価</span>
         <button className="repl-clear-button" onClick={handleClear}>
-          🗑️ クリア
+          <span className="ui-label ui-label-compact"><Icon name="clear" /><span>クリア</span></span>
         </button>
       </div>
       <div className="repl-output" ref={outputRef}>
@@ -157,7 +158,7 @@ export function ReplPage() {
               <pre className="repl-output-text">{entry.output}</pre>
             )}
             {entry.error ? (
-              <div className="repl-error">⚠ {entry.error}</div>
+              <div className="repl-error"><Icon name="warning" className="ui-icon-small" /> {entry.error}</div>
             ) : (
               <div className="repl-return">→ {entry.returnValue}</div>
             )}
@@ -182,7 +183,7 @@ export function ReplPage() {
           disabled={!input.trim()}
           aria-label="式を評価"
         >
-          ▶
+          <Icon name="play" className="ui-icon-small" />
         </button>
       </div>
     </div>

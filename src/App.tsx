@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, type MouseEvent } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/Header';
+import { BRAND } from './config/brand';
 import { HomePage } from './pages/HomePage';
 import { GlossaryPage } from './pages/GlossaryPage';
 import { ProblemsPage } from './pages/ProblemsPage';
@@ -64,7 +65,7 @@ function getInitialBookmarkedProblemIds(): string[] {
   return normalizeProblemIds(loadBookmarkedProblemIds());
 }
 
-const DEFAULT_CODE = `; Lisp Playground へようこそ！
+const DEFAULT_CODE = `; ${BRAND.name} へようこそ！
 ; ここにCommon Lispのコードを入力して実行できます。
 
 ; 基本的な計算

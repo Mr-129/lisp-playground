@@ -37,7 +37,7 @@ function renderProblemsPage(selectedProblemId: string | null = null) {
 describe('ProblemsPage', () => {
   it('問題一覧ページのタイトルを表示する', () => {
     renderProblemsPage();
-    expect(screen.getByText('📚 問題一覧ページ')).toBeInTheDocument();
+    expect(screen.getByText('問題一覧ページ')).toBeInTheDocument();
   });
 
   it('問題文を見るボタンで問題詳細へ進める', () => {
@@ -62,7 +62,7 @@ describe('ProblemsPage', () => {
   it('構文ガイドボタンでガイド画面へ移動できる', () => {
     renderProblemsPage();
 
-    fireEvent.click(screen.getByText('📘 構文ガイドへ'));
+    fireEvent.click(screen.getByText('構文ガイドへ'));
 
     expect(screen.getByText('guide-page')).toBeInTheDocument();
   });
@@ -70,7 +70,7 @@ describe('ProblemsPage', () => {
   it('フリーモードボタンでエディタ画面へ移動できる', () => {
     renderProblemsPage();
 
-    fireEvent.click(screen.getByText('🖊️ フリーモード'));
+    fireEvent.click(screen.getByText('フリーモード'));
 
     expect(screen.getByText('editor-page')).toBeInTheDocument();
   });

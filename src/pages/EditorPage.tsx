@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Editor } from '../components/Editor';
+import { Icon } from '../components/Icon';
 import { OutputPanel } from '../components/OutputPanel';
 import { getLearnProblemPath } from '../data/problems';
 import { runProblemJudge } from '../judge';
@@ -103,12 +104,12 @@ export function EditorPage({
     <div className="editor-page">
       <div className="editor-page-header">
         <button className="back-to-learn" onClick={() => navigate('/problems')}>
-          ← 問題一覧に戻る
+          <span className="ui-label"><Icon name="back" /><span>問題一覧に戻る</span></span>
         </button>
         {selectedProblem && (
           <>
             <span className="current-problem-label">
-              📝 {selectedProblem.title}
+              <span className="ui-label ui-label-compact"><Icon name="note" /><span>{selectedProblem.title}</span></span>
             </span>
             <button
               className="back-to-learn back-to-problem"
@@ -120,7 +121,7 @@ export function EditorPage({
         )}
         {!selectedProblem && (
           <span className="current-problem-label">
-            🖊️ フリーモード
+            <span className="ui-label ui-label-compact"><Icon name="editor" /><span>フリーモード</span></span>
           </span>
         )}
       </div>

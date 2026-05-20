@@ -33,7 +33,7 @@ describe('ReplPage', () => {
 
   it('REPLタイトルを表示する', () => {
     renderRepl();
-    expect(screen.getByText('🖥️ REPL')).toBeInTheDocument();
+    expect(screen.getByText('REPL')).toBeInTheDocument();
   });
 
   it('入力欄が存在する', () => {
@@ -112,8 +112,7 @@ describe('ReplPage', () => {
     fireEvent.change(input, { target: { value: '(+ 1 "a")' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
-    const errorElements = screen.getAllByText(/⚠/);
-    expect(errorElements.length).toBeGreaterThan(0);
+    expect(screen.getByText(/数値が期待されます/)).toBeInTheDocument();
   });
 
   it('クリアボタンで履歴をリセットする', () => {
@@ -124,7 +123,7 @@ describe('ReplPage', () => {
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(screen.getByText('→ 3')).toBeInTheDocument();
 
-    const clearBtn = screen.getByText('🗑️ クリア');
+    const clearBtn = screen.getByText('クリア');
     fireEvent.click(clearBtn);
 
     expect(screen.queryByText('→ 3')).not.toBeInTheDocument();
@@ -162,7 +161,7 @@ describe('ReplPage', () => {
 
     fireEvent.change(input, { target: { value: '(+ 1 2)' } });
     fireEvent.keyDown(input, { key: 'Enter' });
-    fireEvent.click(screen.getByText('🗑️ クリア'));
+    fireEvent.click(screen.getByText('クリア'));
 
     firstView.unmount();
 

@@ -2,6 +2,7 @@ import { useCallback, useState, useMemo } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { lispLanguage } from '../editor/lisp-language';
+import { Icon } from './Icon';
 
 interface EditorProps {
   code: string;
@@ -28,7 +29,10 @@ export function Editor({ code, onChange, onRun, isRunning }: EditorProps) {
         <div className="editor-actions">
           <span className="shortcut-hint">Ctrl+Enter で実行</span>
           <button className="run-button" onClick={onRun} disabled={isRunning} aria-label="コードを実行">
-            {isRunning ? '⏳ 実行中...' : '▶ 実行'}
+            <span className="ui-label ui-label-compact">
+              {!isRunning && <Icon name="spark" className="ui-icon-small" />}
+              <span>{isRunning ? '実行中...' : '実行'}</span>
+            </span>
           </button>
         </div>
       </div>

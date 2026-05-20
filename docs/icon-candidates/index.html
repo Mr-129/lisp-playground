@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lisp Icon Candidates</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07111d;
+        --panel: rgba(11, 21, 39, 0.82);
+        --border: rgba(126, 170, 241, 0.18);
+        --text: #eef4ff;
+        --muted: #b8c8e3;
+        --accent: #f1b35d;
+        --accent-2: #84b8ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(132, 184, 255, 0.18), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(241, 179, 93, 0.12), transparent 24%),
+          linear-gradient(180deg, #091321, #050b14 60%);
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 48px 0 64px;
+      }
+
+      h1,
+      h2 {
+        font-family: "Yu Mincho", Georgia, serif;
+        letter-spacing: 0.03em;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--accent-2);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .hero {
+        padding: 28px 30px;
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        background: linear-gradient(160deg, rgba(12, 21, 37, 0.88), rgba(7, 14, 25, 0.92));
+        box-shadow: 0 26px 50px rgba(1, 5, 10, 0.35);
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(32px, 4vw, 52px);
+      }
+
+      .hero p {
+        max-width: 760px;
+        margin: 16px 0 0;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .notes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .note {
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(241, 179, 93, 0.16);
+        background: rgba(13, 23, 40, 0.75);
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 14px;
+      }
+
+      .note strong {
+        color: var(--text);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      .card {
+        padding: 22px;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18);
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .slug {
+        margin-top: 8px;
+        color: var(--accent-2);
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .samples {
+        display: flex;
+        align-items: flex-end;
+        gap: 18px;
+        margin: 20px 0 18px;
+      }
+
+      .sample {
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+      }
+
+      .frame {
+        display: grid;
+        place-items: center;
+        border-radius: 20px;
+        background: linear-gradient(180deg, rgba(7, 16, 30, 0.95), rgba(11, 23, 42, 0.95));
+        border: 1px solid rgba(129, 166, 228, 0.18);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      }
+
+      .frame.lg {
+        width: 112px;
+        height: 112px;
+      }
+
+      .frame.md {
+        width: 72px;
+        height: 72px;
+      }
+
+      .frame.sm {
+        width: 44px;
+        height: 44px;
+      }
+
+      .sample img {
+        display: block;
+      }
+
+      .sample .lg img {
+        width: 84px;
+        height: 84px;
+      }
+
+      .sample .md img {
+        width: 52px;
+        height: 52px;
+      }
+
+      .sample .sm img {
+        width: 28px;
+        height: 28px;
+      }
+
+      .sample span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .tag {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(124, 176, 255, 0.12);
+        border: 1px solid rgba(124, 176, 255, 0.16);
+        color: #dbe8ff;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          width: min(100% - 24px, 1180px);
+          padding-top: 28px;
+        }
+
+        .hero,
+        .card {
+          padding: 20px;
+        }
+
+        .samples {
+          gap: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">Lambda Atelier Icon Study</p>
+        <h1>S式をそのままロゴ化する候補</h1>
+        <p>
+          Lisp の「List Processor」由来を前面に出すため、文字ベースではなく S式の骨格そのものをアイコンに寄せた案です。
+          すべて favicon 前提で 16px まで縮めて比較しやすいように、線数と要素数を変えた 40 案を並べています。
+        </p>
+        <div class="notes">
+          <div class="note"><strong>一番素直:</strong> <code>(+)</code> 系。Lisp を知らない人にも「記号の核」として認識されやすいです。</div>
+          <div class="note"><strong>より Lisp らしい:</strong> 入れ子や dotted pair を使うと、言語性は強まりますが 16px では少し玄人向けです。</div>
+          <div class="note"><strong>本命派生:</strong> Tree Form と List Spine を起点に、それぞれ 10 案ずつ派生を追加して比較できるようにしました。</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Core S-Expr</h2>
+          <div class="slug">(+) / 最小構成</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-plus.svg" alt="Core S-Expr 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-plus.svg" alt="Core S-Expr 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-plus.svg" alt="Core S-Expr 28px" /></div><span>28px</span></div>
+          </div>
+          <p>いちばん favicon 向きです。括弧と演算子だけで「Lisp は前置記法」という説明まで含められます。</p>
+          <div class="tags"><span class="tag">視認性最優先</span><span class="tag">初見に強い</span><span class="tag">置き換えやすい</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Call Form</h2>
+          <div class="slug">(+ a b) を抽象化</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-call.svg" alt="Call Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-call.svg" alt="Call Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-call.svg" alt="Call Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>「関数が先頭、引数が後ろ」という S式の形をそのまま見せる案です。サイトの学習用途とも相性が良いです。</p>
+          <div class="tags"><span class="tag">学習サービス向き</span><span class="tag">意味が伝わる</span><span class="tag">やや情報量多め</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Nested Form</h2>
+          <div class="slug">((+)) / 入れ子を強調</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-nested.svg" alt="Nested Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-nested.svg" alt="Nested Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-nested.svg" alt="Nested Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>「Lisp はネストしてなんぼ」を感じさせる案です。ヘッダーや SNS アイコンでは映えますが、favicon だと少し攻めています。</p>
+          <div class="tags"><span class="tag">Lisp感が強い</span><span class="tag">玄人寄り</span><span class="tag">大きめ表示向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>List Atoms</h2>
+          <div class="slug">(a b c) を点で表現</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-list.svg" alt="List Atoms 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-list.svg" alt="List Atoms 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-list.svg" alt="List Atoms 28px" /></div><span>28px</span></div>
+          </div>
+          <p>List Processor 由来をいちばんまっすぐ言える案です。式の意味より「リストを扱う言語」という出自を押し出せます。</p>
+          <div class="tags"><span class="tag">List Processor感</span><span class="tag">抽象寄り</span><span class="tag">favicon安定</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Dotted Pair</h2>
+          <div class="slug">(a . b) / cons の象徴</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-cons.svg" alt="Dotted Pair 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-cons.svg" alt="Dotted Pair 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-cons.svg" alt="Dotted Pair 28px" /></div><span>28px</span></div>
+          </div>
+          <p>もっとも Lisp 内部っぽい案です。通好みですが、S式より cons cell のニュアンスが前に出るので学習サイトの個性は強くなります。</p>
+          <div class="tags"><span class="tag">通好み</span><span class="tag">実装寄り</span><span class="tag">差別化が強い</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Progn Stack</h2>
+          <div class="slug">(progn ...) / 複数式の流れ</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-progn.svg" alt="Progn Stack 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-progn.svg" alt="Progn Stack 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-progn.svg" alt="Progn Stack 28px" /></div><span>28px</span></div>
+          </div>
+          <p>ひとつの式だけでなく、Lisp コードが縦に積み上がる感覚を出した案です。学習サイトの「コードを書く場所」らしさが少し出ます。</p>
+          <div class="tags"><span class="tag">複数式</span><span class="tag">エディタ寄り</span><span class="tag">細身で上品</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Quoted Form</h2>
+          <div class="slug">'(+ ) / quote の気配</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-quote.svg" alt="Quoted Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-quote.svg" alt="Quoted Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-quote.svg" alt="Quoted Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>quote は Lisp らしさが急に強く出ます。小サイズでは少し繊細ですが、分かる人にはかなり刺さる方向です。</p>
+          <div class="tags"><span class="tag">Lisp度高い</span><span class="tag">記法寄り</span><span class="tag">やや繊細</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Form</h2>
+          <div class="slug">list as tree</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree.svg" alt="Tree Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree.svg" alt="Tree Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree.svg" alt="Tree Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>S式を tree として読む方向の案です。List Processor というより「code is data」の哲学に近い雰囲気が出ます。</p>
+          <div class="tags"><span class="tag">構造が見える</span><span class="tag">概念寄り</span><span class="tag">ブランド感あり</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Head Tail</h2>
+          <div class="slug">(+ ..) / 先頭と残り</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-head-tail.svg" alt="Head Tail 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-head-tail.svg" alt="Head Tail 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-head-tail.svg" alt="Head Tail 28px" /></div><span>28px</span></div>
+          </div>
+          <p>先頭の演算子と、それに続く atom 群をコンパクトにまとめた案です。call form より抽象的で、favicon にはなじみやすいです。</p>
+          <div class="tags"><span class="tag">S式の順序感</span><span class="tag">中間案</span><span class="tag">運用しやすい</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Cell Form</h2>
+          <div class="slug">cons cell を抽象化</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-cell.svg" alt="Cell Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-cell.svg" alt="Cell Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-cell.svg" alt="Cell Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>List Processor の出自を一段深く取りにいった案です。S式の表面より、内部の組み立て感を押し出せます。</p>
+          <div class="tags"><span class="tag">由来に近い</span><span class="tag">内部表現寄り</span><span class="tag">個性が強い</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Unary Form</h2>
+          <div class="slug">(f x) / 単引数の最小形</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-unary.svg" alt="Unary Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-unary.svg" alt="Unary Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-unary.svg" alt="Unary Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>いちばん基本的な関数適用の形です。演算子と atom の関係が明快で、やさしい印象になります。</p>
+          <div class="tags"><span class="tag">最小 call</span><span class="tag">やさしい</span><span class="tag">視認性高い</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Variadic Form</h2>
+          <div class="slug">(+ a b c) / 可変長の感じ</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-variadic.svg" alt="Variadic Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-variadic.svg" alt="Variadic Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-variadic.svg" alt="Variadic Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>Lisp の「引数をいくつでも並べられる」感じを押し出した案です。S式の伸びやかさがあります。</p>
+          <div class="tags"><span class="tag">可変長</span><span class="tag">S式らしい</span><span class="tag">少し賑やか</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Empty List</h2>
+          <div class="slug">() / nil の静けさ</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-empty.svg" alt="Empty List 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-empty.svg" alt="Empty List 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-empty.svg" alt="Empty List 28px" /></div><span>28px</span></div>
+          </div>
+          <p>空リストそのものを主役にした案です。かなりミニマルで、静かな知性のある雰囲気になります。</p>
+          <div class="tags"><span class="tag">nil</span><span class="tag">静的</span><span class="tag">ミニマル</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Quoted List</h2>
+          <div class="slug">'(a b) / データとしての式</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-quoted-list.svg" alt="Quoted List 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-quoted-list.svg" alt="Quoted List 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-quoted-list.svg" alt="Quoted List 28px" /></div><span>28px</span></div>
+          </div>
+          <p>評価される式ではなく、データとして扱う S式を感じさせる案です。Lisp の哲学寄りです。</p>
+          <div class="tags"><span class="tag">quote</span><span class="tag">哲学寄り</span><span class="tag">玄人向け</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Double Form</h2>
+          <div class="slug">((x) (y)) / 小式が並ぶ</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-double.svg" alt="Double Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-double.svg" alt="Double Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-double.svg" alt="Double Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>小さな式が二つ並ぶ構成です。学習項目がいくつも並ぶ感じがあり、サービスロゴ向きでもあります。</p>
+          <div class="tags"><span class="tag">複数式</span><span class="tag">整然</span><span class="tag">カード向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Linked List</h2>
+          <div class="slug">node chain / 連結リスト</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-linked.svg" alt="Linked List 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-linked.svg" alt="Linked List 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-linked.svg" alt="Linked List 28px" /></div><span>28px</span></div>
+          </div>
+          <p>list processor の出自をそのまま node の連結として見せる案です。意味がまっすぐ伝わります。</p>
+          <div class="tags"><span class="tag">連結リスト</span><span class="tag">由来に近い</span><span class="tag">説明力が高い</span></div>
+        </article>
+
+        <article class="card">
+          <h2>List Spine</h2>
+          <div class="slug">spine / 連なる骨格</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine.svg" alt="List Spine 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine.svg" alt="List Spine 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine.svg" alt="List Spine 28px" /></div><span>28px</span></div>
+          </div>
+          <p>リストが連なって伸びる感じを、少し動きのあるラインで見せた案です。ブランドマーク向きです。</p>
+          <div class="tags"><span class="tag">動きがある</span><span class="tag">ブランド向き</span><span class="tag">個性あり</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Assoc List</h2>
+          <div class="slug">alist / ペアの並び</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-alist.svg" alt="Assoc List 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-alist.svg" alt="Assoc List 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-alist.svg" alt="Assoc List 28px" /></div><span>28px</span></div>
+          </div>
+          <p>pair が二段並ぶ構成で、alist の読みやすさを持ち込んだ案です。情報構造感が出ます。</p>
+          <div class="tags"><span class="tag">alist</span><span class="tag">整理感</span><span class="tag">知的</span></div>
+        </article>
+
+        <article class="card">
+          <h2>List Grid</h2>
+          <div class="slug">list of lists / 2x2 配置</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-grid.svg" alt="List Grid 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-grid.svg" alt="List Grid 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-grid.svg" alt="List Grid 28px" /></div><span>28px</span></div>
+          </div>
+          <p>list の中に list がある感触を、単純な 2x2 配置で表した案です。かなり安定して見えます。</p>
+          <div class="tags"><span class="tag">入れ子リスト</span><span class="tag">安定感</span><span class="tag">小サイズ向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Map Form</h2>
+          <div class="slug">map / 先頭の関数と並ぶ要素</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-map.svg" alt="Map Form 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-map.svg" alt="Map Form 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-map.svg" alt="Map Form 28px" /></div><span>28px</span></div>
+          </div>
+          <p>先頭に関数、その下に要素が並ぶ構図で、list processing をやや抽象的に見せる案です。</p>
+          <div class="tags"><span class="tag">処理感</span><span class="tag">学習サイト向き</span><span class="tag">中庸</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Sprout</h2>
+          <div class="slug">tree family / 最小の芽</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-sprout.svg" alt="Tree Sprout 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-sprout.svg" alt="Tree Sprout 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-sprout.svg" alt="Tree Sprout 28px" /></div><span>28px</span></div>
+          </div>
+          <p>元の Tree Form をもっと素直にした芽のような案です。favicon に落としても形が崩れにくいです。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">最小構成</span><span class="tag">小サイズ向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Rooted</h2>
+          <div class="slug">tree family / 根付きの骨格</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-rooted.svg" alt="Tree Rooted 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-rooted.svg" alt="Tree Rooted 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-rooted.svg" alt="Tree Rooted 28px" /></div><span>28px</span></div>
+          </div>
+          <p>下辺に root を入れて、list structure の安定感を足した案です。学習サイトのロゴとして扱いやすいです。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">安定感</span><span class="tag">土台あり</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Tiered</h2>
+          <div class="slug">tree family / 二段枝</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-tiered.svg" alt="Tree Tiered 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-tiered.svg" alt="Tree Tiered 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-tiered.svg" alt="Tree Tiered 28px" /></div><span>28px</span></div>
+          </div>
+          <p>branch を 2 層に増やして、入れ子の気配を少し強めた案です。Tree の文脈を保ったまま Lisp 感が増します。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">入れ子感</span><span class="tag">情報量中</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Canopy</h2>
+          <div class="slug">tree family / 天蓋型</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-canopy.svg" alt="Tree Canopy 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-canopy.svg" alt="Tree Canopy 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-canopy.svg" alt="Tree Canopy 28px" /></div><span>28px</span></div>
+          </div>
+          <p>上部を横に広げた canopy 型です。ヘッダーの大きめ表示でかなりブランドマークらしく見えます。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">横広がり</span><span class="tag">ブランド向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Fork</h2>
+          <div class="slug">tree family / 四方へ分岐</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-fork.svg" alt="Tree Fork 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-fork.svg" alt="Tree Fork 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-fork.svg" alt="Tree Fork 28px" /></div><span>28px</span></div>
+          </div>
+          <p>Y 字の分岐を上下に広げた案です。Tree の中ではいちばん動きがあり、少し攻めた印象になります。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">動きあり</span><span class="tag">印象強め</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Triad</h2>
+          <div class="slug">tree family / 三葉の終端</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-triad.svg" alt="Tree Triad 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-triad.svg" alt="Tree Triad 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-triad.svg" alt="Tree Triad 28px" /></div><span>28px</span></div>
+          </div>
+          <p>末端を 3 つにした triad 構成です。S式の枝分かれを少し図式化したいときにちょうど良いです。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">三分岐</span><span class="tag">図式的</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Grove</h2>
+          <div class="slug">tree family / 小木が並ぶ</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-grove.svg" alt="Tree Grove 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-grove.svg" alt="Tree Grove 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-grove.svg" alt="Tree Grove 28px" /></div><span>28px</span></div>
+          </div>
+          <p>一本の tree ではなく、小さな tree が並ぶ grove 寄りの案です。教材が連なる感じを出せます。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">複数構造</span><span class="tag">サービス向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Orbit</h2>
+          <div class="slug">tree family / 外周へ開く枝</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-orbit.svg" alt="Tree Orbit 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-orbit.svg" alt="Tree Orbit 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-orbit.svg" alt="Tree Orbit 28px" /></div><span>28px</span></div>
+          </div>
+          <p>枝先をさらに外へ広げて、tree の広がりを強めた案です。少しエンブレムらしい空気が出ます。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">広がり</span><span class="tag">象徴性あり</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Balanced</h2>
+          <div class="slug">tree family / 均衡した二段構成</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-balanced.svg" alt="Tree Balanced 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-balanced.svg" alt="Tree Balanced 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-balanced.svg" alt="Tree Balanced 28px" /></div><span>28px</span></div>
+          </div>
+          <p>左右のバランスをかなり揃えた案です。favicon と header mark のどちらにも持っていきやすい中庸型です。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">バランス型</span><span class="tag">本命候補</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Ladder</h2>
+          <div class="slug">tree family / 縦軸を強調</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-ladder.svg" alt="Tree Ladder 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-ladder.svg" alt="Tree Ladder 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-ladder.svg" alt="Tree Ladder 28px" /></div><span>28px</span></div>
+          </div>
+          <p>tree の trunk を axis として見せる案です。学習サービスのロゴとして少し理知的に見えます。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">軸が強い</span><span class="tag">理知的</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Tree Archive</h2>
+          <div class="slug">tree family / 格納された枝</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-tree-archive.svg" alt="Tree Archive 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-tree-archive.svg" alt="Tree Archive 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-tree-archive.svg" alt="Tree Archive 28px" /></div><span>28px</span></div>
+          </div>
+          <p>tree の末端を再び中央に寄せて、data structure 的なまとまりを強めた案です。</p>
+          <div class="tags"><span class="tag">Tree派生</span><span class="tag">収束型</span><span class="tag">構造的</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Arc</h2>
+          <div class="slug">spine family / 弧を描く連なり</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-arc.svg" alt="Spine Arc 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-arc.svg" alt="Spine Arc 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-arc.svg" alt="Spine Arc 28px" /></div><span>28px</span></div>
+          </div>
+          <p>List Spine を弧線寄りに寄せた案です。動きは残しつつ、やわらかい印象になります。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">曲線寄り</span><span class="tag">やわらかい</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Step</h2>
+          <div class="slug">spine family / 階段状の伸び</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-step.svg" alt="Spine Step 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-step.svg" alt="Spine Step 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-step.svg" alt="Spine Step 28px" /></div><span>28px</span></div>
+          </div>
+          <p>処理が一段ずつ進むように見える step 型です。学習段階や problem progression との相性も良いです。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">階段型</span><span class="tag">進行感</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Ladder</h2>
+          <div class="slug">spine family / 平行な軸</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-ladder.svg" alt="Spine Ladder 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-ladder.svg" alt="Spine Ladder 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-ladder.svg" alt="Spine Ladder 28px" /></div><span>28px</span></div>
+          </div>
+          <p>spine を ladder に読み替えた案です。矩形の秩序感が強く、顔っぽさもほぼ出ません。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">秩序感</span><span class="tag">顔文字感が薄い</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Ribbon</h2>
+          <div class="slug">spine family / 二重の流線</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-ribbon.svg" alt="Spine Ribbon 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-ribbon.svg" alt="Spine Ribbon 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-ribbon.svg" alt="Spine Ribbon 28px" /></div><span>28px</span></div>
+          </div>
+          <p>流線を二本にして、spine の連続性をもう少しエレガントにした案です。ブランドマーク寄りです。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">流線型</span><span class="tag">大きめ表示向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Chain</h2>
+          <div class="slug">spine family / 直列チェーン</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-chain.svg" alt="Spine Chain 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-chain.svg" alt="Spine Chain 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-chain.svg" alt="Spine Chain 28px" /></div><span>28px</span></div>
+          </div>
+          <p>もっとも素直な chain 化です。List Processor の出自をそのまま見せるならかなり強い候補です。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">連結強め</span><span class="tag">本命候補</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Zigzag</h2>
+          <div class="slug">spine family / 折れ線の流れ</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-zigzag.svg" alt="Spine Zigzag 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-zigzag.svg" alt="Spine Zigzag 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-zigzag.svg" alt="Spine Zigzag 28px" /></div><span>28px</span></div>
+          </div>
+          <p>spine の移動量を増やして、処理が跳ねる感じを出した案です。少しアクティブで印象に残ります。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">動的</span><span class="tag">印象強め</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Stack</h2>
+          <div class="slug">spine family / 縦積みの骨格</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-stack.svg" alt="Spine Stack 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-stack.svg" alt="Spine Stack 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-stack.svg" alt="Spine Stack 28px" /></div><span>28px</span></div>
+          </div>
+          <p>spine を縦方向だけで見せた、いちばん静かな案です。favicon としてかなり安定します。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">静的</span><span class="tag">小サイズ向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Rail</h2>
+          <div class="slug">spine family / 軌道上の節</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-rail.svg" alt="Spine Rail 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-rail.svg" alt="Spine Rail 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-rail.svg" alt="Spine Rail 28px" /></div><span>28px</span></div>
+          </div>
+          <p>上下の rail に沿って節が進む構図です。整然としていて UI アイコンにも寄せやすいです。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">整列感</span><span class="tag">UI向き</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Drift</h2>
+          <div class="slug">spine family / 斜めの移動</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-drift.svg" alt="Spine Drift 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-drift.svg" alt="Spine Drift 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-drift.svg" alt="Spine Drift 28px" /></div><span>28px</span></div>
+          </div>
+          <p>diagonal に流れる spine で、少し軽やかな印象にした案です。静的すぎないのが利点です。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">軽快</span><span class="tag">中庸</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Branch</h2>
+          <div class="slug">spine family / 枝を持つ骨格</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-branch.svg" alt="Spine Branch 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-branch.svg" alt="Spine Branch 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-branch.svg" alt="Spine Branch 28px" /></div><span>28px</span></div>
+          </div>
+          <p>spine に一本 side branch を足した案です。Tree と Spine の中間のような顔つきになります。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">ハイブリッド</span><span class="tag">個性あり</span></div>
+        </article>
+
+        <article class="card">
+          <h2>Spine Axis</h2>
+          <div class="slug">spine family / 軸線と横桟</div>
+          <div class="samples">
+            <div class="sample"><div class="frame lg"><img src="./sexpr-spine-axis.svg" alt="Spine Axis 84px" /></div><span>84px</span></div>
+            <div class="sample"><div class="frame md"><img src="./sexpr-spine-axis.svg" alt="Spine Axis 52px" /></div><span>52px</span></div>
+            <div class="sample"><div class="frame sm"><img src="./sexpr-spine-axis.svg" alt="Spine Axis 28px" /></div><span>28px</span></div>
+          </div>
+          <p>中心軸に短い横桟を通した案です。構造の読みやすさと抽象度のバランスが良いです。</p>
+          <div class="tags"><span class="tag">Spine派生</span><span class="tag">構造が明快</span><span class="tag">本命候補</span></div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

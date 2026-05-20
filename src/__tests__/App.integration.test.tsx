@@ -67,7 +67,7 @@ describe('App integration', () => {
       expect(window.location.hash).toBe(`#/learn/${BASIC_PROBLEM?.slug}`);
     });
 
-    expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
+    expect(screen.getByText('エディタで解く')).toBeInTheDocument();
     expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
   });
 
@@ -78,8 +78,8 @@ describe('App integration', () => {
     render(<App />);
 
     expect(await screen.findByText('問題を選択して練習を始める')).toBeInTheDocument();
-    expect(screen.getByText('📖 この問題の問題文へ')).toBeInTheDocument();
-    expect(screen.queryByText('💡 ヒントを表示')).not.toBeInTheDocument();
+    expect(screen.getByText('この問題の問題文へ')).toBeInTheDocument();
+    expect(screen.queryByText('ヒントを表示')).not.toBeInTheDocument();
   });
 
   it('問題ごとの Learn URL を直接開くと問題詳細を表示する', async () => {
@@ -91,9 +91,9 @@ describe('App integration', () => {
       expect(window.location.hash).toBe(`#/learn/${BASIC_PROBLEM?.slug}`);
     });
 
-    expect(await screen.findByText('💡 ヒントを表示')).toBeInTheDocument();
+    expect(await screen.findByText('ヒントを表示')).toBeInTheDocument();
     expect(screen.getAllByText(/初めてのS式/).length).toBeGreaterThan(0);
-    expect(screen.getByText('🖊️ エディタで解く →')).toBeInTheDocument();
+    expect(screen.getByText('エディタで解く')).toBeInTheDocument();
   });
 
   it('LearnPage で解答表示後にエディタへ進むと解答コードを引き継ぎ実行結果をリセットする', async () => {
@@ -101,8 +101,8 @@ describe('App integration', () => {
 
     render(<App />);
 
-    fireEvent.click(await screen.findByText('📖 解答を表示'));
-    fireEvent.click(screen.getByText('🖊️ エディタで解く →'));
+    fireEvent.click(await screen.findByText('解答を表示'));
+    fireEvent.click(screen.getByText('エディタで解く'));
 
     await waitFor(() => {
       expect(window.location.hash).toBe('#/editor');

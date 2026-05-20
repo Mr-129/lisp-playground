@@ -42,6 +42,33 @@
   transform: translateY(0);
 }
 
+.ui-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+}
+
+.ui-label-compact {
+  gap: 0.48rem;
+}
+
+.ui-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.ui-icon-small {
+  width: 0.92rem;
+  height: 0.92rem;
+}
+
+.brand-mark {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* Header */
 .app-header {
   display: flex;
@@ -61,18 +88,32 @@
 }
 
 .header-logo {
-  font-size: 28px;
-  font-weight: bold;
-  color: #e94560;
-  background: none;
-  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(180deg, rgba(20, 35, 63, 0.95), rgba(8, 17, 32, 0.95));
+  border: 1px solid rgba(122, 160, 222, 0.26);
+  border-radius: 12px;
   padding: 0;
   cursor: pointer;
-  line-height: 1;
+  box-shadow: 0 10px 18px rgba(2, 8, 18, 0.22);
 }
 
 .header-logo:hover {
-  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.header-logo-mark {
+  width: 28px;
+  height: 28px;
+}
+
+.header-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .header-title {
@@ -97,7 +138,7 @@
 .header-subtitle {
   font-size: 12px;
   color: #8892b0;
-  margin-left: 4px;
+  margin-left: 0;
 }
 
 .header-right {
@@ -1129,6 +1170,10 @@
     padding-bottom: 32px;
   }
 
+  .welcome-brand {
+    align-items: flex-start;
+  }
+
   .welcome-content h2 {
     font-size: 24px;
   }
@@ -1193,6 +1238,10 @@
   .current-problem-label {
     width: 100%;
     font-size: 13px;
+  }
+
+  .header-brand-copy {
+    min-width: 0;
   }
 
   .repl-header {
@@ -1826,6 +1875,33 @@
   text-align: center;
 }
 
+.welcome-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.welcome-brand-shell {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  border-radius: 18px;
+  padding: 8px;
+  background: linear-gradient(180deg, rgba(12, 23, 44, 0.95), rgba(7, 16, 31, 0.98));
+  border: 1px solid rgba(123, 161, 222, 0.22);
+  box-shadow: 0 18px 32px rgba(3, 9, 20, 0.26);
+}
+
+.welcome-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #92b4ff;
+}
+
 .welcome-content h2 {
   font-size: 28px;
   color: #fff;
@@ -2200,6 +2276,10 @@
   line-height: 1.6;
 }
 
+.guide-note-label {
+  color: #9dc1ff;
+}
+
 .guide-note code {
   background: #0a0f1e;
   color: #e06c75;
@@ -2497,6 +2577,11 @@
   color: #4caf50;
   font-size: 12px;
   font-weight: 700;
+}
+
+.problem-status-icon .ui-icon {
+  width: 0.92rem;
+  height: 0.92rem;
 }
 
 .problem-status-icon.bookmarked {

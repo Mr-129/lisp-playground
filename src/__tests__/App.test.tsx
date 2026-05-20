@@ -342,7 +342,7 @@ describe('App', () => {
       expect(window.location.hash).toBe('#/learn');
     });
 
-    expect(localStorage.getItem('lisp-playground-code')).toContain('; Lisp Playground へようこそ！');
+    expect(localStorage.getItem('lisp-playground-code')).toContain('; Lambda Atelier へようこそ！');
   });
 
   it('スキップリンクで現在のルートを維持したままメインコンテンツへ移動できる', () => {

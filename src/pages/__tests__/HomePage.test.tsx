@@ -21,24 +21,24 @@ function renderHomePage() {
 describe('HomePage', () => {
   it('ウェルカムメッセージを表示する', () => {
     renderHomePage();
-    expect(screen.getByText(/Lisp Playground へようこそ/)).toBeInTheDocument();
+    expect(screen.getByText(/Lambda Atelier へようこそ/)).toBeInTheDocument();
   });
 
   it('問題一覧ボタンから問題一覧ページへ移動できる', () => {
     renderHomePage();
-    fireEvent.click(screen.getByText('📚 問題から始める'));
+    fireEvent.click(screen.getByText('問題から始める'));
     expect(screen.getByText('problems-page')).toBeInTheDocument();
   });
 
   it('構文ガイドボタンから構文ガイドへ移動できる', () => {
     renderHomePage();
-    fireEvent.click(screen.getByText('📘 はじめに構文ガイド'));
+    fireEvent.click(screen.getByText('はじめに構文ガイド'));
     expect(screen.getByText('guide-page')).toBeInTheDocument();
   });
 
   it('用語集ボタンから用語集ページへ移動できる', () => {
     renderHomePage();
-    fireEvent.click(screen.getByText('📖 用語集を開く'));
+    fireEvent.click(screen.getByText('用語集を開く'));
     expect(screen.getByText('glossary-page')).toBeInTheDocument();
   });
 });

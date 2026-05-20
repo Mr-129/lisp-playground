@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, type ChangeEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Icon } from '../components/Icon';
 import { ProblemList } from '../components/ProblemList';
 import { ProblemView } from '../components/ProblemView';
 import { LispGuide, filterGuideSections } from '../components/LispGuide';
@@ -200,7 +201,7 @@ export function LearnPage({
     <div className="learn-page">
       <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
         <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="サイドバーを切り替え">
-          {sidebarOpen ? '◀' : '▶'}
+          <Icon name={sidebarOpen ? 'chevron-left' : 'chevron-right'} />
         </button>
         {sidebarOpen && (
           <>
@@ -262,7 +263,7 @@ export function LearnPage({
           <div className="learn-problem-area">
             <div className="learn-actions">
               <button className="guide-start-button" type="button" onClick={() => navigate('/learn')}>
-                ← Learn に戻る
+                <span className="ui-label"><Icon name="back" /><span>Learn に戻る</span></span>
               </button>
             </div>
             {activeProblem.catalog && selectedCourse && (
@@ -315,7 +316,7 @@ export function LearnPage({
                     className="pricing-cta-button"
                     onClick={() => onOpenPricingGuide('learn_problem')}
                   >
-                    ✨ Standard の案内を見る
+                    <span className="ui-label"><Icon name="spark" /><span>Standard の案内を見る</span></span>
                   </button>
                   {waitlistConfig.url && (
                     <button
@@ -323,7 +324,7 @@ export function LearnPage({
                       className="pricing-inline-link waitlist-cta-button"
                       onClick={() => handleOpenWaitlist('learn_problem')}
                     >
-                      📮 更新通知を受け取る
+                      <span className="ui-label"><Icon name="updates" /><span>更新通知を受け取る</span></span>
                     </button>
                   )}
                 </div>
@@ -347,7 +348,7 @@ export function LearnPage({
             />
             <div className="learn-actions">
               <button className="start-coding-button" onClick={handleStartCoding}>
-                🖊️ エディタで解く →
+                <span className="ui-label"><Icon name="editor" /><span>エディタで解く</span></span>
               </button>
             </div>
           </div>
@@ -382,10 +383,10 @@ export function LearnPage({
                       type="button"
                       onClick={() => handleSelectProblem(nextRecommendedProblem)}
                     >
-                      📖 この問題の問題文へ
+                      <span className="ui-label"><Icon name="solution" /><span>この問題の問題文へ</span></span>
                     </button>
                     <button className="start-coding-button" type="button" onClick={handleStartCoding}>
-                      🖊️ フリーモードで始める
+                      <span className="ui-label"><Icon name="editor" /><span>フリーモードで始める</span></span>
                     </button>
                   </div>
                 </section>
@@ -417,7 +418,7 @@ export function LearnPage({
                       type="button"
                       onClick={() => onOpenPricingGuide('learn_empty')}
                     >
-                      ✨ Standard の案内を見る
+                      <span className="ui-label"><Icon name="spark" /><span>Standard の案内を見る</span></span>
                     </button>
                     {waitlistConfig.url && (
                       <button
@@ -425,7 +426,7 @@ export function LearnPage({
                         type="button"
                         onClick={() => handleOpenWaitlist('learn_empty')}
                       >
-                        📮 更新通知を受け取る
+                        <span className="ui-label"><Icon name="updates" /><span>更新通知を受け取る</span></span>
                       </button>
                     )}
                   </div>
@@ -441,10 +442,10 @@ export function LearnPage({
               )}
               <div className="welcome-actions">
                 <button className="guide-start-button" type="button" onClick={() => navigate('/problems')}>
-                  📚 問題一覧ページへ
+                  <span className="ui-label"><Icon name="problem" /><span>問題一覧ページへ</span></span>
                 </button>
                 <button className="start-coding-button" type="button" onClick={handleOpenGuide}>
-                  📘 構文ガイドを開く
+                  <span className="ui-label"><Icon name="guide" /><span>構文ガイドを開く</span></span>
                 </button>
               </div>
             </div>

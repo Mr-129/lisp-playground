@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { BrandMark, Icon } from '../components/Icon';
+import { BRAND } from '../config/brand';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -7,8 +9,16 @@ export function HomePage() {
     <div className="home-page">
       <div className="learn-welcome">
         <div className="welcome-content">
-          <h2>λ Lisp Playground へようこそ</h2>
-          <p>Common Lisp を、日本語で学び、すぐ試し、問題で定着できる学習サイトです。</p>
+          <div className="welcome-brand">
+            <div className="welcome-brand-shell">
+              <BrandMark className="welcome-brand-mark" />
+            </div>
+            <div>
+              <p className="welcome-eyebrow">{BRAND.eyebrow}</p>
+              <h2>{BRAND.homeTitle}</h2>
+            </div>
+          </div>
+          <p>{BRAND.description}</p>
           <p className="welcome-subcopy">構文ガイドで理解し、問題で確かめ、エディタと REPL で手を動かしながら学べます。</p>
           <div className="welcome-steps">
             <div className="welcome-step">
@@ -35,16 +45,16 @@ export function HomePage() {
           </div>
           <div className="welcome-actions">
             <button className="guide-start-button" type="button" onClick={() => navigate('/guide')}>
-              📘 はじめに構文ガイド
+              <span className="ui-label"><Icon name="guide" /><span>はじめに構文ガイド</span></span>
             </button>
             <button className="guide-start-button" type="button" onClick={() => navigate('/glossary')}>
-              📖 用語集を開く
+              <span className="ui-label"><Icon name="glossary" /><span>用語集を開く</span></span>
             </button>
             <button className="guide-start-button" type="button" onClick={() => navigate('/problems')}>
-              📚 問題から始める
+              <span className="ui-label"><Icon name="problem" /><span>問題から始める</span></span>
             </button>
             <button className="start-coding-button" type="button" onClick={() => navigate('/editor')}>
-              🖊️ まずは試してみる
+              <span className="ui-label"><Icon name="editor" /><span>まずは試してみる</span></span>
             </button>
           </div>
         </div>
