@@ -1,8 +1,8 @@
-# Lisp Playground — コードレビュー・課題管理ドキュメント
+# Lambda Lab — コードレビュー・課題管理ドキュメント
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年5月16日 — T-601〜T-605（問題コンテンツ外部化、slug canonical URL、authoring 導線整備）を反映し、route key 衝突防止の loader validation と focused Vitest 5 件の再確認を追記
+**最終更新**: 2026年5月20日 — ブランド刷新のレビュー、Tree Tiered アイコン採用、Lambda Lab への名称変更、ドキュメント同期、最新テスト / build 検証を反映
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開前チェック**: [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) — 価格や金銭関連を `deploy` へ反映してよい条件  
@@ -32,8 +32,8 @@
 
 | 観点 | 評価 | 備考 |
 |------|------|------|
-| 機能完成度 | ⭐⭐⭐⭐☆ | 基本機能は揃っている。学習パス・コース別ナビゲーション・ロック済みコンテンツ UI・商品属性データ基盤・イベント計測抽象化・GA4 対応 CTA・価格ページ・問い合わせ導線・waitlist 仮登録・REPL・REPL 履歴永続化・進捗 UI・最近見た問題・ブックマーク・問題/ガイド検索・T-501 quote / function object 補強・T-502 tree / assoc / plist 問題群・T-601〜T-605 問題コンテンツ外部化 / slug ルーティング整備まで実装済、問題 66 問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、Vitest 604 件 + Playwright 3 件の回帰確認に加え、problem content loader の schema validation と route key 衝突防止テストを追加 |
+| 機能完成度 | ⭐⭐⭐⭐⭐ | 学習導線、外部 problem content、REPL/Editor、検索、進捗 UI に加え、Tree Tiered ベースのブランドアイコンと SVG icon system、Lambda Lab ブランド名への集約まで反映済み。問題 66 問 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、problem content loader の validation、ブランド設定の集約に加え、2026-05-20 時点で Vitest 32 files / 611 tests と clean build の通過を確認 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -55,6 +55,14 @@
 - 追加レビューで、別問題の `id` と `slug` が衝突すると route key が曖昧化することを確認し、loader 側で禁止する validation を追加した。focused 回帰として [src/data/__tests__/problemContentLoader.test.ts](../src/data/__tests__/problemContentLoader.test.ts) 5 件を再実行して通過を確認済み。
 - `npm test` を再実行し、Vitest 31 files / 604 tests passed を確認済み。
 - [scripts/archive/migrate-legacy-problems-to-content.mjs](../scripts/archive/migrate-legacy-problems-to-content.mjs) は pre-T604 状態からの一時移行補助として archive 済み。現在の通常 authoring フローには含めない。新規問題の追加・修正は [docs/PROBLEM_AUTHORING_GUIDE.md](./PROBLEM_AUTHORING_GUIDE.md) を参照する。
+
+### 2026年5月20日 追記
+
+- 直近のブランド刷新差分をレビューし、実装面の blocking な不具合は確認されなかった。今回の主な修正対象はブランド名と運用ドキュメントのドリフトで、合わせて Playwright smoke test に残っていた旧ブランド名依存の期待値 1 件を修正した。
+- ブランドアイコン本命は Tree Tiered で、[public/favicon.svg](../public/favicon.svg) と [src/components/Icon.tsx](../src/components/Icon.tsx) の `BrandMark` に反映済み。
+- ブランド名は [src/config/brand.ts](../src/config/brand.ts) を起点に Lambda Lab へ集約し、[index.html](../index.html) の title / description、関連テストも同期済み。
+- ローカル検証として `npm test` の直近フル実行 32 files / 611 tests passed、ブランド変更に関する focused Vitest 42 tests passed、`Remove-Item dist -Recurse -Force; npm run build` による clean build success を確認済み。
+- 残課題としてはコード品質よりもドキュメントの保守負荷が支配的で、README の詳細テスト件数表のようなドリフトしやすい記述は簡略化して維持する方針が妥当。
 
 ---
 

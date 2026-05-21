@@ -1,15 +1,15 @@
-# Lisp Playground - Common Lisp 学習環境
+# Lambda Lab - Common Lisp 学習スタジオ
 
 <p align="center">
-  <strong>λ Lisp Playground</strong><br>
-  日本語で Common Lisp を学び、すぐ試し、問題で定着できる学習サイト
+  <strong>Lambda Lab</strong><br>
+  日本語で Common Lisp を学び、すぐ試し、問題で定着できる学習スタジオ
 </p>
 
 ---
 
 ## 概要
 
-**Lisp Playground** は、日本語で Common Lisp を学ぶための、ガイド、実行環境、演習を一体化した学習プラットフォームです。  
+**Lambda Lab** は、日本語で Common Lisp を学ぶための、ガイド、実行環境、演習を一体化した学習プラットフォームです。  
 構文ガイドで理解し、ブラウザ上ですぐ試し、問題演習で定着できます。  
 初学者が迷わず始められ、中級入口まで継続して学べる導線を目指しています。  
 サーバーサイドの処理は不要で、すべてフロントエンドのみで動作するため、無料のホスティングサービスに静的サイトとしてデプロイできます。
@@ -19,6 +19,7 @@
 - **学ぶ・試す・解くの一体化** — ガイド、エディタ、REPL、問題演習を一つのサイトで往復できる
 - **日本語初学者向け導線** — 日本語 UI と説明で、最初の一歩から迷いにくい構成
 - **ブラウザ内 Lisp インタプリタ** — サーバー不要、完全クライアントサイド実行
+- **ブランドアイコンと独自UI** — Tree Tiered ベースのブランドマークと SVG icon system を採用
 - **クロージャ対応** — レキシカルスコープ、高階関数、状態を持つクロージャ
 - **主要ルート分離** — Home、問題一覧、学習詳細、エディタ、REPL を分けた導線設計
 - **Lisp 構文ガイド** — 16セクションの包括的な Common Lisp リファレンス
@@ -53,9 +54,9 @@
 ### Home 画面 (`/`)
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  λ Lisp Playground    [学習]  [エディタ]  [REPL]       │
+│  Lambda Lab          [学習]  [エディタ]  [REPL]       │
 ├─────────────────────────────────────────────────────────┤
-│  λ Lisp Playground へようこそ                           │
+│  Lambda Lab へようこそ                                  │
 │                                                         │
 │  日本語で学び、すぐ試し、問題で定着できる              │
 │                                                         │
@@ -63,7 +64,7 @@
 │   2. 問題で確かめる                                     │
 │   3. エディタと REPL で試す                             │
 │                                                         │
-│  [📘 はじめに構文ガイド] [📚 問題から始める] [🖊️ 試す] │
+│  [はじめに構文ガイド] [問題から始める] [まずは試す]    │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -89,7 +90,7 @@
 ### 学習詳細ページ (`/learn`, `/learn/:slug`, `/guide`)
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  λ Lisp Playground    [学習]  [エディタ]  [REPL]       │
+│  Lambda Lab          [学習]  [エディタ]  [REPL]       │
 ├──────────┬──────────────────────────────────────────────┤
 │ 📚 問題   │  Lisp 構文ガイド / 問題文                    │
 │          │                                              │
@@ -105,7 +106,7 @@
 ### エディタページ (`/editor`)
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  λ Lisp Playground    [学習]  [エディタ]  [REPL]       │
+│  Lambda Lab          [学習]  [エディタ]  [REPL]       │
 ├──────────────────────────┬──────────────────────────────┤
 │  エディタ                │  実行結果                    │
 │                          │                              │
@@ -121,7 +122,7 @@
 ### REPL ページ (`/repl`)
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  λ Lisp Playground    [学習]  [エディタ]  [REPL]       │
+│  Lambda Lab          [学習]  [エディタ]  [REPL]       │
 ├─────────────────────────────────────────────────────────┤
 │  REPL                                                    │
 │  > (+ 1 2 3)                                             │
@@ -238,52 +239,18 @@ npm run test:e2e
 Vitest によるテストスイートが用意されています。
 
 `npm run test:coverage` を実行すると、HTML レポートが `coverage/` に出力されます。
-2026-04-30 時点の coverage ベースラインは All files で Stmts 92.73 / Branch 83.00 / Funcs 97.66 / Lines 99.03 です。
+coverage の数値は実装進行で変動するため、必要な時点で `npm run test:coverage` を再実行して確認してください。
 
 `npm run test:e2e` は Playwright の Chromium を使って、home / guide / problems / editor / repl の主要導線と REPL の基本実行フローを headless で確認します。
 `npm test` は `src/**/*.{test,spec}.{ts,tsx}` 配下の Vitest スイートのみを対象にし、Playwright の E2E spec は `npm run test:e2e` に分離しています。
 
-#### インタプリタテスト (`src/interpreter/__tests__/`)
+#### テスト構成
 
-| テストファイル | 対象 | テスト数 |
-|---|---|---|
-| `types.test.ts` | LispValue ヘルパー関数 | 26 |
-| `environment.test.ts` | レキシカルスコープ管理 | 9 |
-| `parser.test.ts` | トークナイザ + パーサー | 27 |
-| `index.test.ts` | executeLisp / executeLispRepl の境界ケース | 3 |
-| `evaluator.test.ts` | 評価器・特殊形式・ビルトイン・出力再束縛 | 149 |
-| `integration.test.ts` | executeLisp E2E パイプライン | 25 |
-| `repl.test.ts` | executeLispRepl 環境引き継ぎ | 8 |
-| `security.test.ts` | 安全装置・仕様差分の回帰 | 13 |
-
-#### UI / アプリ / 補助機能テスト (`src/components/__tests__/`, `src/pages/__tests__/`, `src/__tests__/`, `src/worker/__tests__/` ほか)
-
-| テストファイル | 対象 | テスト数 |
-|---|---|---|
-| `Header.test.tsx` | ナビゲーションヘッダー | 18 |
-| `Editor.test.tsx` | CodeMirror ラッパー・ショートカット | 7 |
-| `OutputPanel.test.tsx` | 実行結果パネル | 9 |
-| `ProblemList.test.tsx` | 問題一覧サイドバー | 13 |
-| `ProblemView.test.tsx` | 問題表示・ヒント・解答・Markdown 分岐 | 18 |
-| `LispGuide.test.tsx` | Lisp 構文ガイド | 18 |
-| `App.test.tsx` | アプリ状態復元・進捗保存・ルーティング | 15 |
-| `App.integration.test.tsx` | App ルーティング・ページ間状態連携 | 5 |
-| `ContactPage.test.tsx` | 問い合わせページ統合 | 3 |
-| `PricingPage.test.tsx` | 価格ページ統合 | 3 |
-| `HomePage.test.tsx` | Home 画面導線 | 3 |
-| `ProblemsPage.test.tsx` | 問題一覧ページ導線 | 6 |
-| `LearnPage.test.tsx` | 学習ページ統合 | 21 |
-| `EditorPage.test.tsx` | エディタページ統合 | 17 |
-| `ReplPage.test.tsx` | REPLページ統合 | 20 |
-| `problems.test.ts` | 問題データ整合性 | 65 |
-| `analytics.test.ts` | 計測イベント抽象化 | 5 |
-| `storage.test.ts` | localStorage 永続化 | 32 |
-| `runJudge.test.ts` | judge レイヤーの採点実行 | 6 |
-| `lisp-language.test.ts` | Lisp 構文ハイライト | 13 |
-| `worker.test.ts` | Worker 管理・フォールバック | 5 |
-| `lisp-worker.test.ts` | Worker 本体メッセージ処理 | 2 |
-
-| **合計** | | **564** |
+- `src/interpreter/__tests__/`: parser / evaluator / repl / security を含むインタプリタ中核の回帰
+- `src/components/__tests__/`, `src/pages/__tests__/`, `src/__tests__/`: UI、ルーティング、localStorage 復元、ブランド表示の回帰
+- `src/data/__tests__/`, `src/judge/__tests__/`, `src/utils/__tests__/`, `src/worker/__tests__/`, `src/editor/__tests__/`: problem loader、judge、analytics/storage、worker、syntax highlight の回帰
+- `npm test` の直近フル実行実績は 2026-05-20 時点で **32 files / 611 tests passed**
+- `npm run test:e2e` は主要導線のブラウザスモークテストを担当
 
 ---
 
@@ -291,80 +258,36 @@ Vitest によるテストスイートが用意されています。
 
 ```
 LispEditerApp/
-├── index.html                  # エントリーポイント
+├── index.html                  # エントリーポイント / meta / favicon 参照
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
+├── public/
+│   └── favicon.svg             # Tree Tiered ベースの favicon
 ├── src/
-│   ├── main.tsx                # React マウント
 │   ├── App.tsx                 # ルーティング定義 (HashRouter)
-│   ├── App.css                 # グローバルスタイル
-│   ├── index.css               # ベーススタイル
-│   ├── __tests__/              # App 統合テスト
-│   │   ├── App.test.tsx
-│   │   └── App.integration.test.tsx
-│   ├── test-setup.ts           # テスト初期化 (jest-dom)
-│   ├── vite-env.d.ts
-│   ├── types/
-│   │   └── index.ts            # Problem 型定義
-│   ├── interpreter/            # ★ Lisp インタプリタ
-│   │   ├── index.ts            # 公開API (executeLisp, executeLispRepl)
-│   │   ├── types.ts            # LispValue 型定義
-│   │   ├── parser.ts           # レキサー + パーサー
-│   │   ├── evaluator.ts        # 評価器 + 組み込み関数
-│   │   ├── environment.ts      # 環境（スコープ）管理
-│   │   └── __tests__/          # インタプリタ単体テスト
-│   │       ├── types.test.ts
-│   │       ├── environment.test.ts
-│   │       ├── parser.test.ts
-│   │       ├── index.test.ts
-│   │       ├── evaluator.test.ts
-│   │       ├── integration.test.ts
-│   │       ├── repl.test.ts
-│   │       └── security.test.ts
-│   ├── judge/                  # 採点レイヤー
-│   │   ├── runJudge.ts         # judge 実行の公開 API
-│   │   ├── legacy.ts           # 既存問題との互換レイヤー
-│   │   ├── compare.ts          # 出力・戻り値比較処理
-│   │   ├── types.ts            # judge 型定義
-│   │   └── __tests__/          # judge 単体テスト
+│   ├── App.css / index.css     # グローバルスタイル
+│   ├── main.tsx                # React マウント
+│   ├── __tests__/              # App 全体の統合テスト
+│   ├── components/             # Header / Icon / Editor / Problem UI
+│   ├── config/
+│   │   └── brand.ts            # ブランド名・title・description の定義
+│   ├── content/
+│   │   └── problems/           # problem.md / starter / solution / judge の外部問題資産
+│   ├── data/                   # problem loader と UI 向け facade
 │   ├── editor/                 # CodeMirror 拡張
-│   │   └── lisp-language.ts    # Lisp 構文ハイライト定義
-│   ├── worker/                 # Web Worker
-│   │   ├── index.ts            # Worker 管理・非同期実行API
-│   │   ├── lisp-worker.ts      # Worker 本体
-│   │   └── __tests__/          # Worker 単体テスト
-│   ├── utils/                  # ユーティリティ
-│   │   ├── analytics.ts        # 計測イベント抽象化
-│   │   └── storage.ts          # localStorage 永続化
-│   ├── pages/                  # ページコンポーネント
-│   │   ├── HomePage.tsx        # Home 画面
-│   │   ├── ProblemsPage.tsx    # 問題一覧ページ
-│   │   ├── LearnPage.tsx       # 学習詳細ページ（問題 / ガイド）
-│   │   ├── EditorPage.tsx      # エディタページ（実行環境）
-│   │   ├── ReplPage.tsx        # REPLページ（対話式実行）
-│   │   ├── ContactPage.tsx     # 問い合わせページ
-│   │   ├── PricingPage.tsx     # 価格ページ
-│   │   └── __tests__/          # ページ統合テスト
-│   ├── components/             # React コンポーネント
-│   │   ├── Header.tsx          # ナビゲーションヘッダー
-│   │   ├── Editor.tsx          # CodeMirror エディタ
-│   │   ├── LispGuide.tsx       # Lisp 構文ガイド
-│   │   ├── OutputPanel.tsx     # 実行結果パネル
-│   │   ├── ProblemList.tsx     # 問題一覧サイドバー
-│   │   ├── ProblemView.tsx     # 問題説明・ヒント表示
-│   │   └── __tests__/          # コンポーネント単体テスト
-│   └── data/
-│       ├── problems.ts         # 問題データ定義
-│       └── __tests__/          # データ整合性テスト
+│   ├── interpreter/            # Lisp インタプリタ本体
+│   ├── judge/                  # 採点レイヤー
+│   ├── pages/                  # Home / Learn / Editor / REPL などのページ
+│   ├── utils/                  # analytics / storage / waitlist / siteMode
+│   ├── worker/                 # Web Worker 実行基盤
+│   └── types/                  # Problem / judge などの型定義
 ├── docs/
-│   ├── REVIEW.md               # コードレビュー・課題管理
-│   ├── PRE_DEPLOY_CHECKLIST.md # 価格公開前の deploy 判定基準
+│   ├── CONVERSATION_HISTORY.md     # セッション単位の作業履歴
+│   ├── REVIEW.md                   # コードレビュー・課題管理
+│   ├── PRE_DEPLOY_CHECKLIST.md     # deploy 判定基準
 │   ├── POST_DEPLOY_VERIFICATION.md # 公開後の確認ログ
-│   ├── PLATFORM_STRATEGY.md    # プラットフォーム戦略
-│   ├── AUTH_PROVIDER_COMPARISON.md # T-401 向けの認証方式比較
-│   ├── STORAGE_BOUNDARY.md     # localStorage と将来の外部正本の境界
-│   └── IMPLEMENTATION_TASKS.md # 実装バックログ
+│   └── IMPLEMENTATION_TASKS.md     # 実装バックログ
 └── dist/                       # ビルド出力 (git管理外)
 ```
 
@@ -381,7 +304,7 @@ LispEditerApp/
 
 ## 将来計画
 
-Lisp Playground は、当面は静的配信を維持しながら、学習体験の完成度を高める方針です。
+Lambda Lab は、当面は静的配信を維持しながら、学習体験の完成度を高める方針です。
 特に、英語圏の教材と総量で競うのではなく、日本語で Common Lisp を学び、すぐ試し、問題で定着できる学習体験を強めていきます。
 
 ### 短期

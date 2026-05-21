@@ -1,8 +1,8 @@
-# Lisp Playground — deploy 前チェックリスト
+# Lambda Lab — deploy 前チェックリスト
 
 **目的**: `deploy` ブランチへ反映してよい条件を明文化し、公開判断を属人化させない  
 **対象**: 学習導線、価格/問い合わせ導線、公開文言、計測、テスト、ドキュメント同期を含む公開候補  
-**更新日**: 2026年5月15日
+**更新日**: 2026年5月20日
 
 > 2026年5月時点の公開方針は free-only（`LIMITED_FREE_CAMPAIGN = true`）です。現行 UI では `/contact` と `/pricing` は公開せず、waitlist / 価格案内 CTA も非表示が正です。
 
@@ -50,10 +50,11 @@
 | 計測 | free-only の場合、`pricing_cta_clicked` と `contact_cta_clicked` がヘッダー導線前提になっていない | YES / NO |
 | 計測 | commercial-enabled の場合、`pricing_cta_clicked` と `contact_cta_clicked` の対象導線が現在の UI と一致している | YES / NO |
 | 計測 | GA4 未設定でも内部 queue / `dataLayer` 前提の確認ができ、計測コードが vendor 直結になっていない | YES / NO |
+| ブランド | `src/config/brand.ts`、`index.html`、`public/favicon.svg`、主要 UI 表示のブランド名と視覚要素が一致している | YES / NO |
 | テスト | `npm test` が最新の `main` で通過している | YES / NO |
 | テスト | `npm run test:e2e` が通過している | YES / NO |
 | ビルド | deploy 候補の build / deploy は Node 20 または 22 前提で確認する方針に従っている | YES / NO |
-| ドキュメント | README / REVIEW / IMPLEMENTATION_TASKS の状態が現状と一致している | YES / NO |
+| ドキュメント | README / REVIEW / IMPLEMENTATION_TASKS / CONVERSATION_HISTORY の状態が現状と一致している | YES / NO |
 | ドキュメント | 公開後確認先として [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) の更新先が共有されている | YES / NO |
 
 ---
@@ -78,6 +79,7 @@
 - free-only の場合、学習導線のみが公開され、`/contact` と `/pricing` は公開 UI から外れている
 - commercial-enabled の場合、問い合わせ先が公開 UI から辿れる
 - 価格やプランは静的な案内に留まり、決済未接続であることを隠していない
+- ブランド名、favicon、主要画面のヘッダー表示が同じ前提で説明できる
 - テストと deploy 方針が現在の運用ルールに一致している
 
 ### まだ公開してはいけない状態
@@ -85,6 +87,7 @@
 - free-only 方針なのに価格や問い合わせ導線が一部だけ露出している
 - commercial-enabled 方針なのに問い合わせ導線なしで価格や金銭関連だけが見える
 - checkout 未接続なのに購入できるように見せている
+- ブランド名やアイコンがページ、meta、ドキュメントで食い違っている
 - deploy 候補に未完成の金銭導線や誤案内が混ざっている
 - docs の記述が現行挙動とずれており、公開判断の根拠が残らない
 

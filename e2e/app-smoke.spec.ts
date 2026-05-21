@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Lisp Playground smoke flows', () => {
+test.describe('Lambda Lab smoke flows', () => {
   test('home から主要ページへ遷移できる', async ({ page }) => {
     await page.goto('/');
 
     await expect(
-      page.getByRole('heading', { level: 2, name: /Lisp Playground へようこそ/ })
+      page.getByRole('heading', { level: 2, name: /Lambda Lab へようこそ/ })
     ).toBeVisible();
 
     await page.getByRole('button', { name: /構文ガイド/ }).first().click();
@@ -31,7 +31,7 @@ test.describe('Lisp Playground smoke flows', () => {
     await page.getByRole('button', { name: 'ホームへ戻る' }).click();
     await expect(page).toHaveURL(/#\/$/);
     await expect(
-      page.getByRole('heading', { level: 2, name: /Lisp Playground へようこそ/ })
+      page.getByRole('heading', { level: 2, name: /Lambda Lab へようこそ/ })
     ).toBeVisible();
   });
 

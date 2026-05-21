@@ -21,7 +21,7 @@ function renderHomePage() {
 describe('HomePage', () => {
   it('ウェルカムメッセージを表示する', () => {
     renderHomePage();
-    expect(screen.getByText(/Lambda Atelier へようこそ/)).toBeInTheDocument();
+    expect(screen.getByText(/Lambda Lab へようこそ/)).toBeInTheDocument();
   });
 
   it('問題一覧ボタンから問題一覧ページへ移動できる', () => {
