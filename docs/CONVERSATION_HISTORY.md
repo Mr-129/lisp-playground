@@ -1,4 +1,38 @@
-# Lambda Lab — 会話経歴ログ
+# Lisperpaw — 会話経歴ログ
+
+## 2026年5月22日〜23日
+
+### 概要
+
+- サイト名を Lisperpaw に確定し、visible brand、README、title / description、関連テストを現行名称へ同期した。
+- アイコンは Paw 系候補を 10 案追加して検討したが、production では最終的に Tree Tiered に戻した。
+- `main` と `deploy` の二段 push 運用で GitHub Pages を更新し、公開サイトのブランド表記と icon 配信を実画面で確認した。
+
+### 時系列メモ
+
+1. サイト名候補を再検討した結果、Lisperpaw を採用し、[src/config/brand.ts](../src/config/brand.ts)、[index.html](../index.html)、README、関連テストを更新した。
+2. focused Vitest 42 tests passed とフル回帰 32 files / 611 tests passed を確認後、`main` と `deploy` の両方へ push し、GitHub Pages 上で Lisperpaw 表記の公開を確認した。
+3. `docs/icon-candidates/` に Paw 系の brand icon 候補を 10 件追加し、比較 gallery を更新した。
+4. 一時的に Paw Ladder を [public/favicon.svg](../public/favicon.svg) と [src/components/Icon.tsx](../src/components/Icon.tsx) の `BrandMark` に反映し、`deploy` run `26296805560` の success と公開反映を確認した。
+5. 見た目レビューの結果、production icon は Tree Tiered に戻す判断とし、`6f35c3a` で rollback して `deploy` run `26316882323` の success を確認した。
+6. review / 公開確認 / 会話履歴の 3 文書を current state に同期し、運用ログ上でも Lisperpaw + Tree Tiered が current decision であることを明文化した。
+
+### 今回の判断
+
+- ブランド名: Lisperpaw
+- ブランドアイコン: Tree Tiered
+- 公開運用: `main` と `deploy` の二段 push を維持し、GitHub Pages は `deploy` ブランチ経由で反映する
+
+### 検証メモ
+
+- `npm test`: 2026-05-22 の直近フル実行で 32 files / 611 tests passed
+- `npx vitest run src/components/__tests__/Header.test.tsx src/pages/__tests__/HomePage.test.tsx src/__tests__/App.test.tsx`: 2026-05-22, 2026-05-23 ともに 42 tests passed
+- GitHub Actions `CI & Deploy`: `26296805560`（Paw Ladder 反映）success、`26316882323`（Tree Tiered 復帰）success
+
+### レビュー結論
+
+- `ebc57f3`、`77d0bec`、`6f35c3a` の review では、実装側の blocking な不具合は確認されなかった。
+- 直近で最もドリフトしやすかったのは実装ではなく運用ドキュメントであり、ブランド名、icon の current decision、公開確認ログの同期を優先して更新した。
 
 ## 2026年5月20日
 

@@ -1,17 +1,31 @@
-# Lambda Lab — 公開後確認ログ
+# Lisperpaw — 公開後確認ログ
 
 **作成日**: 2026年4月29日  
-**最終更新**: 2026年5月14日  
+**最終更新**: 2026年5月23日
 **対象公開先**: GitHub Pages  
 **公開 URL**: https://mr-129.github.io/lisp-playground/  
 **初回確認対象コミット**: `cce86dd` (`fix: restore problems page styles`)  
-**最新確認対象コミット**: `74fda87` (`Add T-501 quote and function object content`)
+**最新確認対象コミット**: `6f35c3a` (`Restore Tree Tiered brand icon`)
 
 > この文書は公開後確認の累積ログです。`deploy` ブランチへ反映してよいかの事前判断には [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) を使います。Pages 反映失敗の詳細な復旧手順はローカルの個人用 runbook で管理します。
 
 ---
 
-## 0. 最新確認（2026年5月14日）
+## 0. 最新確認（2026年5月23日）
+
+- GitHub Actions `CI & Deploy` run `26316882323` が `success` となり、`deploy` ブランチの `6f35c3a` が公開反映された
+- 公開トップページでタイトル `Lisperpaw - Common Lisp 学習スタジオ` を確認し、ヘッダーのブランドマーク、home のウェルカムマーク、`/favicon.svg` の配信内容が Tree Tiered に戻っていることを確認した
+- ローカル回帰として `npx vitest run src/components/__tests__/Header.test.tsx src/pages/__tests__/HomePage.test.tsx src/__tests__/App.test.tsx` を実行し、42 tests passed を確認した
+- 今回の本番反映差分は `public/favicon.svg`、`src/components/Icon.tsx` の `BrandMark`、`README.md` の説明同期に限定され、候補 SVG や gallery asset は本番挙動に影響しない状態を維持した
+
+| 区分 | 確認内容 | 結果 | 補足 |
+|---|---|---|---|
+| デプロイ | GitHub Actions `CI & Deploy` run `26316882323` | PASS | `deploy` / `6f35c3a` / success を確認 |
+| 公開内容 | top page のブランド名と icon | PASS | `Lisperpaw` 表示を維持しつつ、ヘッダー / home / favicon が Tree Tiered へ復帰 |
+| ローカル回帰 | `npx vitest run src/components/__tests__/Header.test.tsx src/pages/__tests__/HomePage.test.tsx src/__tests__/App.test.tsx` | PASS | 3 files / 42 tests passed |
+| 影響範囲 | icon rollback の限定性 | PASS | icon 参照本体 2 箇所 + README 同期のみ |
+
+## 補足: 2026年5月14日の確認
 
 - GitHub Actions `CI & Deploy` run `#36` の rerun（attempt 2）が `success` になり、`deploy` ブランチの `74fda87` が公開反映された
 - 公開 Learn ページで `進捗 0/59`、`基本構文 0/11` を確認し、59 問版が配信されていることを確認した

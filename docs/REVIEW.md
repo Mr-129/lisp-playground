@@ -1,8 +1,8 @@
-# Lambda Lab — コードレビュー・課題管理ドキュメント
+# Lisperpaw — コードレビュー・課題管理ドキュメント
 
 **レビュー実施日**: 2026年4月11日  
 **対象バージョン**: v1.0.0 (初期リリース)  
-**最終更新**: 2026年5月20日 — ブランド刷新のレビュー、Tree Tiered アイコン採用、Lambda Lab への名称変更、ドキュメント同期、最新テスト / build 検証を反映
+**最終更新**: 2026年5月23日 — Lisperpaw ブランド反映、Tree Tiered アイコン復帰、公開確認、review / 運用ドキュメント同期を反映
 
 **関連ドキュメント**: [PLATFORM_STRATEGY.md](./PLATFORM_STRATEGY.md) — プラットフォーム化と収益化の方針  
 **公開前チェック**: [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) — 価格や金銭関連を `deploy` へ反映してよい条件  
@@ -32,8 +32,8 @@
 
 | 観点 | 評価 | 備考 |
 |------|------|------|
-| 機能完成度 | ⭐⭐⭐⭐⭐ | 学習導線、外部 problem content、REPL/Editor、検索、進捗 UI に加え、Tree Tiered ベースのブランドアイコンと SVG icon system、Lambda Lab ブランド名への集約まで反映済み。問題 66 問 |
-| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、problem content loader の validation、ブランド設定の集約に加え、2026-05-20 時点で Vitest 32 files / 611 tests と clean build の通過を確認 |
+| 機能完成度 | ⭐⭐⭐⭐⭐ | 学習導線、外部 problem content、REPL/Editor、検索、進捗 UI に加え、Tree Tiered ベースのブランドアイコンと SVG icon system、Lisperpaw ブランド名への集約まで反映済み。問題 66 問 |
+| コード品質 | ⭐⭐⭐⭐⭐ | 型安全性改善、problem content loader の validation、ブランド設定の集約に加え、2026-05-22 のフル回帰で Vitest 32 files / 611 tests、2026-05-23 の focused 回帰で 42 tests passed を確認 |
 | セキュリティ | ⭐⭐⭐⭐☆ | 再帰深度制限・出力バッファ制限を追加済 |
 | アクセシビリティ | ⭐⭐⭐⭐☆ | ARIA ラベル・フォーカスインジケータ追加済 |
 | 問題データ品質 | ⭐⭐⭐⭐⭐ | 全問正確、難易度の段階付けも適切 |
@@ -63,6 +63,14 @@
 - ブランド名は [src/config/brand.ts](../src/config/brand.ts) を起点に Lambda Lab へ集約し、[index.html](../index.html) の title / description、関連テストも同期済み。
 - ローカル検証として `npm test` の直近フル実行 32 files / 611 tests passed、ブランド変更に関する focused Vitest 42 tests passed、`Remove-Item dist -Recurse -Force; npm run build` による clean build success を確認済み。
 - 残課題としてはコード品質よりもドキュメントの保守負荷が支配的で、README の詳細テスト件数表のようなドリフトしやすい記述は簡略化して維持する方針が妥当。
+
+### 2026年5月23日 追記
+
+- `ebc57f3` で visible brand を Lisperpaw へ更新した差分、`77d0bec` の Paw Ladder 採用差分、`6f35c3a` の Tree Tiered 復帰差分をレビューし、実装面の blocking な不具合は確認されなかった。
+- 現在の production brand は Lisperpaw、production icon は Tree Tiered で確定している。アイコン候補の探索結果は [docs/icon-candidates](./icon-candidates) 配下の比較資産として保持し、本番参照は [public/favicon.svg](../public/favicon.svg) と [src/components/Icon.tsx](../src/components/Icon.tsx) の `BrandMark` に限定する。
+- 2026-05-23 のローカル回帰として `npx vitest run src/components/__tests__/Header.test.tsx src/pages/__tests__/HomePage.test.tsx src/__tests__/App.test.tsx` を再実行し、42 tests passed を確認した。
+- GitHub Actions `CI & Deploy` の `deploy` run `26316882323` が success となり、公開サイトでヘッダー、home、`favicon.svg` の 3 点が Tree Tiered に戻っていることを確認した。
+- 現時点の主なメンテナンス課題は、実装不具合よりも運用ドキュメントのドリフト管理である。レビュー記録、公開確認ログ、会話履歴は今回同期したが、戦略系 docs は今後もブランド名や件数の同期確認が必要になる。
 
 ---
 
@@ -427,7 +435,7 @@
 
 ---
 
-*このドキュメントは Lambda Lab v1.0.0 の初期レビュー時点のものです。*
+*このドキュメントは現 Lisperpaw（旧 Lambda Lab）の初期レビューを起点に累積更新しているものです。*
 *2026-04-12: BUG-001, SEC-001, SEC-002, ACC-001, ACC-002, CQ-003 の修正を反映。Vitest テスト 184 件を追加。*
 *2026-04-20: react-router-dom によるページ分割（LearnPage / EditorPage）、LispGuide コンポーネント追加、UIコンポーネントテスト追加。localStorage永続化、Lisp構文ハイライト、Web Worker非同期実行を実装（合計 306 テスト）。*
 *2026-04-29: GitHub Pages 公開後確認ログを追加し、主要導線のスモークテスト、localStorage 復元、38 問総当たり、モバイル表示、home / 問題一覧導線、問題一覧ページスタイル復旧確認結果を反映。*
