@@ -1,4 +1,4 @@
-# Lisp Playground — 公開後確認ログ
+# Lambda Lab — 公開後確認ログ
 
 **作成日**: 2026年4月29日  
 **最終更新**: 2026年5月14日  
@@ -51,7 +51,7 @@
 | デプロイ | GitHub Actions `Build & Deploy` | PASS | `main` への push 後に success を確認 |
 | 公開設定 | GitHub Pages 設定と公開 URL | PASS | `https://mr-129.github.io/lisp-playground/` で公開中 |
 | 到達性 | `/`, `/#/problems`, `/#/editor`, `/#/repl` の表示 | PASS | home、問題一覧、editor、repl の主要ルートで表示を確認 |
-| Home画面 | ウェルカム画面と主要 CTA 表示 | PASS | `Lisp Playground へようこそ` と開始導線 3 種を確認 |
+| Home画面 | ウェルカム画面と主要 CTA 表示 | PASS | 当時のウェルカム文言と開始導線 3 種を確認 |
 | 問題一覧ページ | 問題カード一覧と最初の問題選択 | PASS | `/#/problems` で一覧表示し、最初の問題詳細へ進めることを確認 |
 | 問題一覧ページ | カード UI と CTA スタイル復旧 | PASS | card 背景 `rgb(22, 33, 62)`、CTA 背景 `rgb(233, 69, 96)` を確認 |
 | 学習ページ | 解答表示 | PASS | 問題詳細から解答表示を確認 |

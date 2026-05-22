@@ -1,4 +1,4 @@
-# Lisp Playground — 採点モデル設計
+# Lambda Lab — 採点モデル設計
 
 **作成日**: 2026年5月8日  
 **位置づけ**: 問題拡張前に採点基盤を固めるための設計メモ  
@@ -48,7 +48,7 @@
 - 高度な AST 比較
 - 部分点やランキングなど競技プログラミング寄りの採点
 
-Lisp Playground は学習サイトであり、初期段階では「学びやすく、拡張しやすい」ことを優先する。
+Lambda Lab は学習サイトであり、初期段階では「学びやすく、拡張しやすい」ことを優先する。
 
 ---
 
@@ -377,7 +377,7 @@ function getJudgeSpec(problem: Problem): JudgeSpec | null {
 
 ## 12. 結論
 
-Lisp Playground の次の採点モデルは、**単一の expectedOutput 比較から、judge 設定ベースのケース実行方式へ移行する**のがよい。
+Lambda Lab の次の採点モデルは、**単一の expectedOutput 比較から、judge 設定ベースのケース実行方式へ移行する**のがよい。
 
 初期実装では次だけに絞る。
 

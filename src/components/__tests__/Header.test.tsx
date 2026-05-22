@@ -59,7 +59,7 @@ describe('Header', () => {
 
   it('タイトルを表示する', () => {
     renderWithRouter();
-    expect(screen.getByText('Lambda Lab')).toBeInTheDocument();
+    expect(screen.getByText('Lisperpaw')).toBeInTheDocument();
   });
 
   it('サブタイトルを表示する', () => {
@@ -136,7 +136,7 @@ describe('Header', () => {
   it('タイトルをクリックするとホームへ戻る', () => {
     renderWithRouter('/repl');
 
-    fireEvent.click(screen.getByText('Lambda Lab'));
+    fireEvent.click(screen.getByText('Lisperpaw'));
 
     expect(screen.getByTestId('location-path')).toHaveTextContent('/');
   });

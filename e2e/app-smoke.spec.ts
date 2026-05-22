@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Lambda Lab smoke flows', () => {
+test.describe('Lisperpaw smoke flows', () => {
   test('home から主要ページへ遷移できる', async ({ page }) => {
     await page.goto('/');
 
     await expect(
-      page.getByRole('heading', { level: 2, name: /Lambda Lab へようこそ/ })
+      page.getByRole('heading', { level: 2, name: /Lisperpaw へようこそ/ })
     ).toBeVisible();
 
     await page.getByRole('button', { name: /構文ガイド/ }).first().click();
@@ -31,7 +31,7 @@ test.describe('Lambda Lab smoke flows', () => {
     await page.getByRole('button', { name: 'ホームへ戻る' }).click();
     await expect(page).toHaveURL(/#\/$/);
     await expect(
-      page.getByRole('heading', { level: 2, name: /Lambda Lab へようこそ/ })
+      page.getByRole('heading', { level: 2, name: /Lisperpaw へようこそ/ })
     ).toBeVisible();
   });
 

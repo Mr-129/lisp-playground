@@ -427,7 +427,7 @@
 
 ---
 
-*このドキュメントは Lisp Playground v1.0.0 の初期レビュー時点のものです。*
+*このドキュメントは Lambda Lab v1.0.0 の初期レビュー時点のものです。*
 *2026-04-12: BUG-001, SEC-001, SEC-002, ACC-001, ACC-002, CQ-003 の修正を反映。Vitest テスト 184 件を追加。*
 *2026-04-20: react-router-dom によるページ分割（LearnPage / EditorPage）、LispGuide コンポーネント追加、UIコンポーネントテスト追加。localStorage永続化、Lisp構文ハイライト、Web Worker非同期実行を実装（合計 306 テスト）。*
 *2026-04-29: GitHub Pages 公開後確認ログを追加し、主要導線のスモークテスト、localStorage 復元、38 問総当たり、モバイル表示、home / 問題一覧導線、問題一覧ページスタイル復旧確認結果を反映。*
