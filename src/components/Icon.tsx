@@ -206,16 +206,14 @@ export function BrandMark({ className = '', ...props }: BrandMarkProps) {
       <rect x="5" y="5" width="54" height="54" rx="16" fill="#091321" />
       <path d="M19.5 17.5c-4.6 3.9-7.5 8.8-7.5 14.5s2.9 10.6 7.5 14.5" fill="none" stroke="#f1b35d" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M44.5 17.5C49.1 21.4 52 26.3 52 32s-2.9 10.6-7.5 14.5" fill="none" stroke="#f1b35d" strokeWidth="4.2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M32 20.5v20" fill="none" stroke="#f7fbff" strokeWidth="3" strokeLinecap="round" />
-      <path d="M32 24.5 26 29" fill="none" stroke="#7cb0ff" strokeWidth="2.8" strokeLinecap="round" />
-      <path d="M32 24.5 38 29" fill="none" stroke="#7cb0ff" strokeWidth="2.8" strokeLinecap="round" />
-      <path d="M32 31.5 24 37.5" fill="none" stroke="#dce9ff" strokeWidth="2.8" strokeLinecap="round" />
-      <path d="M32 31.5 40 37.5" fill="none" stroke="#dce9ff" strokeWidth="2.8" strokeLinecap="round" />
-      <rect x="29.2" y="17.5" width="5.6" height="5.6" rx="1.5" fill="#f7fbff" />
-      <rect x="23" y="27.5" width="5" height="5" rx="1.3" fill="#7cb0ff" />
-      <rect x="36" y="27.5" width="5" height="5" rx="1.3" fill="#7cb0ff" />
-      <rect x="20.5" y="37" width="5" height="5" rx="1.3" fill="#dce9ff" />
-      <rect x="38.5" y="37" width="5" height="5" rx="1.3" fill="#dce9ff" />
+      <path d="M32 30v15" fill="none" stroke="#f7fbff" strokeWidth="3" strokeLinecap="round" />
+      <path d="M26 37h12" fill="none" stroke="#7cb0ff" strokeWidth="2.8" strokeLinecap="round" />
+      <path d="M24 43h16" fill="none" stroke="#dce9ff" strokeWidth="2.8" strokeLinecap="round" />
+      <ellipse cx="32" cy="28" rx="5.2" ry="4.3" fill="#f6b7c7" />
+      <circle cx="23.5" cy="22.5" r="2.2" fill="#ffdbe3" />
+      <circle cx="28.5" cy="17.5" r="2.2" fill="#ffdbe3" />
+      <circle cx="35.5" cy="17.5" r="2.2" fill="#ffdbe3" />
+      <circle cx="40.5" cy="22.5" r="2.2" fill="#ffdbe3" />
     </svg>
   );
 }

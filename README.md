@@ -19,7 +19,7 @@
 - **学ぶ・試す・解くの一体化** — ガイド、エディタ、REPL、問題演習を一つのサイトで往復できる
 - **日本語初学者向け導線** — 日本語 UI と説明で、最初の一歩から迷いにくい構成
 - **ブラウザ内 Lisp インタプリタ** — サーバー不要、完全クライアントサイド実行
-- **ブランドアイコンと独自UI** — Tree Tiered ベースのブランドマークと SVG icon system を採用
+- **ブランドアイコンと独自UI** — Paw Ladder ベースのブランドマークと SVG icon system を採用
 - **クロージャ対応** — レキシカルスコープ、高階関数、状態を持つクロージャ
 - **主要ルート分離** — Home、問題一覧、学習詳細、エディタ、REPL を分けた導線設計
 - **Lisp 構文ガイド** — 16セクションの包括的な Common Lisp リファレンス
@@ -263,7 +263,7 @@ LispEditerApp/
 ├── tsconfig.json
 ├── vite.config.ts
 ├── public/
-│   └── favicon.svg             # Tree Tiered ベースの favicon
+│   └── favicon.svg             # Paw Ladder ベースの favicon
 ├── src/
 │   ├── App.tsx                 # ルーティング定義 (HashRouter)
 │   ├── App.css / index.css     # グローバルスタイル
