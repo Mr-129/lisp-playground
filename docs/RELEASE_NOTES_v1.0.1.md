@@ -39,7 +39,7 @@ v1.0.1 は、v1.0.0 の初回公開内容をベースに、GitHub Releases 用�
 
 ## GitHub Releases 本文案
 
-Lambda Lab v1.0.1 は、ブラウザ上で Common Lisp を学習・実行できる公開版です。
+Lisperpaw v1.0.1 は、ブラウザ上で Common Lisp を学習・実行できる公開版です。
 
 主な内容:
 - Home、問題一覧、学習詳細、エディタ、REPL を分離した学習導線

@@ -1,4 +1,4 @@
-# Lambda Lab — T-401 認証方式比較
+# Lisperpaw — T-401 認証方式比較
 
 **作成日**: 2026年5月12日  
 **位置づけ**: 内部向けの技術比較メモ  
@@ -12,7 +12,7 @@
 
 ## 1. 背景
 
-Lambda Lab は現在、GitHub Pages 上で配信する静的 SPA であり、学習継続に必要な軽量データは localStorage に保存している。
+Lisperpaw は現在、GitHub Pages 上で配信する静的 SPA であり、学習継続に必要な軽量データは localStorage に保存している。
 
 T-401 以降では、次の要件を段階的に満たす必要がある。
 
@@ -131,4 +131,4 @@ T-401 を実装する場合の最小スコープは次の通りとする。
 
 現フェーズでは「認証だけを入れる」より、「認証がその後の entitlement と billing に自然につながるか」を優先する。
 
-その前提に立つ限り、Lambda Lab の T-401 の出発点は Firebase より Supabase の方が整合的である。
+その前提に立つ限り、Lisperpaw の T-401 の出発点は Firebase より Supabase の方が整合的である。
